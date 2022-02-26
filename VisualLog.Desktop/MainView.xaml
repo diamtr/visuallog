@@ -6,7 +6,15 @@
         xmlns:local="clr-namespace:VisualLog.Desktop"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="100" />
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    <StackPanel Grid.Column="0"
+                Orientation="Vertical">
+      <Button Content="Open"
+              Command="{Binding OpenFileCommand}"/>
+    </StackPanel>
+  </Grid>
 </Window>
