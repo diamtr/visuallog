@@ -6,4 +6,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VisualLog.Core\VisualLog.Core.csproj" />
+  </ItemGroup>
+
 </Project>

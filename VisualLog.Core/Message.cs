@@ -2,8 +2,7 @@
 {
   public class Message
   {
-    public virtual Log Log { get; set; }
-    public virtual long Number { get; set; }
-    public virtual string RawValue { get; set; }
+    public long Number { get; set; }
+    public string RawValue { get; set; }
   }
 }
