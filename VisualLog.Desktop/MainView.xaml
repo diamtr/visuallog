@@ -6,13 +6,21 @@
         xmlns:local="clr-namespace:VisualLog.Desktop"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+  
   <Window.Resources>
     <ResourceDictionary>
+
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Styles.xaml"/>
       </ResourceDictionary.MergedDictionaries>
+
+      <DataTemplate DataType="{x:Type local:LogViewModel}">
+        <local:LogView/>
+      </DataTemplate>
+
     </ResourceDictionary>
   </Window.Resources>
+  
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="100" />
@@ -26,7 +34,7 @@
       </StackPanel>
     </Border>
     <Border Grid.Column="1">
-      <ListView ItemsSource="{Binding LogViewModel.LogMessages}"/>
+      <ContentControl Content="{Binding LogViewModel}" />
     </Border>
   </Grid>
 </Window>
