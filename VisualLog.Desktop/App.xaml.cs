@@ -13,5 +13,12 @@ namespace VisualLog.Desktop
   /// </summary>
   public partial class App : Application
   {
+    private void Application_Startup(object sender, StartupEventArgs e)
+    {
+      var mainViewModel = new MainViewModel();
+      var mainView = new MainView();
+      mainView.DataContext = mainViewModel;
+      mainView.Show();
+    }
   }
 }

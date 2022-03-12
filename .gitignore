@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Except test logs
+! VisualLog.Core.Test/test_logs/*.log
