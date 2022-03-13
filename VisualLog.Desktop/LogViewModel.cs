@@ -59,7 +59,7 @@ namespace VisualLog.Desktop
       this.OnPropertyChanged(nameof(this.LogMessages));
     }
 
-    private void InitEncodings()
+    public void InitEncodings()
     {
       var encodings = Encoding.GetEncodings();
       this.Encodings.AddRange(encodings.Select(x => this.GetEncodingDisplayName(x.GetEncoding())));
@@ -67,7 +67,7 @@ namespace VisualLog.Desktop
       this.SelectedEncoding = this.GetEncodingDisplayName(Encoding.UTF8);
     }
 
-    private string GetEncodingDisplayName(Encoding encoding)
+    public string GetEncodingDisplayName(Encoding encoding)
     {
       return $"{encoding.CodePage} {encoding.WebName} {encoding.EncodingName}";
     }
