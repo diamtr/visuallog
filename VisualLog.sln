@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualLog.Core", "VisualLog
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualLog.Core.Test", "VisualLog.Core.Test\VisualLog.Core.Test.csproj", "{7388190E-D3A2-4EF8-9BA3-59461A9CAB8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualLog.Capture", "VisualLog.Capture\VisualLog.Capture.csproj", "{A1334853-3C5B-4D80-B8C3-E927F55FC671}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualLog.Capture", "VisualLog.Capture\VisualLog.Capture.csproj", "{A1334853-3C5B-4D80-B8C3-E927F55FC671}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualLog.Desktop", "VisualLog.Desktop\VisualLog.Desktop.csproj", "{32BB52DD-1428-46D2-9E6A-79DED9C8F0B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualLog.Desktop", "VisualLog.Desktop\VisualLog.Desktop.csproj", "{32BB52DD-1428-46D2-9E6A-79DED9C8F0B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualLog.Desktop.Tests", "VisualLog.Desktop.Tests\VisualLog.Desktop.Tests.csproj", "{71307FB1-8E00-4526-A52A-05FCD9A9E936}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{32BB52DD-1428-46D2-9E6A-79DED9C8F0B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32BB52DD-1428-46D2-9E6A-79DED9C8F0B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32BB52DD-1428-46D2-9E6A-79DED9C8F0B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71307FB1-8E00-4526-A52A-05FCD9A9E936}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71307FB1-8E00-4526-A52A-05FCD9A9E936}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71307FB1-8E00-4526-A52A-05FCD9A9E936}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71307FB1-8E00-4526-A52A-05FCD9A9E936}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
