@@ -16,5 +16,16 @@ namespace VisualLog.Desktop.Tests
       CollectionAssert.AreEquivalent(Encoding.GetEncodings().Select(x => vm.GetEncodingDisplayName(x.GetEncoding())), vm.Encodings);
       Assert.IsTrue(vm.SelectedEncoding.StartsWith("65001"));
     }
+
+    [Test]
+    public void InitEncodings()
+    {
+      var vm = new LogViewModel();
+      vm.Encodings = new System.Collections.Generic.List<string>();
+      CollectionAssert.IsEmpty(vm.Encodings);
+      vm.InitEncodings();
+      CollectionAssert.IsNotEmpty(vm.Encodings);
+      CollectionAssert.AreEquivalent(Encoding.GetEncodings().Select(x => vm.GetEncodingDisplayName(x.GetEncoding())), vm.Encodings);
+    }
   }
 }
