@@ -7,5 +7,10 @@ namespace VisualLog.Core
     public long Number { get; set; }
     public string RawValue { get; set; }
     public IDictionary<string, string> Parts { get; set; }
+
+    public Message()
+    {
+      this.Parts = new Dictionary<string, string>();
+    }
   }
 }

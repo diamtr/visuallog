@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -97,14 +98,26 @@ namespace VisualLog.Core.Test
       Assert.DoesNotThrow(() => log.ApplyFormat());
     }
 
+    [Test]
     public void ApplyFormatSimpleLine()
     {
       var log = new Log(Encoding.UTF8);
       log.Messages.Add(new Message() { Number = 1, RawValue = "line1" });
       log.Messages.Add(new Message() { Number = 2, RawValue = "line2" });
       var format = new LogFormat();
-      //format.Formatters.Add(new );
+      format.Formatters.Add(new MessageFormatter() { Name = "Line" });
+      log.Format = format;
       Assert.DoesNotThrow(() => log.ApplyFormat());
+
+      CollectionAssert.IsNotEmpty(log.Messages[0].Parts);
+      var expected = new Dictionary<string, string>();
+      expected.Add("Line", "line1");
+      CollectionAssert.AreEquivalent(expected, log.Messages[0].Parts);
+
+      CollectionAssert.IsNotEmpty(log.Messages[1].Parts);
+      expected = new Dictionary<string, string>();
+      expected.Add("Line", "line2");
+      CollectionAssert.AreEquivalent(expected, log.Messages[1].Parts);
     }
   }
 }
