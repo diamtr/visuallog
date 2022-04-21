@@ -9,7 +9,7 @@ namespace VisualLog.Core
   {
     public List<Message> Messages { get; set; }
     public Encoding Encoding { get; private set; }
-    public LogFormat LogFormat { get; private set; }
+    public LogFormat Format { get; set; }
 
     public Log()
     {
@@ -34,8 +34,11 @@ namespace VisualLog.Core
 
     public void ApplyFormat()
     {
+      if (this.Format == null)
+        return;
+
       foreach (var message in this.Messages)
-        message.Parts = this.LogFormat.Deserialize(message);
+        message.Parts = this.Format.Deserialize(message);
     }
   }
 }

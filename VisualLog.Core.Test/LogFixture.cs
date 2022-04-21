@@ -89,15 +89,22 @@ namespace VisualLog.Core.Test
     }
 
     [Test]
-    public void ApplySimpleFormat()
+    public void ApplyFormatNull()
     {
       var log = new Log(Encoding.UTF8);
       log.Messages.Add(new Message() { Number = 1, RawValue = "line1" });
       log.Messages.Add(new Message() { Number = 2, RawValue = "line2" });
+      Assert.DoesNotThrow(() => log.ApplyFormat());
+    }
 
+    public void ApplyFormatSimpleLine()
+    {
+      var log = new Log(Encoding.UTF8);
+      log.Messages.Add(new Message() { Number = 1, RawValue = "line1" });
+      log.Messages.Add(new Message() { Number = 2, RawValue = "line2" });
       var format = new LogFormat();
-
-      Assert.Fail("UNDONE");
+      //format.Formatters.Add(new );
+      Assert.DoesNotThrow(() => log.ApplyFormat());
     }
   }
 }
