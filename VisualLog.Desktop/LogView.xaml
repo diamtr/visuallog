@@ -27,7 +27,8 @@
     </Grid>
     
     <ListView Grid.Row="1"
-              ItemsSource="{Binding LogMessages}"/>
+              ItemsSource="{Binding LogMessages}"
+              SelectionMode="Extended"/>
 
   </Grid>
 </UserControl>
