@@ -2,10 +2,13 @@
 
 namespace VisualLog.Core
 {
-  public interface ILogFormat
+  public class LogFormat
   {
     public string Name { get; set; }
     public List<IMessageFormatter> Formatters { get; set; }
-    public IDictionary<string, string> Deserialize(Message message);
+    public IDictionary<string, string> Deserialize(Message message)
+    {
+      return new Dictionary<string, string>();
+    }
   }
 }

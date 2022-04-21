@@ -87,5 +87,17 @@ namespace VisualLog.Core.Test
       Assert.AreEqual(2, log.Messages[2].Number);
       Assert.AreEqual("line2", log.Messages[2].RawValue);
     }
+
+    [Test]
+    public void ApplySimpleFormat()
+    {
+      var log = new Log(Encoding.UTF8);
+      log.Messages.Add(new Message() { Number = 1, RawValue = "line1" });
+      log.Messages.Add(new Message() { Number = 2, RawValue = "line2" });
+
+      var format = new LogFormat();
+
+      Assert.Fail("UNDONE");
+    }
   }
 }
