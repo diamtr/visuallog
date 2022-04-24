@@ -99,13 +99,13 @@ namespace VisualLog.Core.Test
     }
 
     [Test]
-    public void ApplyFormatSimpleLine()
+    public void ApplyFormatSimpleText()
     {
       var log = new Log(Encoding.UTF8);
       log.Messages.Add(new Message() { Number = 1, RawValue = "line1" });
       log.Messages.Add(new Message() { Number = 2, RawValue = "line2" });
       var format = new LogFormat();
-      format.Formatters.Add(new MessageFormatter() { Name = "Line" });
+      format.Formatters.Add(new MessageFormatter() { Name = "Line", Priority = 0, Pattern = @"^.*" });
       log.Format = format;
       Assert.DoesNotThrow(() => log.ApplyFormat());
 
@@ -118,6 +118,37 @@ namespace VisualLog.Core.Test
       expected = new Dictionary<string, string>();
       expected.Add("Line", "line2");
       CollectionAssert.AreEquivalent(expected, log.Messages[1].Parts);
+    }
+
+    [Test]
+    public void ApplyFormatDateTimeAndText()
+    {
+      var log = new Log(Encoding.UTF8);
+      log.Messages.Add(new Message() { Number = 1, RawValue = " 09.09.2009 09:09:09 line1" });
+      log.Messages.Add(new Message() { Number = 2, RawValue = "09.09.2009 09:09:09\tline2 " });
+      log.Messages.Add(new Message() { Number = 3, RawValue = "\tline3 " });
+      var format = new LogFormat();
+      format.Formatters.Add(new MessageFormatter() { Name = "Text", Priority = 2, Pattern = @"^.*" });
+      format.Formatters.Add(new MessageFormatter() { Name = "DateTime", Priority = 1, Pattern = @"^\d{2}\.\d{2}\.\d{4}\s\d{2}\:\d{2}\:\d{2}" });
+      log.Format = format;
+      Assert.DoesNotThrow(() => log.ApplyFormat());
+
+      CollectionAssert.IsNotEmpty(log.Messages[0].Parts);
+      var expected = new Dictionary<string, string>();
+      expected.Add("DateTime", "09.09.2009 09:09:09");
+      expected.Add("Text", "line1");
+      CollectionAssert.AreEquivalent(expected, log.Messages[0].Parts);
+
+      CollectionAssert.IsNotEmpty(log.Messages[1].Parts);
+      expected = new Dictionary<string, string>();
+      expected.Add("DateTime", "09.09.2009 09:09:09");
+      expected.Add("Text", "line2");
+      CollectionAssert.AreEquivalent(expected, log.Messages[1].Parts);
+
+      CollectionAssert.IsNotEmpty(log.Messages[2].Parts);
+      expected = new Dictionary<string, string>();
+      expected.Add("Text", "line3");
+      CollectionAssert.AreEquivalent(expected, log.Messages[2].Parts);
     }
   }
 }

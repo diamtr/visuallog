@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace VisualLog.Core
 {
@@ -15,9 +16,17 @@ namespace VisualLog.Core
     public IDictionary<string, string> Deserialize(Message message)
     {
       var result = new Dictionary<string, string>();
+      var input = message.RawValue.Trim();
 
-      foreach (var formatter in this.Formatters)
-        result.Add(formatter.Name, formatter.Extract(message.RawValue));
+      foreach (var formatter in this.Formatters.OrderBy(x => x.Priority))
+      {
+        var match = formatter.Match(input);
+        if (!match.Success)
+          continue;
+        input = input.Remove(0, match.Value.Length);
+        input = input.Trim();
+        result.Add(formatter.Name, match.Value);
+      }
 
       return result;
     }
