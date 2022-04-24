@@ -6,6 +6,13 @@
              xmlns:local="clr-namespace:VisualLog.Desktop"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <local:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  
   <Grid>
 
     <Grid.RowDefinitions>
@@ -18,9 +25,23 @@
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
 
-      <ComboBox Grid.Column="1"
+      <StackPanel Grid.Column="1"
+                  Orientation="Horizontal"
+                  Margin="15,0,15,0">
+        <ToggleButton x:Name="ShowFormattedMessageVerticalButton"
+                      Content="|"
+                      Width="25"
+                      IsChecked="{Binding ShowFormattedMessageVertical}"/>
+        <ToggleButton x:Name="ShowFormattedMessageHorizontalButton"
+                      Content="--"
+                      Width="25"
+                      IsChecked="{Binding ShowFormattedMessageHorizontal}"/>
+      </StackPanel>
+
+      <ComboBox Grid.Column="2"
                 ItemsSource="{Binding Encodings}"
                 SelectedItem="{Binding SelectedEncoding}"/>
 
@@ -29,6 +50,30 @@
     <ListView Grid.Row="1"
               ItemsSource="{Binding LogMessages}"
               SelectionMode="Extended"/>
+
+    <Grid Grid.Row="1"
+          Visibility="{Binding ElementName=ShowFormattedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid Grid.Column="1">
+        <Border Margin="20"
+                Background="Pink"/>
+      </Grid>
+    </Grid>
+
+    <Grid Grid.Row="1"
+          Visibility="{Binding ElementName=ShowFormattedMessageHorizontalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Grid Grid.Row="1">
+        <Border Margin="20"
+                Background="Pink"/>
+      </Grid>
+    </Grid>
 
   </Grid>
 </UserControl>

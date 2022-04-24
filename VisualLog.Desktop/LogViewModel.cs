@@ -21,10 +21,40 @@ namespace VisualLog.Desktop
         this.OnPropertyChanged();
       }
     }
+    public bool ShowFormattedMessageVertical
+    {
+      get
+      {
+        return this.showFormattedMessageVertical;
+      }
+      set
+      {
+        this.showFormattedMessageVertical = value;
+        if (this.showFormattedMessageVertical && this.showFormattedMessageHorizontal)
+          this.ShowFormattedMessageHorizontal = false;
+        this.OnPropertyChanged();
+      }
+    }
+    public bool ShowFormattedMessageHorizontal
+    {
+      get
+      {
+        return this.showFormattedMessageHorizontal;
+      }
+      set
+      {
+        this.showFormattedMessageHorizontal = value;
+        if (this.showFormattedMessageHorizontal && this.showFormattedMessageVertical)
+          this.ShowFormattedMessageVertical = false;
+        this.OnPropertyChanged();
+      }
+    }
 
     private string logPath;
     private Log log;
     private string selectedEncoding;
+    private bool showFormattedMessageVertical;
+    private bool showFormattedMessageHorizontal;
 
     public LogViewModel()
     {
