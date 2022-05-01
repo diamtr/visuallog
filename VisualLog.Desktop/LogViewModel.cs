@@ -49,6 +49,7 @@ namespace VisualLog.Desktop
         this.OnPropertyChanged();
       }
     }
+    public List<LogFormat> LogFormats { get; set; }
 
     private string logPath;
     private Log log;
@@ -60,6 +61,7 @@ namespace VisualLog.Desktop
     {
       this.LogMessages = new List<string>();
       this.Encodings = new List<string>();
+      this.LogFormats = new List<LogFormat>();
       this.InitEncodings();
       this.PropertyChanged += SelectedEncoding_PropertyChanged;
     }

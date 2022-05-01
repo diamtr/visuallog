@@ -26,9 +26,13 @@
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
 
-      <StackPanel Grid.Column="1"
+      <ComboBox Grid.Column="1"
+                ItemsSource="{Binding LogFormats}"/>
+
+      <StackPanel Grid.Column="2"
                   Orientation="Horizontal"
                   Margin="15,0,15,0">
         <ToggleButton x:Name="ShowFormattedMessageVerticalButton"
@@ -41,7 +45,7 @@
                       IsChecked="{Binding ShowFormattedMessageHorizontal}"/>
       </StackPanel>
 
-      <ComboBox Grid.Column="2"
+      <ComboBox Grid.Column="3"
                 ItemsSource="{Binding Encodings}"
                 SelectedItem="{Binding SelectedEncoding}"/>
 
