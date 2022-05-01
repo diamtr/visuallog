@@ -6,6 +6,7 @@ namespace VisualLog.Desktop
   {
     public LogViewModel LogViewModel { get; private set; }
     public Command OpenFileCommand { get; private set; }
+    public Command ShowFormatManagerCommand { get; private set; }
 
     public MainViewModel()
     {
@@ -16,9 +17,18 @@ namespace VisualLog.Desktop
     private void InitCommands()
     {
       this.OpenFileCommand = new Command(
-        x => {
+        x =>
+        {
           var path = OpenFile();
           this.LogViewModel.ReadLog(path);
+        },
+        x => true
+        );
+
+      this.ShowFormatManagerCommand = new Command(
+        x =>
+        {
+
         },
         x => true
         );

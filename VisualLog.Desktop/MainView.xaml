@@ -32,6 +32,9 @@
         <Button Content="Open"
                 Command="{Binding OpenFileCommand}"
                 Style="{StaticResource LeftMenuButton}"/>
+        <Button Content="Formats"
+                Command="{Binding ShowFormatManagerCommand}"
+                Style="{StaticResource LeftMenuButton}"/>
       </StackPanel>
     </Border>
     <Border Grid.Column="1">
