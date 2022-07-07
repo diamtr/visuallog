@@ -10,6 +10,10 @@
   <UserControl.Resources>
     <ResourceDictionary>
       <local:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
+
+      <DataTemplate DataType="{x:Type local:MessageInlineViewModel}">
+        <local:MessageInlineView />
+      </DataTemplate>
     </ResourceDictionary>
   </UserControl.Resources>
   

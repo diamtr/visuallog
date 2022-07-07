@@ -28,8 +28,7 @@ namespace VisualLog.Core
         lines = File.ReadAllLines(path, this.Encoding).ToList();
       else
         lines = File.ReadAllLines(path).ToList();
-      foreach (var line in lines)
-        this.Messages.Add(new Message() { Number = lines.IndexOf(line), RawValue = line });
+      this.Messages.AddRange(lines.Select(x => new Message(x)));
     }
 
     public void ApplyFormat()
