@@ -6,6 +6,15 @@
              xmlns:local="clr-namespace:VisualLog.Desktop.FormatManager"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <DataTemplate DataType="{x:Type local:LogFormatViewModel}">
+        <local:LogFormatView/>
+      </DataTemplate>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  
   <Grid>
 
     <Grid.RowDefinitions>
@@ -29,9 +38,15 @@
                 SelectedItem="{Binding SelectedFormat}">
         <ListBox.ItemsPanel>
           <ItemsPanelTemplate>
-            <VirtualizingStackPanel IsItemsHost="True" Orientation="Horizontal"/>
+            <VirtualizingStackPanel IsItemsHost="True"
+                                    Orientation="Horizontal"/>
           </ItemsPanelTemplate>
         </ListBox.ItemsPanel>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <local:LogFormatListView/>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
       </ListBox>
 
     </Grid>
