@@ -33,7 +33,13 @@
     <ListBox Grid.Row="3"
              ItemsSource="{Binding Formatters}"
              SelectedItem="{Binding SelectedFormatter}"
-             Margin="0,5,0,0">
+             Margin="0,5,0,0"
+             HorizontalContentAlignment="Stretch">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <local:MessageFormatterView/>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
     </ListBox>
 
   </Grid>

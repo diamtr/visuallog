@@ -34,7 +34,11 @@ namespace VisualLog.Desktop.FormatManager
 
     public void AddNewFormatter()
     {
-      var formatterViewModel = new MessageFormatterViewModel();
+      var formatter = new MessageFormatter();
+      formatter.Name = $"New {this.Formatters.Count}";
+      formatter.Priority = this.Formatters.Count;
+      formatter.Pattern = $"Something{this.Formatters.Count}";
+      var formatterViewModel = new MessageFormatterViewModel(formatter);
       this.Formatters.Add(formatterViewModel);
     }
 
