@@ -11,20 +11,29 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
     
     <TextBox Grid.Row="0"
              Text="{Binding Format.Name}"
              FontSize="16"
-             Margin="20,20,10,10"/>
+             Margin="0,10,0,10"/>
 
     <TextBlock Grid.Row="1"
                Text="Example: "
-               Margin="20,5,10,5"/>
+               Margin="0,5,0,5"/>
 
-    <ListBox Grid.Row="2"
-             Margin="20,5,10,10">
+    <StackPanel Grid.Row="2"
+                Margin="0,5,0,5">
+      <Button Content="Add new"
+              Command="{Binding AddNewFormatterCommand}"/>
+    </StackPanel>
+
+    <ListBox Grid.Row="3"
+             ItemsSource="{Binding Formatters}"
+             SelectedItem="{Binding SelectedFormatter}"
+             Margin="0,5,0,0">
     </ListBox>
 
   </Grid>
