@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using VisualLog.Core;
 
 namespace VisualLog.Desktop.Tests
 {
@@ -46,15 +47,18 @@ namespace VisualLog.Desktop.Tests
       };
       File.WriteAllLines("testlog.log", logLines);
 
+      var expectedMessages = new List<Message>();
+      expectedMessages.Add(new Message("line1"));
+      expectedMessages.Add(new Message("line2"));
+      expectedMessages.Add(new Message("line3"));
+
       vm.ReadLog("testlog.log");
       CollectionAssert.IsNotEmpty(vm.LogMessages);
-      CollectionAssert.AreEqual(logLines, vm.LogMessages);
-
-      vm.LogMessages = new List<string>();
+      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
 
       vm.ReadLog();
       CollectionAssert.IsNotEmpty(vm.LogMessages);
-      CollectionAssert.AreEqual(logLines, vm.LogMessages);
+      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
 
       File.Delete("testlog.log");
     }

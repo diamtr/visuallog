@@ -9,6 +9,7 @@ namespace VisualLog.Core
   {
     public List<Message> Messages { get; set; }
     public Encoding Encoding { get; private set; }
+    public LogFormat Format { get; set; }
 
     public Log()
     {
@@ -27,8 +28,16 @@ namespace VisualLog.Core
         lines = File.ReadAllLines(path, this.Encoding).ToList();
       else
         lines = File.ReadAllLines(path).ToList();
-      foreach (var line in lines)
-        this.Messages.Add(new Message() { Number = lines.IndexOf(line), RawValue = line });
+      this.Messages.AddRange(lines.Select(x => new Message(x)));
+    }
+
+    public void ApplyFormat()
+    {
+      if (this.Format == null)
+        return;
+
+      foreach (var message in this.Messages)
+        message.Parts = this.Format.Deserialize(message);
     }
   }
 }
