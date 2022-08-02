@@ -27,7 +27,8 @@ namespace VisualLog.Core.Test
       Assert.DoesNotThrow(() => formats.Read());
       CollectionAssert.IsEmpty(formats.Read());
 
-      formats.Source = @"VisualLog.Formats.Test.json";
+      var fileName = @"VisualLog.Formats.Test.json";
+      formats.Source = fileName;
       var content = "[" +
         "{" +
         "\"Name\":\"Seventy four\"," +
@@ -45,7 +46,7 @@ namespace VisualLog.Core.Test
         "]" +
         "}," +
         "]";
-      File.WriteAllText(formats.Source, content);
+      File.WriteAllText(fileName, content);
       try
       {
         Assert.DoesNotThrow(() => formats.Read());
@@ -53,11 +54,16 @@ namespace VisualLog.Core.Test
         Assert.AreEqual(1, f.Count());
         Assert.AreEqual("Seventy four", f.First().Name);
         Assert.AreEqual(2, f.First().Formatters.Count());
+
+        f = Formats.Read(fileName);
+        Assert.AreEqual(1, f.Count());
+        Assert.AreEqual("Seventy four", f.First().Name);
+        Assert.AreEqual(2, f.First().Formatters.Count());
       }
       catch
       {
         File.Delete(formats.Source);
-        Assert.Fail();
+        throw;
       }
       finally
       {

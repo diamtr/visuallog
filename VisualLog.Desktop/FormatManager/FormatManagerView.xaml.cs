@@ -24,5 +24,13 @@ namespace VisualLog.Desktop.FormatManager
     {
       InitializeComponent();
     }
+
+    private void UserControl_Loaded(object sender, RoutedEventArgs e)
+    {
+      var vm = (FormatManagerViewModel)this.DataContext;
+      if (vm == null)
+        return;
+      vm.ReadLogFormats();
+    }
   }
 }

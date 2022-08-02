@@ -24,6 +24,8 @@ namespace VisualLog.Desktop.FormatManager
     public LogFormatViewModel(LogFormat format) : this()
     {
       this.format = format;
+      foreach (var formatter in format.Formatters)
+        this.Formatters.Add(new MessageFormatterViewModel(formatter));
     }
 
     public LogFormatViewModel()

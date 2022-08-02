@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using VisualLog.Core;
 
 namespace VisualLog.Desktop.FormatManager
@@ -35,6 +34,15 @@ namespace VisualLog.Desktop.FormatManager
       var formatVm = new LogFormatViewModel() { Format = format };
       this.Formats.Add(formatVm);
       this.SelectedFormat = formatVm;
+    }
+
+    public void ReadLogFormats(string path = null)
+    {
+      this.SelectedFormat = null;
+      this.Formats.Clear();
+      var formats = Core.Formats.Read(path);
+      foreach (var format in formats)
+        this.Formats.Add(new LogFormatViewModel(format));
     }
 
     private void InitCommands()

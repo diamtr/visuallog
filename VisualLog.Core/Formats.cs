@@ -14,6 +14,14 @@ namespace VisualLog.Core
       this.Source = "VisualLog.Formats.json";
     }
 
+    public static IEnumerable<LogFormat> Read(string sourcePath = null)
+    {
+      var instance = new Formats();
+      if (!string.IsNullOrEmpty(sourcePath))
+        instance.Source = sourcePath;
+      return instance.Read();
+    }
+
     public IEnumerable<LogFormat> Read()
     {
       if (this.Source == null ||
