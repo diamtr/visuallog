@@ -17,6 +17,7 @@ namespace VisualLog.Desktop.FormatManager
       set { this.selectedFormatter = value; this.OnPropertyChanged(); }
     }
     public Command AddNewFormatterCommand { get; private set; }
+    public Command SaveFormatCommand { get; private set; }
 
     private LogFormat format;
     private MessageFormatterViewModel selectedFormatter;
@@ -34,6 +35,11 @@ namespace VisualLog.Desktop.FormatManager
       this.InitCommands();
     }
 
+    public void SaveFormat()
+    {
+
+    }
+
     public void AddNewFormatter()
     {
       var formatter = new MessageFormatter();
@@ -46,6 +52,11 @@ namespace VisualLog.Desktop.FormatManager
 
     private void InitCommands()
     {
+      this.SaveFormatCommand = new Command(
+        x => { this.SaveFormat(); },
+        x => true
+        );
+
       this.AddNewFormatterCommand = new Command(
         x => { this.AddNewFormatter(); },
         x => true

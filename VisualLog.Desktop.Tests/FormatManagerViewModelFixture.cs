@@ -49,10 +49,11 @@ namespace VisualLog.Desktop.Tests
         "}," +
         "]";
       File.WriteAllText(fileName, content);
+      Core.Formats.InitFrom(fileName);
 
       try
       {
-        Assert.DoesNotThrow(() => vm.ReadLogFormats(fileName));
+        Assert.DoesNotThrow(() => vm.ReadLogFormats());
 
         Assert.AreEqual(1, vm.Formats.Count);
         var formatVM = vm.Formats.First();

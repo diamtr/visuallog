@@ -28,7 +28,6 @@ namespace VisualLog.Core.Test
       CollectionAssert.IsEmpty(formats.Read());
 
       var fileName = @"VisualLog.Formats.Test.json";
-      formats.Source = fileName;
       var content = "[" +
         "{" +
         "\"Name\":\"Seventy four\"," +
@@ -47,6 +46,8 @@ namespace VisualLog.Core.Test
         "}," +
         "]";
       File.WriteAllText(fileName, content);
+      formats.Source = fileName;
+
       try
       {
         Assert.DoesNotThrow(() => formats.Read());
@@ -70,6 +71,53 @@ namespace VisualLog.Core.Test
         if (File.Exists(formats.Source))
           File.Delete(formats.Source);
       }
+    }
+
+    [Test]
+    public void Write()
+    {
+      var fileName = @"VisualLog.Formats.Test.json";
+      if (File.Exists(fileName))
+        File.Delete(fileName);
+
+      var format = new LogFormat();
+      format.Name = "TestLogFormat";
+      var formatter = new MessageFormatter();
+      formatter.Name = "TestMessageFormatter";
+      formatter.Priority = 0;
+      formatter.Pattern = "*";
+      format.Formatters.Add(formatter);
+
+      var formats = new Formats();
+      formats.Source = fileName;
+      formats.Write(format);
+
+      var formatsInFile = formats.Read();
+      Assert.AreEqual(1, formatsInFile.Count());
+      var formatInFile = formatsInFile.First();
+      Assert.AreEqual("TestLogFormat", formatInFile.Name);
+      Assert.AreEqual(1, formatInFile.Formatters.Count);
+      var formatterInFile = formatInFile.Formatters.First();
+      Assert.AreEqual("TestMessageFormatter", formatterInFile.Name);
+      Assert.AreEqual(0, formatterInFile.Priority);
+      Assert.AreEqual("*", formatterInFile.Pattern);
+
+      if (File.Exists(fileName))
+        File.Delete(fileName);
+      Formats.InitFrom(fileName);
+      Formats.Write(format);
+      formatsInFile = Formats.Read();
+      Assert.AreEqual(1, formatsInFile.Count());
+      formatInFile = formatsInFile.First();
+      Assert.AreEqual("TestLogFormat", formatInFile.Name);
+      Assert.AreEqual(1, formatInFile.Formatters.Count);
+      formatterInFile = formatInFile.Formatters.First();
+      Assert.AreEqual("TestMessageFormatter", formatterInFile.Name);
+      Assert.AreEqual(0, formatterInFile.Priority);
+      Assert.AreEqual("*", formatterInFile.Pattern);
+
+      if (File.Exists(fileName))
+        File.Delete(fileName);
     }
   }
 }

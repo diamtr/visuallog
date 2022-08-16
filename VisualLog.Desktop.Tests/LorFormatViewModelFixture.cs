@@ -31,5 +31,15 @@ namespace VisualLog.Desktop.Tests
       formatVM.AddNewFormatterCommand.Execute(null);
       Assert.AreEqual(2, formatVM.Formatters.Count);
     }
+
+    [Test]
+    public void SaveFormat()
+    {
+      var fileName = @"VisualLog.Formats.Test.json";
+      Core.Formats.InitFrom(fileName);
+      var format = new LogFormat() { Name = "test format" };
+      var formatVM = new LogFormatViewModel(format);
+      formatVM.SaveFormat();
+    }
   }
 }
