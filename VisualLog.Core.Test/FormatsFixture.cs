@@ -30,6 +30,7 @@ namespace VisualLog.Core.Test
       var fileName = @"VisualLog.Formats.Test.json";
       var content = "[" +
         "{" +
+        "\"Id\":1," +
         "\"Name\":\"Seventy four\"," +
         "\"Formatters\":[" +
         "{" +
@@ -53,11 +54,13 @@ namespace VisualLog.Core.Test
         Assert.DoesNotThrow(() => formats.Read());
         var f = formats.Read();
         Assert.AreEqual(1, f.Count());
+        Assert.AreEqual(1, f.First().Id);
         Assert.AreEqual("Seventy four", f.First().Name);
         Assert.AreEqual(2, f.First().Formatters.Count());
 
         f = Formats.Read(fileName);
         Assert.AreEqual(1, f.Count());
+        Assert.AreEqual(1, f.First().Id);
         Assert.AreEqual("Seventy four", f.First().Name);
         Assert.AreEqual(2, f.First().Formatters.Count());
       }
@@ -95,6 +98,7 @@ namespace VisualLog.Core.Test
       var formatsInFile = formats.Read();
       Assert.AreEqual(1, formatsInFile.Count());
       var formatInFile = formatsInFile.First();
+      Assert.AreEqual(1, formatInFile.Id);
       Assert.AreEqual("TestLogFormat", formatInFile.Name);
       Assert.AreEqual(1, formatInFile.Formatters.Count);
       var formatterInFile = formatInFile.Formatters.First();
@@ -109,6 +113,7 @@ namespace VisualLog.Core.Test
       formatsInFile = Formats.Read();
       Assert.AreEqual(1, formatsInFile.Count());
       formatInFile = formatsInFile.First();
+      Assert.AreEqual(1, formatInFile.Id);
       Assert.AreEqual("TestLogFormat", formatInFile.Name);
       Assert.AreEqual(1, formatInFile.Formatters.Count);
       formatterInFile = formatInFile.Formatters.First();

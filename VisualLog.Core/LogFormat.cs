@@ -5,6 +5,7 @@ namespace VisualLog.Core
 {
   public class LogFormat
   {
+    public int Id { get; set; }
     public string Name { get; set; }
     public List<MessageFormatter> Formatters { get; set; }
 

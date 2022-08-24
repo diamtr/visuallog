@@ -50,6 +50,8 @@ namespace VisualLog.Core
     public void Write(LogFormat format)
     {
       var formats = this.Read().ToList();
+      if (format.Id <= 0)
+        format.Id = formats.Any() ? formats.Max(x => x.Id) + 1 : 1;
       formats.Add(format);
       File.WriteAllText(this.Source, JsonConvert.SerializeObject(formats, Formatting.Indented));
     }
