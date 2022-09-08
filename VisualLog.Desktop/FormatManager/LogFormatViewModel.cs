@@ -37,7 +37,7 @@ namespace VisualLog.Desktop.FormatManager
 
     public void SaveFormat()
     {
-
+      Formats.Write(this.Format);
     }
 
     public void AddNewFormatter()

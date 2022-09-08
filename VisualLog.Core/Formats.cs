@@ -52,6 +52,9 @@ namespace VisualLog.Core
       var formats = this.Read().ToList();
       if (format.Id <= 0)
         format.Id = formats.Any() ? formats.Max(x => x.Id) + 1 : 1;
+      var formatToRewrite = formats.FirstOrDefault(x => x.Id == format.Id);
+      if (formatToRewrite != null)
+        formats.Remove(formatToRewrite);
       formats.Add(format);
       File.WriteAllText(this.Source, JsonConvert.SerializeObject(formats, Formatting.Indented));
     }
