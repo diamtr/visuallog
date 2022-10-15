@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop.FormatManager"
+             xmlns:root="clr-namespace:VisualLog.Desktop"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
   <Grid>
@@ -16,10 +17,10 @@
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
-    <TextBox Grid.Row="0"
-             Text="{Binding Format.Name}"
-             FontSize="16"
-             Margin="0,10,0,10"/>
+    <root:EditableTextControl Grid.Row="0"
+                              Text="{Binding Format.Name}"
+                              FontSize="16"
+                              Margin="0,10,0,10"/>
 
     <StackPanel Grid.Row="1"
                 Margin="0,5,0,5"
