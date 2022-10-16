@@ -23,6 +23,7 @@
       </TextBox.Style>
     </TextBox>
     <TextBlock x:Name="TextBlock"
+               Text="{Binding ElementName=TextBox, Path=Text}"
                MouseLeftButtonUp="TextBlock_MouseLeftButtonUp">
       <TextBlock.Style>
         <Style TargetType="{x:Type TextBlock}">

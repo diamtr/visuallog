@@ -43,8 +43,6 @@ namespace VisualLog.Desktop
       var control = (EditableTextControl)depObj;
       var textBox = control.TextBox;
       textBox.Text = args.NewValue.ToString();
-      var textBlock = control.TextBlock;
-      textBlock.Text = args.NewValue.ToString();
     }
 
     public EditableTextControl()
