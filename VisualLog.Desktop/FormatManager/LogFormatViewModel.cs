@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using VisualLog.Core;
 
 namespace VisualLog.Desktop.FormatManager
@@ -37,6 +38,9 @@ namespace VisualLog.Desktop.FormatManager
 
     public void SaveFormat()
     {
+      var formatters = this.Formatters.Select(x => x.Formatter);
+      this.Format.Formatters.Clear();
+      this.Format.Formatters.AddRange(formatters);
       Formats.Write(this.Format);
     }
 
