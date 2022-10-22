@@ -14,7 +14,7 @@
     </Grid.ColumnDefinitions>
 
     <TextBlock Grid.Column="0"
-               Text="{Binding Formatter.Priority}"
+               Text="{Binding Priority}"
                HorizontalAlignment="Right"
                VerticalAlignment="Center"/>
 
@@ -26,10 +26,10 @@
       </Grid.RowDefinitions>
 
       <root:EditableTextControl Grid.Row="0"
-                                Text="{Binding Formatter.Name}"
+                                Text="{Binding Name, Mode=TwoWay}"
                                 FontWeight="Bold"/>
       <root:EditableTextControl Grid.Row="1"
-                                Text="{Binding Formatter.Pattern}" />
+                                Text="{Binding Pattern, Mode=TwoWay}" />
 
     </Grid>
 

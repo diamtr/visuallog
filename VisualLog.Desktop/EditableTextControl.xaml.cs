@@ -20,6 +20,12 @@ namespace VisualLog.Desktop
   /// </summary>
   public partial class EditableTextControl : UserControl
   {
+    public EditableTextControl()
+    {
+      InitializeComponent();
+    }
+
+    #region DP Text
 
     /// <summary>
     /// Текст.
@@ -41,14 +47,10 @@ namespace VisualLog.Desktop
     public static void TextChangedCallback(DependencyObject depObj, DependencyPropertyChangedEventArgs args)
     {
       var control = (EditableTextControl)depObj;
-      var textBox = control.TextBox;
-      textBox.Text = args.NewValue.ToString();
+      control.Text = args.NewValue.ToString();
     }
 
-    public EditableTextControl()
-    {
-      InitializeComponent();
-    }
+    #endregion
 
     private void TextBlock_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {

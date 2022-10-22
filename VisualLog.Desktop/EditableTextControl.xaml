@@ -5,9 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="800">
+             d:DesignHeight="50" d:DesignWidth="800"
+             x:Name="EditableTextUserControl">
   <Grid>
     <TextBox x:Name="TextBox"
+             Text="{Binding Text, ElementName=EditableTextUserControl}"
              LostFocus="TextBox_LostFocus">
       <TextBox.Style>
         <Style TargetType="{x:Type TextBox}">
