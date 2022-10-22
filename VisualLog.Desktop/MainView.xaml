@@ -4,8 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VisualLog.Desktop"
+        xmlns:fmtmngr="clr-namespace:VisualLog.Desktop.FormatManager"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        WindowState="Maximized">
   
   <Window.Resources>
     <ResourceDictionary>
@@ -17,6 +19,12 @@
       <DataTemplate DataType="{x:Type local:LogViewModel}">
         <local:LogView/>
       </DataTemplate>
+
+      <DataTemplate DataType="{x:Type fmtmngr:FormatManagerViewModel}">
+        <fmtmngr:FormatManagerView/>
+      </DataTemplate>
+
+      <local:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
 
     </ResourceDictionary>
   </Window.Resources>
@@ -31,10 +39,18 @@
         <Button Content="Open"
                 Command="{Binding OpenFileCommand}"
                 Style="{StaticResource LeftMenuButton}"/>
+        <Button Content="Formats"
+                Command="{Binding ShowFormatManagerCommand}"
+                Style="{StaticResource LeftMenuButton}"/>
       </StackPanel>
     </Border>
-    <Border Grid.Column="1">
-      <ContentControl Content="{Binding LogViewModel}" />
+    <Border Grid.Column="1"
+            Visibility="{Binding Context.LogIsActive, Converter={StaticResource VisibilityBoolConverter}}">
+      <ContentControl Content="{Binding LogViewModel}"/>
+    </Border>
+    <Border Grid.Column="1"
+            Visibility="{Binding Context.FormatManagerIsActive, Converter={StaticResource VisibilityBoolConverter}}">
+      <ContentControl Content="{Binding FormatManagerViewModel}"/>
     </Border>
   </Grid>
 </Window>

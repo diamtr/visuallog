@@ -7,7 +7,15 @@ namespace VisualLog.Desktop
 {
   public class LogViewModel : ViewModelBase
   {
-    public List<string> LogMessages { get; set; }
+    public List<MessageInlineViewModel> LogMessages
+    {
+      get
+      {
+        if (this.log == null)
+          return new List<MessageInlineViewModel>();
+        return this.log.Messages.Select(x => new MessageInlineViewModel(x)).ToList();
+      }
+    }
     public List<string> Encodings { get; set; }
     public string SelectedEncoding
     {
@@ -21,15 +29,46 @@ namespace VisualLog.Desktop
         this.OnPropertyChanged();
       }
     }
+    public bool ShowFormattedMessageVertical
+    {
+      get
+      {
+        return this.showFormattedMessageVertical;
+      }
+      set
+      {
+        this.showFormattedMessageVertical = value;
+        if (this.showFormattedMessageVertical && this.showFormattedMessageHorizontal)
+          this.ShowFormattedMessageHorizontal = false;
+        this.OnPropertyChanged();
+      }
+    }
+    public bool ShowFormattedMessageHorizontal
+    {
+      get
+      {
+        return this.showFormattedMessageHorizontal;
+      }
+      set
+      {
+        this.showFormattedMessageHorizontal = value;
+        if (this.showFormattedMessageHorizontal && this.showFormattedMessageVertical)
+          this.ShowFormattedMessageVertical = false;
+        this.OnPropertyChanged();
+      }
+    }
+    public List<LogFormat> LogFormats { get; set; }
 
     private string logPath;
     private Log log;
     private string selectedEncoding;
+    private bool showFormattedMessageVertical;
+    private bool showFormattedMessageHorizontal;
 
     public LogViewModel()
     {
-      this.LogMessages = new List<string>();
       this.Encodings = new List<string>();
+      this.LogFormats = new List<LogFormat>();
       this.InitEncodings();
       this.PropertyChanged += SelectedEncoding_PropertyChanged;
     }
@@ -55,7 +94,6 @@ namespace VisualLog.Desktop
         encoding = Encoding.GetEncoding(int.Parse(this.SelectedEncoding.Split(' ')[0]));
       this.log = new Log(encoding);
       this.log.Read(this.logPath);
-      this.LogMessages = this.log.Messages.Select(x => x.RawValue).ToList();
       this.OnPropertyChanged(nameof(this.LogMessages));
     }
 
