@@ -13,7 +13,6 @@ namespace VisualLog.Desktop
     public LogViewModel LogViewModel { get; private set; }
     public LogManagerViewModel LogManagerViewModel { get; private set; }
     public FormatManagerViewModel FormatManagerViewModel { get; private set; }
-    public MainViewModelContext Context { get; private set; }
     public Command ShowLogManagerCommand { get; private set; }
     public Command ShowFormatManagerCommand { get; private set; }
 
@@ -21,7 +20,6 @@ namespace VisualLog.Desktop
 
     public MainViewModel()
     {
-      this.Context = new MainViewModelContext();
       this.LogViewModel = new LogViewModel();
       this.LogManagerViewModel = new LogManagerViewModel();
       this.FormatManagerViewModel = new FormatManagerViewModel();
@@ -43,7 +41,7 @@ namespace VisualLog.Desktop
       this.ShowLogManagerCommand = new Command(
         x =>
         {
-          this.Context.SetAsActive(this.LogManagerViewModel);
+          this.SetAsActive(this.LogManagerViewModel);
         },
         x => true
         );
@@ -51,7 +49,7 @@ namespace VisualLog.Desktop
       this.ShowFormatManagerCommand = new Command(
         x =>
         {
-          this.Context.SetAsActive(this.FormatManagerViewModel);
+          this.SetAsActive(this.FormatManagerViewModel);
         },
         x => true
         );
