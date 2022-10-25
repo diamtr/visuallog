@@ -12,7 +12,6 @@ namespace VisualLog.Desktop.Tests
 
       Assert.IsNotNull(mvm.LogManagerViewModel);
       Assert.IsNotNull(mvm.FormatManagerViewModel);
-      Assert.AreEqual(mvm.LogManagerViewModel, mvm.ActiveViewModel);
     }
 
     [Test]
@@ -21,6 +20,14 @@ namespace VisualLog.Desktop.Tests
       var mvm = new MainViewModel();
       mvm.SetAsActive(mvm.FormatManagerViewModel);
       Assert.AreEqual(mvm.FormatManagerViewModel, mvm.ActiveViewModel);
+    }
+
+    [Test]
+    public void OnWindowLoaded()
+    {
+      var mvm = new MainViewModel();
+      mvm.OnWindowLoaded();
+      Assert.AreEqual(mvm.LogManagerViewModel, mvm.ActiveViewModel);
     }
   }
 }
