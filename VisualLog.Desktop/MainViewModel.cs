@@ -10,7 +10,6 @@ namespace VisualLog.Desktop
       get { return this.activeViewModel; }
       private set { this.activeViewModel = value; this.OnPropertyChanged(); }
     }
-    public LogViewModel LogViewModel { get; private set; }
     public LogManagerViewModel LogManagerViewModel { get; private set; }
     public FormatManagerViewModel FormatManagerViewModel { get; private set; }
     public Command ShowLogManagerCommand { get; private set; }
@@ -20,7 +19,6 @@ namespace VisualLog.Desktop
 
     public MainViewModel()
     {
-      this.LogViewModel = new LogViewModel();
       this.LogManagerViewModel = new LogManagerViewModel();
       this.FormatManagerViewModel = new FormatManagerViewModel();
       this.InitCommands();
