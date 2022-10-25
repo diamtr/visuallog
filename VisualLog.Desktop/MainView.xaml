@@ -42,9 +42,6 @@
     </Grid.ColumnDefinitions>
     <Border Grid.Column="0">
       <StackPanel Orientation="Vertical">
-        <Button Content="Open"
-                Command="{Binding OpenFileCommand}"
-                Style="{StaticResource LeftMenuButton}"/>
         <Button Content="Logs"
                 Command="{Binding ShowLogManagerCommand}"
                 Style="{StaticResource LeftMenuButton}"/>

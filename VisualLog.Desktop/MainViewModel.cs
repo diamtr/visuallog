@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using VisualLog.Desktop.FormatManager;
+﻿using VisualLog.Desktop.FormatManager;
 using VisualLog.Desktop.LogManager;
 
 namespace VisualLog.Desktop
@@ -15,7 +14,6 @@ namespace VisualLog.Desktop
     public LogManagerViewModel LogManagerViewModel { get; private set; }
     public FormatManagerViewModel FormatManagerViewModel { get; private set; }
     public MainViewModelContext Context { get; private set; }
-    public Command OpenFileCommand { get; private set; }
     public Command ShowLogManagerCommand { get; private set; }
     public Command ShowFormatManagerCommand { get; private set; }
 
@@ -42,16 +40,6 @@ namespace VisualLog.Desktop
 
     private void InitCommands()
     {
-      this.OpenFileCommand = new Command(
-        x =>
-        {
-          var path = OpenFile();
-          this.LogViewModel.ReadLog(path);
-          this.Context.SetAsActive(this.LogViewModel);
-        },
-        x => true
-        );
-
       this.ShowLogManagerCommand = new Command(
         x =>
         {
@@ -67,17 +55,6 @@ namespace VisualLog.Desktop
         },
         x => true
         );
-    }
-
-    public static string OpenFile()
-    {
-      var dialog = new OpenFileDialog();
-      dialog.Multiselect = false;
-
-      if (dialog.ShowDialog() != true)
-        return string.Empty;
-
-      return dialog.FileName;
     }
   }
 }
