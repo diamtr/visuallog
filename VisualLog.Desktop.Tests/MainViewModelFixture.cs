@@ -29,5 +29,21 @@ namespace VisualLog.Desktop.Tests
       mvm.OnWindowLoaded();
       Assert.AreEqual(mvm.LogManagerViewModel, mvm.ActiveViewModel);
     }
+
+    [Test]
+    public void ShowLogManagerCommand()
+    {
+      var mvm = new MainViewModel();
+      mvm.ShowLogManagerCommand.Execute(null);
+      Assert.AreEqual(mvm.LogManagerViewModel, mvm.ActiveViewModel);
+    }
+
+    [Test]
+    public void ShowFormatManagerCommand()
+    {
+      var mvm = new MainViewModel();
+      mvm.ShowFormatManagerCommand.Execute(null);
+      Assert.AreEqual(mvm.FormatManagerViewModel, mvm.ActiveViewModel);
+    }
   }
 }
