@@ -4,10 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VisualLog.Desktop"
-        xmlns:fmtmngr="clr-namespace:VisualLog.Desktop.FormatManager"
+        xmlns:fmtmgr="clr-namespace:VisualLog.Desktop.FormatManager"
+        xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        Loaded="Window_Loaded">
   
   <Window.Resources>
     <ResourceDictionary>
@@ -16,12 +18,12 @@
         <ResourceDictionary Source="Styles.xaml"/>
       </ResourceDictionary.MergedDictionaries>
 
-      <DataTemplate DataType="{x:Type local:LogViewModel}">
-        <local:LogView/>
+      <DataTemplate DataType="{x:Type logmgr:LogManagerViewModel}">
+        <logmgr:LogManagerView/>
       </DataTemplate>
-
-      <DataTemplate DataType="{x:Type fmtmngr:FormatManagerViewModel}">
-        <fmtmngr:FormatManagerView/>
+      
+      <DataTemplate DataType="{x:Type fmtmgr:FormatManagerViewModel}">
+        <fmtmgr:FormatManagerView/>
       </DataTemplate>
 
       <local:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
@@ -36,21 +38,16 @@
     </Grid.ColumnDefinitions>
     <Border Grid.Column="0">
       <StackPanel Orientation="Vertical">
-        <Button Content="Open"
-                Command="{Binding OpenFileCommand}"
+        <Button Content="Logs"
+                Command="{Binding ShowLogManagerCommand}"
                 Style="{StaticResource LeftMenuButton}"/>
         <Button Content="Formats"
                 Command="{Binding ShowFormatManagerCommand}"
                 Style="{StaticResource LeftMenuButton}"/>
       </StackPanel>
     </Border>
-    <Border Grid.Column="1"
-            Visibility="{Binding Context.LogIsActive, Converter={StaticResource VisibilityBoolConverter}}">
-      <ContentControl Content="{Binding LogViewModel}"/>
-    </Border>
-    <Border Grid.Column="1"
-            Visibility="{Binding Context.FormatManagerIsActive, Converter={StaticResource VisibilityBoolConverter}}">
-      <ContentControl Content="{Binding FormatManagerViewModel}"/>
+    <Border Grid.Column="1">
+      <ContentControl Content="{Binding ActiveViewModel}"/>
     </Border>
   </Grid>
 </Window>

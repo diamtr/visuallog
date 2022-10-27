@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace VisualLog.Desktop.LogManager
 {
   /// <summary>
-  /// Interaction logic for LogView.xaml
+  /// Interaction logic for LogManagerView.xaml
   /// </summary>
-  public partial class LogView : UserControl
+  public partial class LogManagerView : UserControl
   {
-    public LogView()
+    public LogManagerView()
     {
       InitializeComponent();
     }

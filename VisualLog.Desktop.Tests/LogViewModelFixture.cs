@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using VisualLog.Core;
+using VisualLog.Desktop.LogManager;
 
 namespace VisualLog.Desktop.Tests
 {

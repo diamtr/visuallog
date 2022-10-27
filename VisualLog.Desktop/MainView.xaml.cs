@@ -24,5 +24,14 @@ namespace VisualLog.Desktop
     {
       InitializeComponent();
     }
+
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+      if (this.DataContext is MainViewModel)
+      {
+        var mvm = this.DataContext as MainViewModel;
+        mvm.OnWindowLoaded();
+      }
+    }
   }
 }
