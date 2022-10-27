@@ -3,10 +3,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VisualLog.Desktop.LogManager"
+             xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
   <Grid>
-    <TextBlock Text="Log Manager View" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid.Resources>
+      <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
+        <logmgr:LogView/>
+      </DataTemplate>
+    </Grid.Resources>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <Grid Grid.Row="0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Button Grid.Column="0"
+              Content="Open"
+              Command="{Binding OpenLogsCommand}"
+              CommandParameter="LogManagerView"/>
+      <ListBox Grid.Column="1"
+               FlowDirection="LeftToRight"
+               ItemsSource="{Binding Logs}"
+               SelectedItem="{Binding ActiveLog}">
+        <ListBox.Resources>
+          <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
+            <logmgr:LogWrapPanelView/>
+          </DataTemplate>
+        </ListBox.Resources>
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel/>
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+      </ListBox>
+    </Grid>
+    <ContentControl Grid.Row="1"
+                    Content="{Binding ActiveLog}"/>
   </Grid>
 </UserControl>

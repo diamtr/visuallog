@@ -17,4 +17,10 @@
     <ProjectReference Include="..\VisualLog.Desktop\VisualLog.Desktop.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="doc\simpletest.log">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

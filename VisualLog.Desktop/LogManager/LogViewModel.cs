@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using VisualLog.Core;
@@ -16,7 +17,32 @@ namespace VisualLog.Desktop.LogManager
         return this.log.Messages.Select(x => new MessageInlineViewModel(x)).ToList();
       }
     }
+    public string DisplayName
+    {
+      get
+      {
+        return this.displayName;
+      }
+      set
+      {
+        this.displayName = value;
+        this.OnPropertyChanged();
+      }
+    }
     public List<string> Encodings { get; set; }
+    public string LogPath
+    {
+      get
+      {
+        return this.logPath;
+      }
+      set
+      {
+        this.logPath = value;
+        this.OnPropertyChanged();
+        this.DisplayName = Path.GetFileName(this.logPath);
+      }
+    }
     public string SelectedEncoding
     {
       get
@@ -59,12 +85,18 @@ namespace VisualLog.Desktop.LogManager
     }
     public List<LogFormat> LogFormats { get; set; }
 
+    private string displayName;
     private string logPath;
     private Log log;
     private string selectedEncoding;
     private bool showFormattedMessageVertical;
     private bool showFormattedMessageHorizontal;
 
+    public LogViewModel(string path) : this()
+    {
+      this.LogPath = path;
+    }
+    
     public LogViewModel()
     {
       this.Encodings = new List<string>();
