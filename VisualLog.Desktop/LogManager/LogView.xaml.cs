@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace VisualLog.Desktop
+namespace VisualLog.Desktop.LogManager
 {
   /// <summary>
   /// Interaction logic for LogView.xaml

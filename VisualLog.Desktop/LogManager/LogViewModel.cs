@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using VisualLog.Core;
 
-namespace VisualLog.Desktop
+namespace VisualLog.Desktop.LogManager
 {
   public class LogViewModel : ViewModelBase
   {

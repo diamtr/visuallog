@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using VisualLog.Core;
 
-namespace VisualLog.Desktop
+namespace VisualLog.Desktop.LogManager
 {
   public class MessageInlineViewModel : ViewModelBase
   {
