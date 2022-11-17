@@ -9,7 +9,7 @@ namespace VisualLog.Core
   {
     public List<Message> Messages { get; set; }
     public Encoding Encoding { get; private set; }
-    public LogFormat Format { get; set; }
+    public Format Format { get; set; }
 
     public Log()
     {

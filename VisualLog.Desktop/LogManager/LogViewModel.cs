@@ -83,7 +83,7 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
-    public List<LogFormat> LogFormats { get; set; }
+    public List<Format> LogFormats { get; set; }
 
     private string displayName;
     private string logPath;
@@ -100,7 +100,7 @@ namespace VisualLog.Desktop.LogManager
     public LogViewModel()
     {
       this.Encodings = new List<string>();
-      this.LogFormats = new List<LogFormat>();
+      this.LogFormats = new List<Format>();
       this.InitEncodings();
       this.PropertyChanged += SelectedEncoding_PropertyChanged;
     }

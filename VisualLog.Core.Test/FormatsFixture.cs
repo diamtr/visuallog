@@ -83,7 +83,7 @@ namespace VisualLog.Core.Test
       if (File.Exists(fileName))
         File.Delete(fileName);
 
-      var format = new LogFormat();
+      var format = new Format();
       format.Name = "TestLogFormat";
       var formatter = new MessageFormatter();
       formatter.Name = "TestMessageFormatter";

@@ -18,9 +18,9 @@ namespace VisualLog.Desktop.FormatManager
   /// <summary>
   /// Interaction logic for LogFormatView.xaml
   /// </summary>
-  public partial class LogFormatView : UserControl
+  public partial class FormatView : UserControl
   {
-    public LogFormatView()
+    public FormatView()
     {
       InitializeComponent();
     }

@@ -86,7 +86,7 @@ namespace VisualLog.Core.Test
       var log = new Log(Encoding.UTF8);
       log.Messages.Add(new Message("line1"));
       log.Messages.Add(new Message("line2"));
-      var format = new LogFormat();
+      var format = new Format();
       format.Formatters.Add(new MessageFormatter() { Name = "Line", Priority = 0, Pattern = @"^.*" });
       log.Format = format;
       Assert.DoesNotThrow(() => log.ApplyFormat());
@@ -109,7 +109,7 @@ namespace VisualLog.Core.Test
       log.Messages.Add(new Message(" 09.09.2009 09:09:09 line1"));
       log.Messages.Add(new Message("09.09.2009 09:09:09\tline2 "));
       log.Messages.Add(new Message("\tline3 "));
-      var format = new LogFormat();
+      var format = new Format();
       format.Formatters.Add(new MessageFormatter() { Name = "Text", Priority = 2, Pattern = @"^.*" });
       format.Formatters.Add(new MessageFormatter() { Name = "DateTime", Priority = 1, Pattern = @"^\d{2}\.\d{2}\.\d{4}\s\d{2}\:\d{2}\:\d{2}" });
       log.Format = format;

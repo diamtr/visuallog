@@ -10,8 +10,8 @@
 
   <UserControl.Resources>
     <ResourceDictionary>
-      <DataTemplate DataType="{x:Type local:LogFormatViewModel}">
-        <local:LogFormatView/>
+      <DataTemplate DataType="{x:Type local:FormatViewModel}">
+        <local:FormatView/>
       </DataTemplate>
     </ResourceDictionary>
   </UserControl.Resources>
@@ -46,7 +46,7 @@
         </ListBox.ItemsPanel>
         <ListBox.ItemTemplate>
           <DataTemplate>
-            <local:LogFormatListView/>
+            <local:FormatListView/>
           </DataTemplate>
         </ListBox.ItemTemplate>
       </ListBox>
