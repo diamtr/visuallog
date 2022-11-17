@@ -124,8 +124,8 @@ namespace VisualLog.Desktop.LogManager
       var encoding = Encoding.Default;
       if (!string.IsNullOrWhiteSpace(this.SelectedEncoding))
         encoding = Encoding.GetEncoding(int.Parse(this.SelectedEncoding.Split(' ')[0]));
-      this.log = new Log(encoding);
-      this.log.Read(this.logPath);
+      this.log = new Log(this.logPath, encoding);
+      this.log.Read();
       this.OnPropertyChanged(nameof(this.LogMessages));
     }
 

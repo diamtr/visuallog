@@ -11,23 +11,31 @@ namespace VisualLog.Core
     public Encoding Encoding { get; private set; }
     public Format Format { get; set; }
 
+    private string sourceFilePath;
+    private FileSystemWatcher sourceFileWatcher;
+
     public Log()
     {
       this.Messages = new List<Message>();
     }
 
-    public Log(Encoding encoding) : this()
+    public Log(string path) : this()
+    {
+      this.sourceFilePath = path;
+    }
+
+    public Log(string path, Encoding encoding) : this(path)
     {
       this.Encoding = encoding;
     }
 
-    public void Read(string path)
+    public void Read()
     {
       var lines = new List<string>();
       if (this.Encoding != null)
-        lines = File.ReadAllLines(path, this.Encoding).ToList();
+        lines = File.ReadAllLines(this.sourceFilePath, this.Encoding).ToList();
       else
-        lines = File.ReadAllLines(path).ToList();
+        lines = File.ReadAllLines(this.sourceFilePath).ToList();
       this.Messages.AddRange(lines.Select(x => new Message(x)));
     }
 
@@ -38,6 +46,45 @@ namespace VisualLog.Core
 
       foreach (var message in this.Messages)
         message.Parts = this.Format.Deserialize(message);
+    }
+
+    public void StartFollowTail()
+    {
+      var fileInfo = new FileInfo(this.sourceFilePath);
+      this.sourceFileWatcher = new FileSystemWatcher(fileInfo.DirectoryName);
+      this.sourceFileWatcher.NotifyFilter = NotifyFilters.LastWrite;
+      this.sourceFileWatcher.Filter = Path.GetFileName(fileInfo.Name);
+      this.sourceFileWatcher.Changed += this.ReadLogUpdates;
+      this.sourceFileWatcher.EnableRaisingEvents = true;
+    }
+
+    public void ReadLogUpdates(object sender, FileSystemEventArgs e)
+    {
+      if (e.ChangeType != WatcherChangeTypes.Changed)
+        return;
+
+      using (var fileStream = new FileStream(this.sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+      using (var streamReader = new StreamReader(fileStream, this.Encoding))
+      {
+        var linesCount = 0;
+        while (streamReader.Peek() >= 0)
+        {
+          var line = streamReader.ReadLine();
+          if (line == null)
+            break;
+          linesCount++;
+          if (linesCount <= this.Messages.Count)
+            continue;
+          try
+          {
+            this.Messages.Add(new Message(line));
+          }
+          catch
+          {
+            continue;
+          }
+        }
+      }
     }
   }
 }
