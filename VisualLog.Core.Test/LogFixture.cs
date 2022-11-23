@@ -179,5 +179,35 @@ namespace VisualLog.Core.Test
 
       File.WriteAllText(path, null);
     }
+
+    [Test]
+    public void ReadingInProcess()
+    {
+      var path = Path.Combine(TestLogsDirName, "followtail.log");
+      File.WriteAllText(path, null);
+      var log = new Log(path);
+      CollectionAssert.IsEmpty(log.Messages);
+
+      log.ReadingInProcess = true;
+
+      File.AppendAllLines(path, new List<string>() { "xx.xx.xxxx xx:xx:xx.xxxx Trace First update followtail.log" });
+      System.Threading.Thread.Sleep(System.TimeSpan.FromMilliseconds(5));
+      Assert.DoesNotThrow(() => { log.ReadLogUpdates(null, new FileSystemEventArgs(WatcherChangeTypes.Changed, TestLogsDirName, "followtail.log")); });
+      CollectionAssert.IsEmpty(log.Messages);
+
+      File.AppendAllLines(path, new List<string>() { "xx.xx.xxxx xx:xx:xx.xxxx Trace Second update followtail.log" });
+      System.Threading.Thread.Sleep(System.TimeSpan.FromMilliseconds(5));
+      Assert.DoesNotThrow(() => { log.ReadLogUpdates(null, new FileSystemEventArgs(WatcherChangeTypes.Changed, TestLogsDirName, "followtail.log")); });
+      CollectionAssert.IsEmpty(log.Messages);
+
+      log.ReadingInProcess = false;
+
+      Assert.DoesNotThrow(() => { log.ReadLogUpdates(null, new FileSystemEventArgs(WatcherChangeTypes.Changed, TestLogsDirName, "followtail.log")); });
+      Assert.AreEqual(2, log.Messages.Count);
+      Assert.AreEqual("xx.xx.xxxx xx:xx:xx.xxxx Trace First update followtail.log", log.Messages[0].RawValue);
+      Assert.AreEqual("xx.xx.xxxx xx:xx:xx.xxxx Trace Second update followtail.log", log.Messages[1].RawValue);
+
+      File.WriteAllText(path, null);
+    }
   }
 }

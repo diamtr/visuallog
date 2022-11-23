@@ -10,6 +10,7 @@ namespace VisualLog.Core
     public List<Message> Messages { get; set; }
     public Encoding Encoding { get; private set; }
     public Format Format { get; set; }
+    public bool ReadingInProcess { get; set; }
 
     private string sourceFilePath;
     private FileSystemWatcher sourceFileWatcher;
@@ -31,12 +32,15 @@ namespace VisualLog.Core
 
     public void Read()
     {
+      this.ReadingInProcess = true;
       var lines = new List<string>();
       if (this.Encoding != null)
         lines = File.ReadAllLines(this.sourceFilePath, this.Encoding).ToList();
       else
         lines = File.ReadAllLines(this.sourceFilePath).ToList();
-      this.Messages.AddRange(lines.Select(x => new Message(x)));
+      foreach (var line in lines)
+        this.Messages.Add(new Message(line));
+      this.ReadingInProcess = false;
     }
 
     public void ApplyFormat()
@@ -63,6 +67,10 @@ namespace VisualLog.Core
       if (e.ChangeType != WatcherChangeTypes.Changed)
         return;
 
+      if (this.ReadingInProcess)
+        return;
+
+      this.ReadingInProcess = true;
       using (var fileStream = new FileStream(this.sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
       using (var streamReader = new StreamReader(fileStream, this.Encoding))
       {
@@ -85,6 +93,7 @@ namespace VisualLog.Core
           }
         }
       }
+      this.ReadingInProcess = false;
     }
   }
 }
