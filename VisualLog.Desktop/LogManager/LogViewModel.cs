@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using VisualLog.Core;
 
 namespace VisualLog.Desktop.LogManager
@@ -81,6 +82,7 @@ namespace VisualLog.Desktop.LogManager
     private string displayName;
     private string logPath;
     private Log log;
+    private bool followLogTail;
     private string selectedEncoding;
     private bool showFormattedMessageVertical;
     private bool showFormattedMessageHorizontal;
@@ -123,6 +125,37 @@ namespace VisualLog.Desktop.LogManager
       this.LogMessages.Clear();
       foreach (var message in this.log.Messages)
         this.LogMessages.Add(new MessageInlineViewModel(message));
+      if (this.followLogTail)
+      {
+        this.log.CatchNewMessage += this.OnNewLogMessageCatched;
+        this.log.StartFollowTail();
+      }
+    }
+
+    public void FollowTail()
+    {
+      this.followLogTail = true;
+      if (this.log == null)
+        return;
+      this.log.CatchNewMessage += this.OnNewLogMessageCatched;
+      this.log.StartFollowTail();
+    }
+
+    public void OnNewLogMessageCatched(Message message)
+    {
+      if (message == null)
+        return;
+      try
+      {
+        // UI thread safety
+        if (Application.Current != null)
+          Application.Current.Dispatcher.Invoke(() => { this.LogMessages.Add(new MessageInlineViewModel(message)); });
+        else
+          this.LogMessages.Add(new MessageInlineViewModel(message));
+      }
+      catch
+      {
+      }
     }
 
     public void InitEncodings()

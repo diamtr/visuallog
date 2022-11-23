@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -62,6 +63,66 @@ namespace VisualLog.Desktop.Tests
       CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
 
       File.Delete("testlog.log");
+    }
+
+    [Test]
+    public void OnNewLogMessageCatched()
+    {
+      var vm = new LogViewModel();
+      var logLines = new string[]
+      {
+        "line1",
+        "line2",
+        "line3"
+      };
+      File.WriteAllLines("testlog.log", logLines);
+
+      CollectionAssert.IsEmpty(vm.LogMessages);
+
+      var expectedMessages = new List<Message>();
+      expectedMessages.Add(new Message("line1"));
+      expectedMessages.Add(new Message("line2"));
+      expectedMessages.Add(new Message("line3"));
+      vm.ReadLog("testlog.log");
+      CollectionAssert.IsNotEmpty(vm.LogMessages);
+      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
+
+      expectedMessages.Add(new Message("line4"));
+      Assert.DoesNotThrow(() => { vm.OnNewLogMessageCatched(new Message("line4")); });
+      CollectionAssert.IsNotEmpty(vm.LogMessages);
+      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
+    }
+
+    [Test]
+    public void FollowTail()
+    {
+      var vm = new LogViewModel();
+      var logLines = new string[]
+      {
+        "line1",
+        "line2",
+        "line3"
+      };
+      File.WriteAllLines("testlog.log", logLines);
+
+      CollectionAssert.IsEmpty(vm.LogMessages);
+      Assert.DoesNotThrow(() => { vm.FollowTail(); });
+      CollectionAssert.IsEmpty(vm.LogMessages);
+
+      var expectedMessages = new List<Message>();
+      expectedMessages.Add(new Message("line1"));
+      expectedMessages.Add(new Message("line2"));
+      expectedMessages.Add(new Message("line3"));
+      vm.ReadLog("testlog.log");
+      CollectionAssert.IsNotEmpty(vm.LogMessages);
+      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
+
+      expectedMessages.Add(new Message("line4"));
+      File.AppendAllLines("testlog.log", new string[] { "line4" });
+      System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(15));
+      CollectionAssert.IsNotEmpty(vm.LogMessages);
+      System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(15));
+      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
     }
   }
 }
