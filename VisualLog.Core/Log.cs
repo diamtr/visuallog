@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,8 @@ namespace VisualLog.Core
     public Encoding Encoding { get; private set; }
     public Format Format { get; set; }
     public bool ReadingInProcess { get; set; }
+
+    public event Action<Message> CatchNewMessage;
 
     private string sourceFilePath;
     private FileSystemWatcher sourceFileWatcher;
@@ -85,7 +88,10 @@ namespace VisualLog.Core
             continue;
           try
           {
-            this.Messages.Add(new Message(line));
+            var newMessage = new Message(line);
+            this.Messages.Add(newMessage);
+            if (this.CatchNewMessage != null)
+              this.CatchNewMessage.Invoke(newMessage);
           }
           catch
           {

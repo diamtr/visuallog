@@ -139,23 +139,25 @@ namespace VisualLog.Core.Test
       var path = Path.Combine(TestLogsDirName, "followtail.log");
       File.WriteAllText(path, null);
       var log = new Log(path);
+      var newMessagesCount = 0;
+      log.CatchNewMessage += (Message message) => { newMessagesCount++; };
       CollectionAssert.IsEmpty(log.Messages);
 
       Assert.DoesNotThrow(() => { log.StartFollowTail(); });
 
       File.AppendAllLines(path, new List<string>() { "xx.xx.xxxx xx:xx:xx.xxxx Trace First update followtail.log" });
       System.Threading.Thread.Sleep(System.TimeSpan.FromMilliseconds(5));
-
       CollectionAssert.IsNotEmpty(log.Messages);
       Assert.AreEqual(1, log.Messages.Count);
       Assert.AreEqual("xx.xx.xxxx xx:xx:xx.xxxx Trace First update followtail.log", log.Messages[0].RawValue);
+      Assert.AreEqual(1, newMessagesCount);
 
       File.AppendAllLines(path, new List<string>() { "xx.xx.xxxx xx:xx:xx.xxxx Trace Second update followtail.log" });
       System.Threading.Thread.Sleep(System.TimeSpan.FromMilliseconds(5));
-
       Assert.AreEqual(2, log.Messages.Count);
       Assert.AreEqual("xx.xx.xxxx xx:xx:xx.xxxx Trace First update followtail.log", log.Messages[0].RawValue);
       Assert.AreEqual("xx.xx.xxxx xx:xx:xx.xxxx Trace Second update followtail.log", log.Messages[1].RawValue);
+      Assert.AreEqual(2, newMessagesCount);
 
       File.WriteAllText(path, null);
     }
@@ -166,16 +168,18 @@ namespace VisualLog.Core.Test
       var path = Path.Combine(TestLogsDirName, "followtail.log");
       File.WriteAllText(path, null);
       var log = new Log(path);
+      var newMessagesCount = 0;
+      log.CatchNewMessage += (Message message) => { newMessagesCount++; };
       CollectionAssert.IsEmpty(log.Messages);
 
       File.AppendAllLines(path, new List<string>() { "xx.xx.xxxx xx:xx:xx.xxxx Trace First update followtail.log" });
       System.Threading.Thread.Sleep(System.TimeSpan.FromMilliseconds(5));
 
       Assert.DoesNotThrow(() => { log.ReadLogUpdates(null, new FileSystemEventArgs(WatcherChangeTypes.Changed, TestLogsDirName, "followtail.log")); });
-
       CollectionAssert.IsNotEmpty(log.Messages);
       Assert.AreEqual(1, log.Messages.Count);
       Assert.AreEqual("xx.xx.xxxx xx:xx:xx.xxxx Trace First update followtail.log", log.Messages[0].RawValue);
+      Assert.AreEqual(1, newMessagesCount);
 
       File.WriteAllText(path, null);
     }
