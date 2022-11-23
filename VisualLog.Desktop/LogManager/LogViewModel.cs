@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,15 +9,7 @@ namespace VisualLog.Desktop.LogManager
 {
   public class LogViewModel : ViewModelBase
   {
-    public List<MessageInlineViewModel> LogMessages
-    {
-      get
-      {
-        if (this.log == null)
-          return new List<MessageInlineViewModel>();
-        return this.log.Messages.Select(x => new MessageInlineViewModel(x)).ToList();
-      }
-    }
+    public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
     public string DisplayName
     {
       get
@@ -99,6 +92,7 @@ namespace VisualLog.Desktop.LogManager
     
     public LogViewModel()
     {
+      this.LogMessages = new ObservableCollection<MessageInlineViewModel>();
       this.Encodings = new List<string>();
       this.LogFormats = new List<Format>();
       this.InitEncodings();
@@ -108,7 +102,7 @@ namespace VisualLog.Desktop.LogManager
     public void ReadLog()
     {
       if (string.IsNullOrWhiteSpace(this.logPath) ||
-          !System.IO.File.Exists(this.logPath))
+          !File.Exists(this.logPath))
         return;
 
       this.ReadLog(this.logPath);
@@ -117,7 +111,7 @@ namespace VisualLog.Desktop.LogManager
     public void ReadLog(string path)
     {
       if (string.IsNullOrWhiteSpace(path) ||
-          !System.IO.File.Exists(path))
+          !File.Exists(path))
         return;
 
       this.logPath = path;
@@ -126,7 +120,9 @@ namespace VisualLog.Desktop.LogManager
         encoding = Encoding.GetEncoding(int.Parse(this.SelectedEncoding.Split(' ')[0]));
       this.log = new Log(this.logPath, encoding);
       this.log.Read();
-      this.OnPropertyChanged(nameof(this.LogMessages));
+      this.LogMessages.Clear();
+      foreach (var message in this.log.Messages)
+        this.LogMessages.Add(new MessageInlineViewModel(message));
     }
 
     public void InitEncodings()
