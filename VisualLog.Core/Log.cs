@@ -13,10 +13,22 @@ namespace VisualLog.Core
     public Format Format { get; set; }
     public bool ReadingInProcess { get; set; }
 
-    public event Action<Message> CatchNewMessage;
+    public event Action<Message> CatchNewMessage
+    {
+      add
+      {
+        if (catchNewMessage == null || !catchNewMessage.GetInvocationList().Contains(value))
+          this.catchNewMessage += value;
+      }
+      remove
+      {
+        this.catchNewMessage -= value;
+      }
+    }
 
     private string sourceFilePath;
     private FileSystemWatcher sourceFileWatcher;
+    private Action<Message> catchNewMessage;
 
     public Log()
     {
@@ -90,8 +102,8 @@ namespace VisualLog.Core
           {
             var newMessage = new Message(line);
             this.Messages.Add(newMessage);
-            if (this.CatchNewMessage != null)
-              this.CatchNewMessage.Invoke(newMessage);
+            if (this.catchNewMessage != null)
+              this.catchNewMessage.Invoke(newMessage);
           }
           catch
           {

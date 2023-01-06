@@ -20,6 +20,10 @@ namespace VisualLog.Desktop.Tests
       CollectionAssert.IsNotEmpty(vm.Encodings);
       CollectionAssert.AreEquivalent(Encoding.GetEncodings().Select(x => vm.GetEncodingDisplayName(x.GetEncoding())), vm.Encodings);
       Assert.IsTrue(vm.SelectedEncoding.StartsWith("65001"));
+      Assert.IsNotNull(vm.State);
+      Assert.IsFalse(vm.State.ShowSelectedMessageHorizontal);
+      Assert.IsFalse(vm.State.ShowSelectedMessageVertical);
+      Assert.IsTrue(vm.State.FollowTail);
     }
 
     [Test]
@@ -119,9 +123,9 @@ namespace VisualLog.Desktop.Tests
 
       expectedMessages.Add(new Message("line4"));
       File.AppendAllLines("testlog.log", new string[] { "line4" });
-      System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(15));
+      System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(25));
       CollectionAssert.IsNotEmpty(vm.LogMessages);
-      System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(15));
+      System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(25));
       CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
     }
   }

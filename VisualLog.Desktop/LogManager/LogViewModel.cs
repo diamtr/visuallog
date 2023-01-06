@@ -49,43 +49,13 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
-    public bool ShowFormattedMessageVertical
-    {
-      get
-      {
-        return this.showFormattedMessageVertical;
-      }
-      set
-      {
-        this.showFormattedMessageVertical = value;
-        if (this.showFormattedMessageVertical && this.showFormattedMessageHorizontal)
-          this.ShowFormattedMessageHorizontal = false;
-        this.OnPropertyChanged();
-      }
-    }
-    public bool ShowFormattedMessageHorizontal
-    {
-      get
-      {
-        return this.showFormattedMessageHorizontal;
-      }
-      set
-      {
-        this.showFormattedMessageHorizontal = value;
-        if (this.showFormattedMessageHorizontal && this.showFormattedMessageVertical)
-          this.ShowFormattedMessageVertical = false;
-        this.OnPropertyChanged();
-      }
-    }
     public List<Format> LogFormats { get; set; }
+    public LogViewStateViewModel State { get; set; }
 
     private string displayName;
     private string logPath;
     private Log log;
-    private bool followLogTail;
     private string selectedEncoding;
-    private bool showFormattedMessageVertical;
-    private bool showFormattedMessageHorizontal;
 
     public LogViewModel(string path) : this()
     {
@@ -97,6 +67,7 @@ namespace VisualLog.Desktop.LogManager
       this.LogMessages = new ObservableCollection<MessageInlineViewModel>();
       this.Encodings = new List<string>();
       this.LogFormats = new List<Format>();
+      this.State = new LogViewStateViewModel();
       this.InitEncodings();
       this.PropertyChanged += SelectedEncoding_PropertyChanged;
     }
@@ -125,7 +96,7 @@ namespace VisualLog.Desktop.LogManager
       this.LogMessages.Clear();
       foreach (var message in this.log.Messages)
         this.LogMessages.Add(new MessageInlineViewModel(message));
-      if (this.followLogTail)
+      if (this.State.FollowTail)
       {
         this.log.CatchNewMessage += this.OnNewLogMessageCatched;
         this.log.StartFollowTail();
@@ -134,7 +105,7 @@ namespace VisualLog.Desktop.LogManager
 
     public void FollowTail()
     {
-      this.followLogTail = true;
+      this.State.FollowTail = true;
       if (this.log == null)
         return;
       this.log.CatchNewMessage += this.OnNewLogMessageCatched;
