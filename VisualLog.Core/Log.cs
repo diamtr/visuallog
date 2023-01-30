@@ -30,6 +30,8 @@ namespace VisualLog.Core
     private FileSystemWatcher sourceFileWatcher;
     private Action<Message> catchNewMessage;
 
+    #region ctors
+
     public Log()
     {
       this.Messages = new List<Message>();
@@ -45,6 +47,10 @@ namespace VisualLog.Core
       this.Encoding = encoding;
     }
 
+    #endregion
+
+    #region Reading
+
     public void Read()
     {
       this.ReadingInProcess = true;
@@ -56,15 +62,6 @@ namespace VisualLog.Core
       foreach (var line in lines)
         this.Messages.Add(new Message(line));
       this.ReadingInProcess = false;
-    }
-
-    public void ApplyFormat()
-    {
-      if (this.Format == null)
-        return;
-
-      foreach (var message in this.Messages)
-        message.Parts = this.Format.Deserialize(message);
     }
 
     public void StartFollowTail()
@@ -112,6 +109,31 @@ namespace VisualLog.Core
         }
       }
       this.ReadingInProcess = false;
+    }
+
+    #endregion
+
+    #region Searching
+
+    /// <summary>
+    /// Search entries of the string.
+    /// </summary>
+    /// <param name="s">String to search.</param>
+    /// <returns>String search results.</returns>
+    public SearchResults SearchString(string s)
+    {
+      return new SearchResults();
+    }
+
+    #endregion
+
+    public void ApplyFormat()
+    {
+      if (this.Format == null)
+        return;
+
+      foreach (var message in this.Messages)
+        message.Parts = this.Format.Deserialize(message);
     }
   }
 }
