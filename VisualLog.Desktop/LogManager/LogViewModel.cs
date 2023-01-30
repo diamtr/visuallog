@@ -1,22 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using VisualLog.Core;
 
 namespace VisualLog.Desktop.LogManager
 {
   public class LogViewModel : ViewModelBase
   {
-    public List<MessageInlineViewModel> LogMessages
-    {
-      get
-      {
-        if (this.log == null)
-          return new List<MessageInlineViewModel>();
-        return this.log.Messages.Select(x => new MessageInlineViewModel(x)).ToList();
-      }
-    }
+    public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
     public string DisplayName
     {
       get
@@ -55,42 +49,13 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
-    public bool ShowFormattedMessageVertical
-    {
-      get
-      {
-        return this.showFormattedMessageVertical;
-      }
-      set
-      {
-        this.showFormattedMessageVertical = value;
-        if (this.showFormattedMessageVertical && this.showFormattedMessageHorizontal)
-          this.ShowFormattedMessageHorizontal = false;
-        this.OnPropertyChanged();
-      }
-    }
-    public bool ShowFormattedMessageHorizontal
-    {
-      get
-      {
-        return this.showFormattedMessageHorizontal;
-      }
-      set
-      {
-        this.showFormattedMessageHorizontal = value;
-        if (this.showFormattedMessageHorizontal && this.showFormattedMessageVertical)
-          this.ShowFormattedMessageVertical = false;
-        this.OnPropertyChanged();
-      }
-    }
-    public List<LogFormat> LogFormats { get; set; }
+    public List<Format> LogFormats { get; set; }
+    public LogViewStateViewModel State { get; set; }
 
     private string displayName;
     private string logPath;
     private Log log;
     private string selectedEncoding;
-    private bool showFormattedMessageVertical;
-    private bool showFormattedMessageHorizontal;
 
     public LogViewModel(string path) : this()
     {
@@ -99,8 +64,10 @@ namespace VisualLog.Desktop.LogManager
     
     public LogViewModel()
     {
+      this.LogMessages = new ObservableCollection<MessageInlineViewModel>();
       this.Encodings = new List<string>();
-      this.LogFormats = new List<LogFormat>();
+      this.LogFormats = new List<Format>();
+      this.State = new LogViewStateViewModel();
       this.InitEncodings();
       this.PropertyChanged += SelectedEncoding_PropertyChanged;
     }
@@ -108,7 +75,7 @@ namespace VisualLog.Desktop.LogManager
     public void ReadLog()
     {
       if (string.IsNullOrWhiteSpace(this.logPath) ||
-          !System.IO.File.Exists(this.logPath))
+          !File.Exists(this.logPath))
         return;
 
       this.ReadLog(this.logPath);
@@ -117,16 +84,49 @@ namespace VisualLog.Desktop.LogManager
     public void ReadLog(string path)
     {
       if (string.IsNullOrWhiteSpace(path) ||
-          !System.IO.File.Exists(path))
+          !File.Exists(path))
         return;
 
       this.logPath = path;
       var encoding = Encoding.Default;
       if (!string.IsNullOrWhiteSpace(this.SelectedEncoding))
         encoding = Encoding.GetEncoding(int.Parse(this.SelectedEncoding.Split(' ')[0]));
-      this.log = new Log(encoding);
-      this.log.Read(this.logPath);
-      this.OnPropertyChanged(nameof(this.LogMessages));
+      this.log = new Log(this.logPath, encoding);
+      this.log.Read();
+      this.LogMessages.Clear();
+      foreach (var message in this.log.Messages)
+        this.LogMessages.Add(new MessageInlineViewModel(message));
+      if (this.State.FollowTail)
+      {
+        this.log.CatchNewMessage += this.OnNewLogMessageCatched;
+        this.log.StartFollowTail();
+      }
+    }
+
+    public void FollowTail()
+    {
+      this.State.FollowTail = true;
+      if (this.log == null)
+        return;
+      this.log.CatchNewMessage += this.OnNewLogMessageCatched;
+      this.log.StartFollowTail();
+    }
+
+    public void OnNewLogMessageCatched(Message message)
+    {
+      if (message == null)
+        return;
+      try
+      {
+        // UI thread safety
+        if (Application.Current != null)
+          Application.Current.Dispatcher.Invoke(() => { this.LogMessages.Add(new MessageInlineViewModel(message)); });
+        else
+          this.LogMessages.Add(new MessageInlineViewModel(message));
+      }
+      catch
+      {
+      }
     }
 
     public void InitEncodings()

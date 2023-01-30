@@ -26,28 +26,28 @@ namespace VisualLog.Core
         instance.Source = path;
     }
 
-    public static IEnumerable<LogFormat> Read(string path = null)
+    public static IEnumerable<Format> Read(string path = null)
     {
       InitFrom(path);
       return instance.Read();
     }
 
-    public static void Write(LogFormat format, string path = null)
+    public static void Write(Format format, string path = null)
     {
       InitFrom(path);
       instance.Write(format);
     }
 
-    public IEnumerable<LogFormat> Read()
+    public IEnumerable<Format> Read()
     {
       if (this.Source == null ||
           !File.Exists(this.Source))
-        return Enumerable.Empty<LogFormat>();
+        return Enumerable.Empty<Format>();
 
-      return JsonConvert.DeserializeObject<IEnumerable<LogFormat>>(File.ReadAllText(this.Source));
+      return JsonConvert.DeserializeObject<IEnumerable<Format>>(File.ReadAllText(this.Source));
     }
 
-    public void Write(LogFormat format)
+    public void Write(Format format)
     {
       var formats = this.Read().ToList();
       if (format.Id <= 0)

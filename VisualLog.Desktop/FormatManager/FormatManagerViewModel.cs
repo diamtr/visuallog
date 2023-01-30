@@ -5,8 +5,8 @@ namespace VisualLog.Desktop.FormatManager
 {
   public class FormatManagerViewModel : ViewModelBase
   {
-    public ObservableCollection<LogFormatViewModel> Formats { get; private set; }
-    public LogFormatViewModel SelectedFormat
+    public ObservableCollection<FormatViewModel> Formats { get; private set; }
+    public FormatViewModel SelectedFormat
     {
       get
       {
@@ -20,18 +20,18 @@ namespace VisualLog.Desktop.FormatManager
     }
     public Command CreateFormatCommand { get; private set; }
 
-    private LogFormatViewModel selectedFormat;
+    private FormatViewModel selectedFormat;
 
     public FormatManagerViewModel()
     {
-      this.Formats = new ObservableCollection<LogFormatViewModel>();
+      this.Formats = new ObservableCollection<FormatViewModel>();
       this.InitCommands();
     }
 
     public void CreateFormat()
     {
-      var format = new LogFormat() { Name = "<NEW FORMAT>" };
-      var formatVm = new LogFormatViewModel() { Format = format };
+      var format = new Format() { Name = "<NEW FORMAT>" };
+      var formatVm = new FormatViewModel() { Format = format };
       this.Formats.Add(formatVm);
       this.SelectedFormat = formatVm;
     }
@@ -42,7 +42,7 @@ namespace VisualLog.Desktop.FormatManager
       this.Formats.Clear();
       var formats = Core.Formats.Read(path);
       foreach (var format in formats)
-        this.Formats.Add(new LogFormatViewModel(format));
+        this.Formats.Add(new FormatViewModel(format));
     }
 
     private void InitCommands()

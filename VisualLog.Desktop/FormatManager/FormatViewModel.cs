@@ -4,9 +4,9 @@ using VisualLog.Core;
 
 namespace VisualLog.Desktop.FormatManager
 {
-  public class LogFormatViewModel : ViewModelBase
+  public class FormatViewModel : ViewModelBase
   {
-    public LogFormat Format
+    public Format Format
     {
       get { return this.format; }
       set { this.format = value; this.OnPropertyChanged(); }
@@ -20,17 +20,17 @@ namespace VisualLog.Desktop.FormatManager
     public Command AddNewFormatterCommand { get; private set; }
     public Command SaveFormatCommand { get; private set; }
 
-    private LogFormat format;
+    private Format format;
     private MessageFormatterViewModel selectedFormatter;
 
-    public LogFormatViewModel(LogFormat format) : this()
+    public FormatViewModel(Format format) : this()
     {
       this.format = format;
       foreach (var formatter in format.Formatters)
         this.Formatters.Add(new MessageFormatterViewModel(formatter));
     }
 
-    public LogFormatViewModel()
+    public FormatViewModel()
     {
       this.Formatters = new ObservableCollection<MessageFormatterViewModel>();
       this.InitCommands();

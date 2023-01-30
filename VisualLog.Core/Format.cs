@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace VisualLog.Core
 {
-  public class LogFormat
+  public class Format
   {
     public int Id { get; set; }
     public string Name { get; set; }
     public List<MessageFormatter> Formatters { get; set; }
 
-    public LogFormat()
+    public Format()
     {
       this.Formatters = new List<MessageFormatter>();
     }

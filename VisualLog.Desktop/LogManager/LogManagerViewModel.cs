@@ -46,6 +46,7 @@ namespace VisualLog.Desktop.LogManager
           {
             logViewModel = new LogViewModel(path);
             logViewModel.ReadLog();
+            logViewModel.FollowTail();
             this.Logs.Add(logViewModel);
           }
           this.ActiveLog = logViewModel;
