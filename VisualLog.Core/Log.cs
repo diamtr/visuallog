@@ -120,10 +120,15 @@ namespace VisualLog.Core
     /// Search entries of the string.
     /// </summary>
     /// <param name="s">String to search.</param>
+    /// <param name="additionalOptions">Additional regular expression options.</param>
     /// <returns>String search results.</returns>
-    public SearchResults SearchString(string s)
+    /// <remarks>The entries search is going on through regular expression. It always has the "Compiled" option.</remarks>
+    public SearchResults SearchString(string s, RegexOptions? additionalOptions = null)
     {
-      var re = new Regex(s, RegexOptions.Compiled);
+      var options = RegexOptions.Compiled;
+      if (additionalOptions.HasValue)
+        options = options | additionalOptions.Value;
+      var re = new Regex(s, options);
 
       var searchResults = new SearchResults();
       foreach (var message in this.Messages)
