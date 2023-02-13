@@ -2,8 +2,7 @@
 {
   public struct SearchEntry
   {
-    public uint Line { get; set; }
-    public uint StartPosition { get; set; }
-    public uint EndPosition { get; set; }
+    public int LineNumber { get; set; }
+    public int StartPosition { get; set; }
   }
 }

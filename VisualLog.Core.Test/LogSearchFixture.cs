@@ -22,12 +22,13 @@ namespace VisualLog.Core.Test
 
       var expectedEntries = new List<SearchEntry>()
       {
-        new SearchEntry() { Line = 2, StartPosition = 9, EndPosition = 12 },
-        new SearchEntry() { Line = 3, StartPosition = 6, EndPosition = 9 },
-        new SearchEntry() { Line = 5, StartPosition = 0, EndPosition = 3 }
+        new SearchEntry() { LineNumber = 2, StartPosition = 8 },
+        new SearchEntry() { LineNumber = 3, StartPosition = 6 },
+        new SearchEntry() { LineNumber = 5, StartPosition = 0 },
+        new SearchEntry() { LineNumber = 5, StartPosition = 10 }
       };
       
-      //CollectionAssert.AreEqual(expectedEntries, results.Entries);
+      CollectionAssert.AreEqual(expectedEntries, results.Entries);
     }
   }
 }

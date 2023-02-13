@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace VisualLog.Core
 {
@@ -122,7 +123,29 @@ namespace VisualLog.Core
     /// <returns>String search results.</returns>
     public SearchResults SearchString(string s)
     {
-      return new SearchResults();
+      var re = new Regex(s, RegexOptions.Compiled);
+
+      var searchResults = new SearchResults();
+      foreach (var message in this.Messages)
+        searchResults.Entries.AddRange(this.SearchStringInLine(this.Messages.IndexOf(message) + 1, message.RawValue, re));
+
+      return searchResults;
+    }
+
+    /// <summary>
+    /// Search entries of the string in the log line.
+    /// </summary>
+    /// <param name="lineNumber">Log line number (1-based).</param>
+    /// <param name="line">Log line.</param>
+    /// <param name="re">Regex.</param>
+    /// <returns>Entries of the string in the log line.</returns>
+    public List<SearchEntry> SearchStringInLine(int lineNumber, string line, Regex re)
+    {
+      var matches = re.Matches(line);
+      return matches
+        .Where(x => x.Success)
+        .Select(x => new SearchEntry() { LineNumber = lineNumber, StartPosition = x.Index })
+        .ToList();
     }
 
     #endregion
