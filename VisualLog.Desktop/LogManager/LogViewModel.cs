@@ -52,6 +52,9 @@ namespace VisualLog.Desktop.LogManager
     public List<Format> LogFormats { get; set; }
     public LogViewStateViewModel State { get; set; }
 
+    public Command ShowSearchPanelCommand { get; private set; }
+    public Command HideSearchPanelCommand { get; private set; }
+
     private string displayName;
     private string logPath;
     private Log log;
@@ -70,6 +73,7 @@ namespace VisualLog.Desktop.LogManager
       this.State = new LogViewStateViewModel();
       this.InitEncodings();
       this.PropertyChanged += SelectedEncoding_PropertyChanged;
+      this.InitCommands();
     }
 
     public void ReadLog()
@@ -140,6 +144,18 @@ namespace VisualLog.Desktop.LogManager
     public string GetEncodingDisplayName(Encoding encoding)
     {
       return $"{encoding.CodePage} {encoding.WebName} {encoding.EncodingName}";
+    }
+
+    private void InitCommands()
+    {
+      this.ShowSearchPanelCommand = new Command(
+        x => this.State.ShowSearchPanel = true,
+        x => true
+      );
+      this.HideSearchPanelCommand = new Command(
+        x => this.State.ShowSearchPanel = false,
+        x => true
+      );
     }
 
     private void SelectedEncoding_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

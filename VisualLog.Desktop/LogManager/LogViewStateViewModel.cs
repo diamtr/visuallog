@@ -2,6 +2,18 @@
 {
   public class LogViewStateViewModel : ViewModelBase
   {
+    public bool ShowSearchPanel
+    {
+      get
+      {
+        return this.showSearchPanel;
+      }
+      set
+      {
+        this.showSearchPanel = value;
+        this.OnPropertyChanged();
+      }
+    }
     public bool ShowSelectedMessageVertical
     {
       get
@@ -43,12 +55,14 @@
       }
     }
 
+    private bool showSearchPanel;
     private bool showSelectedMessagesVertical;
     private bool showSelectedMessagesHorizontal;
     private bool followTail;
 
     public LogViewStateViewModel()
     {
+      this.showSearchPanel = false;
       this.followTail = true;
     }
   }
