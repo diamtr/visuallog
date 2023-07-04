@@ -21,7 +21,6 @@ namespace VisualLog.Desktop.Tests
       CollectionAssert.AreEquivalent(Encoding.GetEncodings().Select(x => vm.GetEncodingDisplayName(x.GetEncoding())), vm.Encodings);
       Assert.IsTrue(vm.SelectedEncoding.StartsWith("65001"));
       Assert.IsNotNull(vm.State);
-      Assert.IsFalse(vm.State.ShowSearchPanel);
       Assert.IsFalse(vm.State.ShowSelectedMessageHorizontal);
       Assert.IsFalse(vm.State.ShowSelectedMessageVertical);
       Assert.IsTrue(vm.State.FollowTail);

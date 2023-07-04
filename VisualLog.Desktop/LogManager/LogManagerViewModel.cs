@@ -9,9 +9,10 @@ namespace VisualLog.Desktop.LogManager
   public class LogManagerViewModel : ViewModelBase
   {
     public Command OpenLogsCommand { get; private set; }
-
+    public Command ShowSearchPanelCommand { get; private set; }
+    public Command HideSearchPanelCommand { get; private set; }
     public ObservableCollection<LogViewModel> Logs { get; set; }
-
+    private LogViewModel activeLog;
     public LogViewModel ActiveLog
     { 
       get
@@ -24,12 +25,12 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
-
-    private LogViewModel activeLog;
+    public LogManagerStateViewModel State { get; set; }
 
     public LogManagerViewModel()
     {
       this.Logs = new ObservableCollection<LogViewModel>();
+      this.State = new LogManagerStateViewModel();
       this.InitCommands();
     }
 
@@ -72,6 +73,14 @@ namespace VisualLog.Desktop.LogManager
         },
         x => true
         );
+      this.ShowSearchPanelCommand = new Command(
+        x => this.State.ShowSearchPanel = true,
+        x => true
+      );
+      this.HideSearchPanelCommand = new Command(
+        x => this.State.ShowSearchPanel = false,
+        x => true
+      );
     }
   }
 }

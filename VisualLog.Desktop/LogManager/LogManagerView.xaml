@@ -4,8 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
+             xmlns:root="clr-namespace:VisualLog.Desktop"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <root:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <UserControl.InputBindings>
+    <KeyBinding Gesture="Ctrl+F" Command="{Binding ShowSearchPanelCommand}"/>
+  </UserControl.InputBindings>
   <Grid>
     <Grid.Resources>
       <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
@@ -13,6 +22,7 @@
       </DataTemplate>
     </Grid.Resources>
     <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
@@ -25,6 +35,7 @@
               Content="Open"
               Command="{Binding OpenLogsCommand}"
               CommandParameter="LogManagerView"/>
+
       <ListBox Grid.Column="1"
                FlowDirection="LeftToRight"
                ItemsSource="{Binding Logs}"
@@ -41,7 +52,19 @@
         </ItemsControl.ItemsPanel>
       </ListBox>
     </Grid>
-    <ContentControl Grid.Row="1"
+    <Grid Grid.Row="1">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <TextBox Grid.Column="0"
+               Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
+      <Button Grid.Column="1"
+              Command="{Binding HideSearchPanelCommand}"
+              Content="x"
+              Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
+    </Grid>
+    <ContentControl Grid.Row="2"
                     Content="{Binding ActiveLog}"/>
   </Grid>
 </UserControl>

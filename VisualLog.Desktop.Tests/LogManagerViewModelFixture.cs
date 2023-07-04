@@ -17,6 +17,23 @@ namespace VisualLog.Desktop.Tests
     }
 
     [Test]
+    public void ShowHideSearchCommands()
+    {
+      var lmvm = new LogManagerViewModel();
+      Assert.IsFalse(lmvm.State.ShowSearchPanel);
+      Assert.IsTrue(lmvm.ShowSearchPanelCommand.CanExecute(null));
+      Assert.IsTrue(lmvm.HideSearchPanelCommand.CanExecute(null));
+      Assert.DoesNotThrow(() => { lmvm.ShowSearchPanelCommand.Execute(null); });
+      Assert.IsTrue(lmvm.State.ShowSearchPanel);
+      Assert.IsTrue(lmvm.ShowSearchPanelCommand.CanExecute(null));
+      Assert.IsTrue(lmvm.HideSearchPanelCommand.CanExecute(null));
+      Assert.DoesNotThrow(() => { lmvm.HideSearchPanelCommand.Execute(null); });
+      Assert.IsFalse(lmvm.State.ShowSearchPanel);
+      Assert.IsTrue(lmvm.ShowSearchPanelCommand.CanExecute(null));
+      Assert.IsTrue(lmvm.HideSearchPanelCommand.CanExecute(null));
+    }
+
+    [Test]
     public void OpenLogs()
     {
       var lmvm = new LogManagerViewModel();
