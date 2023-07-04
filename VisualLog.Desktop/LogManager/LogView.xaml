@@ -18,6 +18,10 @@
         <logmgr:MessageInlineView />
       </DataTemplate>
 
+      <DataTemplate DataType="{x:Type logmgr:SearchViewModel}">
+        <logmgr:SearchView/>
+      </DataTemplate>
+      
       <ControlTemplate TargetType="{x:Type ScrollViewer}" x:Key="AutoScrollViewerControlTemplate">
         <Border BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="{TemplateBinding BorderThickness}"
@@ -90,6 +94,10 @@
     </ResourceDictionary>
   </UserControl.Resources>
 
+  <UserControl.InputBindings>
+    <KeyBinding Gesture="Ctrl+F" Command="{Binding ShowSearchPanelCommand}"/>
+  </UserControl.InputBindings>
+  
   <Grid>
 
     <Grid.RowDefinitions>
@@ -103,7 +111,12 @@
               Template="{StaticResource LogMessagesListViewControlTemplate}"
               ItemsSource="{Binding LogMessages}"
               SelectionMode="Extended"/>
-    
+
+    <ContentControl Grid.Row="0"
+                    Content="{Binding SearchViewModel}"
+                    VerticalAlignment="Top"
+                    Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
+
     <Grid Grid.Row="1">
 
       <Grid.ColumnDefinitions>

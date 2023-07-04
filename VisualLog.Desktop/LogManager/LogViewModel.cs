@@ -10,6 +10,7 @@ namespace VisualLog.Desktop.LogManager
 {
   public class LogViewModel : ViewModelBase
   {
+    public Command ShowSearchPanelCommand { get; private set; }
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
     public string DisplayName
     {
@@ -23,6 +24,7 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
+    private string displayName;
     public List<string> Encodings { get; set; }
     public string LogPath
     {
@@ -37,6 +39,7 @@ namespace VisualLog.Desktop.LogManager
         this.DisplayName = Path.GetFileName(this.logPath);
       }
     }
+    private string logPath;
     public string SelectedEncoding
     {
       get
@@ -49,13 +52,13 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
+    private string selectedEncoding;
     public List<Format> LogFormats { get; set; }
     public LogViewStateViewModel State { get; set; }
+    public SearchViewModel SearchViewModel { get; set; }
+    
 
-    private string displayName;
-    private string logPath;
     private Log log;
-    private string selectedEncoding;
 
     public LogViewModel(string path) : this()
     {
@@ -68,8 +71,30 @@ namespace VisualLog.Desktop.LogManager
       this.Encodings = new List<string>();
       this.LogFormats = new List<Format>();
       this.State = new LogViewStateViewModel();
+      this.SearchViewModel = new SearchViewModel();
+      this.SearchViewModel.HideSearchPanelRequested += SearchViewModel_HideSearchPanelRequested;
+      this.SearchViewModel.SearchRequested += SearchViewModel_SearchRequested;
       this.InitEncodings();
       this.PropertyChanged += SelectedEncoding_PropertyChanged;
+      this.InitCommands();
+    }
+
+    private void SearchViewModel_SearchRequested(object sender, string e)
+    {
+      throw new System.NotImplementedException();
+    }
+
+    private void SearchViewModel_HideSearchPanelRequested()
+    {
+      this.State.ShowSearchPanel = false;
+    }
+
+    private void InitCommands()
+    {
+      this.ShowSearchPanelCommand = new Command(
+        x => this.State.ShowSearchPanel = true,
+        x => true
+      );
     }
 
     public void ReadLog()

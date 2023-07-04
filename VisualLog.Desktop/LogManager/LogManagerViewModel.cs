@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -10,7 +9,6 @@ namespace VisualLog.Desktop.LogManager
   {
     public Command OpenLogsCommand { get; private set; }
     public Command ShowSearchPanelCommand { get; private set; }
-    public Command HideSearchPanelCommand { get; private set; }
     public ObservableCollection<LogViewModel> Logs { get; set; }
     private LogViewModel activeLog;
     public LogViewModel ActiveLog
@@ -25,12 +23,10 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
-    public LogManagerStateViewModel State { get; set; }
 
     public LogManagerViewModel()
     {
       this.Logs = new ObservableCollection<LogViewModel>();
-      this.State = new LogManagerStateViewModel();
       this.InitCommands();
     }
 
@@ -73,14 +69,8 @@ namespace VisualLog.Desktop.LogManager
         },
         x => true
         );
-      this.ShowSearchPanelCommand = new Command(
-        x => this.State.ShowSearchPanel = true,
-        x => true
-      );
-      this.HideSearchPanelCommand = new Command(
-        x => this.State.ShowSearchPanel = false,
-        x => true
-      );
+      
+      
     }
   }
 }

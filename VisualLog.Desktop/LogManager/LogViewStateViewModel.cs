@@ -2,6 +2,19 @@
 {
   public class LogViewStateViewModel : ViewModelBase
   {
+    public bool ShowSearchPanel
+    {
+      get
+      {
+        return this.showSearchPanel;
+      }
+      set
+      {
+        this.showSearchPanel = value;
+        this.OnPropertyChanged();
+      }
+    }
+    private bool showSearchPanel;
     public bool ShowSelectedMessageVertical
     {
       get
@@ -16,6 +29,7 @@
         this.OnPropertyChanged();
       }
     }
+    private bool showSelectedMessagesVertical;
     public bool ShowSelectedMessageHorizontal
     {
       get
@@ -30,6 +44,7 @@
         this.OnPropertyChanged();
       }
     }
+    private bool showSelectedMessagesHorizontal;
     public bool FollowTail
     {
       get
@@ -42,14 +57,12 @@
         this.OnPropertyChanged();
       }
     }
-
-    private bool showSelectedMessagesVertical;
-    private bool showSelectedMessagesHorizontal;
     private bool followTail;
 
     public LogViewStateViewModel()
     {
       this.followTail = true;
+      this.showSearchPanel = false;
     }
   }
 }
