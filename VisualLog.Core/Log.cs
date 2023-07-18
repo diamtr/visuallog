@@ -149,7 +149,7 @@ namespace VisualLog.Core
       var matches = re.Matches(line);
       return matches
         .Where(x => x.Success)
-        .Select(x => new SearchEntry() { LineNumber = lineNumber, StartPosition = x.Index })
+        .Select(x => new SearchEntry() { LineNumber = lineNumber, StartPosition = x.Index, RawString = line })
         .ToList();
     }
 

@@ -4,5 +4,6 @@
   {
     public int LineNumber { get; set; }
     public int StartPosition { get; set; }
+    public string RawString { get; set; }
   }
 }

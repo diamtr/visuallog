@@ -56,9 +56,7 @@ namespace VisualLog.Desktop.LogManager
     public List<Format> LogFormats { get; set; }
     public LogViewStateViewModel State { get; set; }
     public SearchViewModel SearchViewModel { get; set; }
-    
-
-    private Log log;
+    public Log Log { get; private set; }
 
     public LogViewModel(string path) : this()
     {
@@ -71,22 +69,10 @@ namespace VisualLog.Desktop.LogManager
       this.Encodings = new List<string>();
       this.LogFormats = new List<Format>();
       this.State = new LogViewStateViewModel();
-      this.SearchViewModel = new SearchViewModel();
-      this.SearchViewModel.HideSearchPanelRequested += SearchViewModel_HideSearchPanelRequested;
-      this.SearchViewModel.SearchRequested += SearchViewModel_SearchRequested;
+      this.SearchViewModel = new SearchViewModel(this);
       this.InitEncodings();
       this.PropertyChanged += SelectedEncoding_PropertyChanged;
       this.InitCommands();
-    }
-
-    private void SearchViewModel_SearchRequested(object sender, string e)
-    {
-      throw new System.NotImplementedException();
-    }
-
-    private void SearchViewModel_HideSearchPanelRequested()
-    {
-      this.State.ShowSearchPanel = false;
     }
 
     private void InitCommands()
@@ -116,25 +102,25 @@ namespace VisualLog.Desktop.LogManager
       var encoding = Encoding.Default;
       if (!string.IsNullOrWhiteSpace(this.SelectedEncoding))
         encoding = Encoding.GetEncoding(int.Parse(this.SelectedEncoding.Split(' ')[0]));
-      this.log = new Log(this.logPath, encoding);
-      this.log.Read();
+      this.Log = new Log(this.logPath, encoding);
+      this.Log.Read();
       this.LogMessages.Clear();
-      foreach (var message in this.log.Messages)
+      foreach (var message in this.Log.Messages)
         this.LogMessages.Add(new MessageInlineViewModel(message));
       if (this.State.FollowTail)
       {
-        this.log.CatchNewMessage += this.OnNewLogMessageCatched;
-        this.log.StartFollowTail();
+        this.Log.CatchNewMessage += this.OnNewLogMessageCatched;
+        this.Log.StartFollowTail();
       }
     }
 
     public void FollowTail()
     {
       this.State.FollowTail = true;
-      if (this.log == null)
+      if (this.Log == null)
         return;
-      this.log.CatchNewMessage += this.OnNewLogMessageCatched;
-      this.log.StartFollowTail();
+      this.Log.CatchNewMessage += this.OnNewLogMessageCatched;
+      this.Log.StartFollowTail();
     }
 
     public void OnNewLogMessageCatched(Message message)

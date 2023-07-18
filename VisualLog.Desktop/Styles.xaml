@@ -8,5 +8,11 @@
     <Setter Property="Width" Value="50"/>
     <Setter Property="Height" Value="50"/>
   </Style>
+
+  <Style x:Key="PanelHeader1" TargetType="{x:Type TextBlock}">
+    <Setter Property="FontWeight" Value="ExtraBold" />
+    <Setter Property="FontStretch" Value="SemiExpanded" />
+    <Setter Property="Margin" Value="10, 0, 0, 5" />
+  </Style>
   
 </ResourceDictionary>

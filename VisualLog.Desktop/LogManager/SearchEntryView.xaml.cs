@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace VisualLog.Desktop.LogManager
 {
   /// <summary>
-  /// Interaction logic for SearchView.xaml
+  /// Interaction logic for SearchEntryView.xaml
   /// </summary>
-  public partial class SearchView : UserControl
+  public partial class SearchEntryView : UserControl
   {
-    public SearchView()
+    public SearchEntryView()
     {
       InitializeComponent();
     }
