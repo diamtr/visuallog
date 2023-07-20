@@ -132,7 +132,11 @@ namespace VisualLog.Core
 
       var searchResults = new SearchResults();
       foreach (var message in this.Messages)
-        searchResults.Entries.AddRange(this.SearchStringInLine(this.Messages.IndexOf(message) + 1, message.RawValue, re));
+      {
+        var searchEntry = this.SearchStringInLine(this.Messages.IndexOf(message) + 1, message.RawValue, re);
+        if (searchEntry.Matches.Any())
+          searchResults.Entries.Add(searchEntry);
+      }
 
       return searchResults;
     }
@@ -144,13 +148,16 @@ namespace VisualLog.Core
     /// <param name="line">Log line.</param>
     /// <param name="re">Regex.</param>
     /// <returns>Entries of the string in the log line.</returns>
-    public List<SearchEntry> SearchStringInLine(int lineNumber, string line, Regex re)
+    public SearchEntry SearchStringInLine(int lineNumber, string line, Regex re)
     {
       var matches = re.Matches(line);
-      return matches
-        .Where(x => x.Success)
-        .Select(x => new SearchEntry() { LineNumber = lineNumber, StartPosition = x.Index, RawString = line })
-        .ToList();
+      return new SearchEntry() {
+        LineNumber = lineNumber,
+        RawString = line,
+        Matches = matches.Where(x => x.Success)
+          .Select(x => new Match() { Index = x.Index, Length = x.Length })
+          .ToList()
+      };
     }
 
     #endregion

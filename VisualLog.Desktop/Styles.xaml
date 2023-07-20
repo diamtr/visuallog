@@ -12,7 +12,7 @@
   <Style x:Key="PanelHeader1" TargetType="{x:Type TextBlock}">
     <Setter Property="FontWeight" Value="ExtraBold" />
     <Setter Property="FontStretch" Value="SemiExpanded" />
-    <Setter Property="Margin" Value="10, 0, 0, 5" />
+    <Setter Property="Margin" Value="10, 0, 0, 0" />
   </Style>
   
 </ResourceDictionary>

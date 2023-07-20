@@ -23,10 +23,28 @@ namespace VisualLog.Core.Test
 
       var expectedEntries = new List<SearchEntry>()
       {
-        new SearchEntry() { LineNumber = 2, StartPosition = 8 },
-        new SearchEntry() { LineNumber = 3, StartPosition = 6 },
-        new SearchEntry() { LineNumber = 5, StartPosition = 0 },
-        new SearchEntry() { LineNumber = 5, StartPosition = 10 }
+        new SearchEntry() { 
+          LineNumber = 2,
+          RawString = "line2 - test",
+          Matches = new List<Match>() {
+            new Match() { Index = 8, Length = 4 }
+          } 
+        },
+        new SearchEntry() { 
+          LineNumber = 3,
+          RawString = "line3 test line3 Test",
+          Matches = new List<Match>() {
+            new Match() { Index = 6, Length = 4 }
+          } 
+        },
+        new SearchEntry() {
+          LineNumber = 5,
+          RawString = "test Test test",
+          Matches = new List<Match>() {
+            new Match() { Index = 0, Length = 4 },
+            new Match() { Index = 10, Length = 4 }
+          }
+        },
       };
       
       CollectionAssert.AreEqual(expectedEntries, results.Entries);
@@ -45,12 +63,30 @@ namespace VisualLog.Core.Test
 
       var expectedEntries = new List<SearchEntry>()
       {
-        new SearchEntry() { LineNumber = 2, StartPosition = 8 },
-        new SearchEntry() { LineNumber = 3, StartPosition = 6 },
-        new SearchEntry() { LineNumber = 3, StartPosition = 17 },
-        new SearchEntry() { LineNumber = 5, StartPosition = 0 },
-        new SearchEntry() { LineNumber = 5, StartPosition = 5 },
-        new SearchEntry() { LineNumber = 5, StartPosition = 10 }
+        new SearchEntry() {
+          LineNumber = 2,
+          RawString = "line2 - test",
+          Matches = new List<Match>() {
+            new Match() { Index = 8, Length = 4 } 
+          }
+        },
+        new SearchEntry() {
+          LineNumber = 3,
+          RawString = "line3 test line3 Test",
+          Matches = new List<Match>() {
+            new Match() { Index = 6, Length = 4 },
+            new Match() { Index = 17, Length = 4 }
+          }
+        },
+        new SearchEntry() {
+          LineNumber = 5,
+          RawString = "test Test test",
+          Matches = new List<Match>() {
+            new Match() { Index = 0, Length = 4 },
+            new Match() { Index = 5, Length = 4 },
+            new Match() { Index = 10, Length = 4 }
+          }
+        },
       };
 
       CollectionAssert.AreEqual(expectedEntries, results.Entries);
