@@ -11,7 +11,7 @@ namespace VisualLog.Capture
     {
       var from = new DateTime(2023, 1, 13, 0, 0, 2);
       var to = new DateTime(2023, 1, 13, 0, 0, 3);
-      var log = new JLog("D:\\AuraLogs13012023\\AURANPO2.Client.Host.2023-01-13.log");
+      var log = new JLog("xxxxxxx");
       Console.WriteLine($"Reading: {log.SourceFilePath}");
       log.Read();
       Console.WriteLine($"Parsing...");
