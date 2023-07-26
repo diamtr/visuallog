@@ -1,12 +1,14 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Globalization;
 
 namespace VisualLog.Core
 {
   public class JMessage
   {
     public JObject JsonObject { get; set; }
+    public DateTimeOffset? DateTime { get; set; }
     public string RawValue { get; set; }
     public bool Parsed { get; private set; }
 
@@ -19,13 +21,17 @@ namespace VisualLog.Core
     {
       try
       {
-        var settings = new JsonSerializerSettings()
-        { 
-          DateParseHandling = DateParseHandling.None,
-          DateFormatString = "yyyy-MM-dd HH:mm:ssZ"
-        };
+        var settings = new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None };
         this.JsonObject = JsonConvert.DeserializeObject<JObject>(RawValue, settings);
         this.Parsed = true;
+        var tokenName = "t";
+        var token = this.JsonObject.SelectToken(tokenName, false);
+        if (token != null)
+        {
+          DateTimeOffset dt;
+          if (DateTimeOffset.TryParseExact(token.Value<string>(), "yyyy-MM-dd HH:mm:ss.fffzzz", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
+            this.DateTime = dt;
+        }
       }
       catch
       {
@@ -37,14 +43,14 @@ namespace VisualLog.Core
 
     public bool MessageDateTimeBetween(DateTime from, DateTime to)
     {
-      if (!this.Parsed)
+      if (!this.Parsed || !this.DateTime.HasValue)
         return false;
-      var tokenName = "t";
-      var token = this.JsonObject.SelectToken(tokenName, false);
-      if (token == null)
-        return false;
-      var dateTime = token.Value<DateTime>();
-      return dateTime >= from && dateTime <= to;
+      return this.DateTime.Value.DateTime >= from && this.DateTime.Value.DateTime <= to;
+    }
+
+    public void AddLogNamePropertyFirst(string logName)
+    {
+      this.JsonObject.AddFirst(new JProperty("logName", logName));
     }
   }
 }

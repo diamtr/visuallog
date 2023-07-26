@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using VisualLog.Core;
@@ -9,19 +11,29 @@ namespace VisualLog.Capture
   {
     static void Main(string[] args)
     {
-      var from = new DateTime(2023, 1, 13, 0, 0, 2);
-      var to = new DateTime(2023, 1, 13, 0, 0, 3);
-      var log = new JLog("xxxxxxx");
-      Console.WriteLine($"Reading: {log.SourceFilePath}");
-      log.Read();
-      Console.WriteLine($"Parsing...");
-      log.Parse();
-      Console.WriteLine($"Get between [{from}; {to}]");
-      var messages = log.GetBetween(from, to); 
-      Console.WriteLine($"Found: {messages.Count()}");
+      var from = DateTime.Parse("2023-07-21 12:03:37.352");
+      var to = DateTime.Parse("2023-07-21 12:03:38.218");
+      var dirPath = @"xxxxx";
+      var dir = new DirectoryInfo(dirPath);
+      var result = new JLog();
+      foreach (var fileInfo in dir.EnumerateFiles())
+      {
+        var log = new JLog(fileInfo.FullName);
+        Console.WriteLine($"Reading: {log.SourceFilePath}");
+        log.Read();
+        Console.WriteLine($"Parsing...");
+        log.Parse();
+        Console.WriteLine($"Get between [{from}; {to}]");
+        var messages = log.GetBetween(from, to);
+        foreach (var message in messages)
+          message.AddLogNamePropertyFirst(fileInfo.Name);
+        Console.WriteLine($"Found: {messages.Count()}");
+        result.Messages.AddRange(messages);
+      }
+      result.OrderMessagesByDateTime();
       var dest = "D:\\between.log";
       Console.WriteLine($"Writing: {dest}");
-      File.WriteAllLines(dest, messages.Select(x => x.RawValue));
+      File.WriteAllLines(dest, result.Messages.Select(x => JsonConvert.SerializeObject(x.JsonObject)));
     }
   }
 }

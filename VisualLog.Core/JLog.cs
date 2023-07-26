@@ -50,6 +50,9 @@ namespace VisualLog.Core
       return this.Messages.Where(x => x.MessageDateTimeBetween(from, to));
     }
 
-    
+    public void OrderMessagesByDateTime()
+    {
+      this.Messages = this.Messages.OrderBy(x => x.DateTime).ToList();
+    }
   }
 }
