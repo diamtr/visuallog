@@ -131,11 +131,13 @@ namespace VisualLog.Core
       var re = new Regex(s, options);
 
       var searchResults = new SearchResults();
+      var i = 1;
       foreach (var message in this.Messages)
       {
-        var searchEntry = this.SearchStringInLine(this.Messages.IndexOf(message) + 1, message.RawValue, re);
+        var searchEntry = this.SearchStringInLine(i, message.RawValue, re);
         if (searchEntry.Matches.Any())
           searchResults.Entries.Add(searchEntry);
+        i++;
       }
 
       return searchResults;
