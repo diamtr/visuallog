@@ -50,6 +50,9 @@ namespace VisualLog.Core
 
     public void AddLogNamePropertyFirst(string logName)
     {
+      if (this.JsonObject.ContainsKey("logName"))
+        return;
+
       this.JsonObject.AddFirst(new JProperty("logName", logName));
     }
   }

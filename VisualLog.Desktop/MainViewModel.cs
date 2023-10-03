@@ -20,6 +20,7 @@ namespace VisualLog.Desktop
     public MainViewModel()
     {
       this.LogManagerViewModel = new LogManagerViewModel();
+      this.LogManagerViewModel.Logs.CollectionChanged += LogManagerViewModelLogsCollectionChanged;
       this.FormatManagerViewModel = new FormatManagerViewModel();
       this.InitCommands();
     }
@@ -51,6 +52,11 @@ namespace VisualLog.Desktop
         },
         x => true
         );
+    }
+
+    private void LogManagerViewModelLogsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+      this.SetAsActive(this.LogManagerViewModel);
     }
   }
 }

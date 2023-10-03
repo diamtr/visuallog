@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace VisualLog.Desktop.LogManager
   public class LogViewModel : ViewModelBase
   {
     public Command ShowSearchPanelCommand { get; private set; }
+    public Command CloseCommand { get; private set; }
+    public event Action<LogViewModel> CloseRequested;
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
     public string DisplayName
     {
@@ -79,6 +82,10 @@ namespace VisualLog.Desktop.LogManager
     {
       this.ShowSearchPanelCommand = new Command(
         x => this.State.ShowSearchPanel = true,
+        x => true
+      );
+      this.CloseCommand = new Command(
+        x => { if (this.CloseRequested != null) this.CloseRequested.Invoke(this); },
         x => true
       );
     }

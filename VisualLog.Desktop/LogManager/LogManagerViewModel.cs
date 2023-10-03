@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -42,6 +43,7 @@ namespace VisualLog.Desktop.LogManager
           if (logViewModel == null)
           {
             logViewModel = new LogViewModel(path);
+            logViewModel.CloseRequested += this.OnLogCloseRequested;
             logViewModel.ReadLog();
             logViewModel.FollowTail();
             this.Logs.Add(logViewModel);
@@ -55,22 +57,29 @@ namespace VisualLog.Desktop.LogManager
       this.OpenLogsCommand = new Command(
         x =>
         {
-          string[] paths = null;
-          if (x != null && 
-              x is string && 
-              (string)x == "LogManagerView")
+          List<string> paths = new List<string>();
+          if (x is not null && x is string)
+          {
+            paths.Add((string)x);
+          }
+          else
           {
             var dialog = new OpenFileDialog();
             dialog.Multiselect = true;
             if (dialog.ShowDialog() == true)
-              paths = dialog.FileNames;
+              paths = dialog.FileNames.ToList();
           }
-          this.OpenLogs(paths);
+          this.OpenLogs(paths.ToArray());
         },
         x => true
         );
-      
-      
+    }
+
+    private void OnLogCloseRequested(LogViewModel logViewModel)
+    {
+      this.Logs.Remove(logViewModel);
+      if (Equals(this.ActiveLog, logViewModel))
+        this.ActiveLog = this.Logs.FirstOrDefault();
     }
   }
 }

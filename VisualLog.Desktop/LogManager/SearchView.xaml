@@ -29,57 +29,54 @@
     <KeyBinding Gesture="Esc" Command="{Binding HideSearchPanelCommand}"/>
   </UserControl.InputBindings>
 
-  <Border Padding="10, 10, 10, 0">
-    <Border Padding="10, 10, 10, 5"
-            Background="LightGray">
+  <Border>
+    <Border Margin="10,10,5,5">
       <Grid>
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto"/>
           <RowDefinition Height="Auto"/>
-          <RowDefinition Height="Auto"/>
           <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        
         <Grid Grid.Row="0"
-              Margin="0,0,0,10">
+              Margin="0,0,0,5">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto" />
           </Grid.ColumnDefinitions>
           <TextBlock Grid.Column="0"
                      Style="{StaticResource PanelHeader1}"
-                     Text="{Binding SearchEntries.Count, StringFormat=Search ({0})}" />
-          <Button Grid.Column="1"
-                  Command="{Binding HideSearchPanelCommand}"
-                  BorderBrush="Transparent">
-            <Path Margin="1"
-                  Data="M -4 -4 L 4 4 M -4 4 L 4 -4"
-                  Stretch="Fill"
-                  Stroke="Black"
-                  StrokeThickness="3"/>
-          </Button>
+                     Text="Find"/>
+          <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Content="Search"
+                    Command="{Binding SearchCommand}"/>
+            <Button Grid.Column="1"
+                    Content="Clear"
+                    Command="{Binding ClearCommand}"/>
+            <Button Grid.Column="2"
+                    Command="{Binding HideSearchPanelCommand}">
+              <Path Data="M 1 1 L 9 9 M 1 9 L 9 1"
+                    Stroke="Black"
+                    StrokeThickness="2"/>
+            </Button>
+          </Grid>
+          
         </Grid>
         <Grid Grid.Row="1"
               Margin="0,0,0,10">
           <TextBox Text="{Binding StringToSearch}"/>  
         </Grid>
-        <Grid Grid.Row="2"
-              Margin="0,0,0,10">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-          </Grid.ColumnDefinitions>
-          <Button Grid.Column="0"
-                  Content="Search"
-                  Command="{Binding SearchCommand}"/>
-          <Button Grid.Column="1"
-                  Content="Clear"
-                  Command="{Binding ClearCommand}"/>
-        </Grid>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="2">
           <ListView ItemsSource="{Binding SearchEntries}"
                     MinHeight="50"/>
         </Grid>
+        
       </Grid>
     </Border>
   </Border>

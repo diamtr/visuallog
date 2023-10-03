@@ -17,19 +17,12 @@
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
     <Grid Grid.Row="0">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-      <Button Grid.Column="0"
-              Content="Open"
-              Command="{Binding OpenLogsCommand}"
-              CommandParameter="LogManagerView"/>
 
-      <ListBox Grid.Column="1"
-               FlowDirection="LeftToRight"
+      <ListBox FlowDirection="LeftToRight"
+               MinHeight="20"
                ItemsSource="{Binding Logs}"
-               SelectedItem="{Binding ActiveLog}">
+               SelectedItem="{Binding ActiveLog}"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
         <ListBox.Resources>
           <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
             <logmgr:LogWrapPanelView/>
@@ -37,7 +30,7 @@
         </ListBox.Resources>
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
-            <WrapPanel/>
+            <WrapPanel Orientation="Horizontal"/>
           </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
       </ListBox>

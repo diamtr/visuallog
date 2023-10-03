@@ -112,12 +112,36 @@
               ItemsSource="{Binding LogMessages}"
               SelectionMode="Extended"/>
 
-    <ContentControl Grid.Row="0"
+    <Grid Grid.Row="0"
+          Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid Grid.Column="1">
+        <Border Margin="20"
+                Background="Pink"/>
+      </Grid>
+    </Grid>
+
+    <Grid Grid.Row="0"
+          Visibility="{Binding ElementName=ShowSelectedMessageHorizontalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Grid Grid.Row="1">
+        <Border Margin="20"
+                Background="Pink"/>
+      </Grid>
+    </Grid>
+    
+    <ContentControl Grid.Row="1"
+                    MaxHeight="400"
                     Content="{Binding SearchViewModel}"
-                    VerticalAlignment="Top"
                     Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
 
-    <Grid Grid.Row="1">
+    <Grid Grid.Row="2">
 
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
@@ -146,30 +170,6 @@
                 ItemsSource="{Binding Encodings}"
                 SelectedItem="{Binding SelectedEncoding}"/>
 
-    </Grid>
-
-    <Grid Grid.Row="2"
-          Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-      <Grid Grid.Column="1">
-        <Border Margin="20"
-                Background="Pink"/>
-      </Grid>
-    </Grid>
-
-    <Grid Grid.Row="2"
-          Visibility="{Binding ElementName=ShowSelectedMessageHorizontalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="*"/>
-      </Grid.RowDefinitions>
-      <Grid Grid.Row="1">
-        <Border Margin="20"
-                Background="Pink"/>
-      </Grid>
     </Grid>
 
   </Grid>
