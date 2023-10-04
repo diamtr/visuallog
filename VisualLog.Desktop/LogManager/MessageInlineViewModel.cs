@@ -17,6 +17,19 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
+    public bool CopyEnabled
+    {
+      get
+      {
+        return this.copyEnabled;
+      }
+      set
+      {
+        this.copyEnabled = value;
+        this.OnPropertyChanged();
+      }
+    }
+
     public Message Message
     {
       get { return this.message; }
@@ -24,6 +37,7 @@ namespace VisualLog.Desktop.LogManager
 
     private Message message;
     private bool onlyRaw;
+    private bool copyEnabled;
 
     public MessageInlineViewModel(Message message)
     {
