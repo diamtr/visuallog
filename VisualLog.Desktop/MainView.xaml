@@ -7,7 +7,7 @@
         xmlns:fmtmgr="clr-namespace:VisualLog.Desktop.FormatManager"
         xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="VisualLog" Height="450" Width="800"
         WindowState="Maximized"
         Loaded="Window_Loaded">
   
@@ -32,21 +32,21 @@
   </Window.Resources>
   
   <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="100" />
-      <ColumnDefinition Width="*"/>
-    </Grid.ColumnDefinitions>
-    <Border Grid.Column="0">
-      <StackPanel Orientation="Vertical">
-        <Button Content="Logs"
-                Command="{Binding ShowLogManagerCommand}"
-                Style="{StaticResource LeftMenuButton}"/>
-        <Button Content="Formats"
-                Command="{Binding ShowFormatManagerCommand}"
-                Style="{StaticResource LeftMenuButton}"/>
-      </StackPanel>
-    </Border>
-    <Border Grid.Column="1">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <Menu Grid.Row="0">
+      <MenuItem Header="Logs">
+        <MenuItem Header="Open" Command="{Binding LogManagerViewModel.OpenLogsCommand}"/>
+        <Separator/>
+        <MenuItem Header="Dashboard" Command="{Binding ShowLogManagerCommand}"/>
+      </MenuItem>
+      <MenuItem Header="Formats" Command="{Binding ShowFormatManagerCommand}"/>
+    </Menu>
+    
+    <Border Grid.Row="1">
       <ContentControl Content="{Binding ActiveViewModel}"/>
     </Border>
   </Grid>

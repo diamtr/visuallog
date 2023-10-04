@@ -11,12 +11,17 @@
 
   <UserControl.Resources>
     <ResourceDictionary>
+        
       <root:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
 
       <DataTemplate DataType="{x:Type logmgr:MessageInlineViewModel}">
         <logmgr:MessageInlineView />
       </DataTemplate>
 
+      <DataTemplate DataType="{x:Type logmgr:SearchViewModel}">
+        <logmgr:SearchView/>
+      </DataTemplate>
+      
       <ControlTemplate TargetType="{x:Type ScrollViewer}" x:Key="AutoScrollViewerControlTemplate">
         <Border BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="{TemplateBinding BorderThickness}"
@@ -88,15 +93,55 @@
       
     </ResourceDictionary>
   </UserControl.Resources>
+
+  <UserControl.InputBindings>
+    <KeyBinding Gesture="Ctrl+F" Command="{Binding ShowSearchPanelCommand}"/>
+  </UserControl.InputBindings>
   
   <Grid>
 
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
-    <Grid Grid.Row="0">
+    <ListView Grid.Row="0"
+              x:Name="MessagesListView"
+              Template="{StaticResource LogMessagesListViewControlTemplate}"
+              ItemsSource="{Binding LogMessages}"
+              SelectionMode="Extended"/>
+
+    <Grid Grid.Row="0"
+          Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid Grid.Column="1">
+        <Border Margin="20"
+                Background="Pink"/>
+      </Grid>
+    </Grid>
+
+    <Grid Grid.Row="0"
+          Visibility="{Binding ElementName=ShowSelectedMessageHorizontalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Grid Grid.Row="1">
+        <Border Margin="20"
+                Background="Pink"/>
+      </Grid>
+    </Grid>
+    
+    <ContentControl Grid.Row="1"
+                    MaxHeight="400"
+                    Content="{Binding SearchViewModel}"
+                    Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
+
+    <Grid Grid.Row="2">
 
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
@@ -126,36 +171,7 @@
                 SelectedItem="{Binding SelectedEncoding}"/>
 
     </Grid>
-    
-    <ListView x:Name="MessagesListView"
-              Grid.Row="1"
-              Template="{StaticResource LogMessagesListViewControlTemplate}"
-              ItemsSource="{Binding LogMessages}"
-              SelectionMode="Extended"/>
-
-    <Grid Grid.Row="1"
-          Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-      <Grid Grid.Column="1">
-        <Border Margin="20"
-                Background="Pink"/>
-      </Grid>
-    </Grid>
-
-    <Grid Grid.Row="1"
-          Visibility="{Binding ElementName=ShowSelectedMessageHorizontalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="*"/>
-      </Grid.RowDefinitions>
-      <Grid Grid.Row="1">
-        <Border Margin="20"
-                Background="Pink"/>
-      </Grid>
-    </Grid>
 
   </Grid>
+  
 </UserControl>

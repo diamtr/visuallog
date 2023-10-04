@@ -40,12 +40,18 @@ namespace VisualLog.Desktop.LogManager
     private void PART_AutoSrollToBottomButton_Checked(object sender, RoutedEventArgs e)
     {
       this.ScrollToBottom();
-      ((INotifyCollectionChanged)this.MessagesListView.Items.SourceCollection).CollectionChanged += this.MessagesListView_SourceUpdated;
+      var sourceCollection = (INotifyCollectionChanged)this.MessagesListView.Items.SourceCollection;
+      if (sourceCollection == null)
+        return;
+      sourceCollection.CollectionChanged += this.MessagesListView_SourceUpdated;
     }
 
     private void PART_AutoSrollToBottomButton_Unchecked(object sender, RoutedEventArgs e)
     {
-      ((INotifyCollectionChanged)this.MessagesListView.Items.SourceCollection).CollectionChanged -= this.MessagesListView_SourceUpdated;
+      var sourceCollection = (INotifyCollectionChanged)this.MessagesListView.Items.SourceCollection;
+      if (sourceCollection == null)
+        return;
+      sourceCollection.CollectionChanged -= this.MessagesListView_SourceUpdated;
     }
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)

@@ -13,7 +13,7 @@ namespace VisualLog.Desktop.Tests
       var lmvm = new LogManagerViewModel();
 
       Assert.IsTrue(lmvm.OpenLogsCommand.CanExecute(null));
-      Assert.DoesNotThrow(() => { lmvm.OpenLogsCommand.Execute(null); });
+      Assert.DoesNotThrow(() => { lmvm.OpenLogsCommand.Execute("doc\\simpletest.log"); });
     }
 
     [Test]
