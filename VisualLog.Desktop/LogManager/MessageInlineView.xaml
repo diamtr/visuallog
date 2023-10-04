@@ -5,14 +5,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:root="clr-namespace:VisualLog.Desktop"
              mc:Ignorable="d" 
-             d:DesignHeight="75" d:DesignWidth="800">
+             d:DesignHeight="75" d:DesignWidth="800"
+             LostKeyboardFocus="Message_LostFocus">
   <UserControl.Resources>
     <ResourceDictionary>
       <root:VisibilityBoolConverter x:Key="VisibilityBoolConverter" />
+      <root:VisibilityBoolConverter x:Key="VisibilityBoolConverterReverse" Reverse="True" />
     </ResourceDictionary>
   </UserControl.Resources>
   <Grid>
-    <TextBlock Text="{Binding Message.RawValue}"
-               Visibility="{Binding OnlyRaw, Converter={StaticResource VisibilityBoolConverter}}" />
+    <ContentControl MouseDoubleClick="Message_MouseDoubleClick">
+      <TextBlock Text="{Binding Message.RawValue}"
+                 Visibility="{Binding CopyEnabled, Converter={StaticResource VisibilityBoolConverterReverse}}"/>
+    </ContentControl>
+    <TextBox x:Name="MessageTextBox"
+             Text="{Binding Message.RawValue}"
+             BorderThickness="0"
+             Visibility="{Binding CopyEnabled, Converter={StaticResource VisibilityBoolConverter}}"
+             />
   </Grid>
 </UserControl>

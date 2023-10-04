@@ -24,5 +24,21 @@ namespace VisualLog.Desktop.LogManager
     {
       InitializeComponent();
     }
+
+    private void Message_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      var dataContext = (MessageInlineViewModel)this.DataContext;
+      if (dataContext == null)
+        return;
+      dataContext.CopyEnabled = true;
+    }
+
+    private void Message_LostFocus(object sender, RoutedEventArgs e)
+    {
+      var dataContext = (MessageInlineViewModel)this.DataContext;
+      if (dataContext == null)
+        return;
+      dataContext.CopyEnabled = false;
+    }
   }
 }
