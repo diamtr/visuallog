@@ -57,6 +57,9 @@ namespace VisualLog.Desktop.LogManager
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
       this.ScrollToBottom();
+      var logViewModel = this.DataContext as LogViewModel;
+      if (logViewModel != null)
+        logViewModel.ShowLineRequested += this.ShowLine;
     }
 
     private void ScrollToBottom()
@@ -79,5 +82,31 @@ namespace VisualLog.Desktop.LogManager
       if (toggleButton.IsChecked == true)
         scrollViewer.ScrollToBottom();
     }
+
+    private void ShowLine(double position)
+    {
+      if (position < 0)
+        return;
+
+      if (VisualTreeHelper.GetChildrenCount(this.MessagesListView) <= 0)
+        return;
+      var border = (Border)VisualTreeHelper.GetChild(this.MessagesListView, 0);
+      if (VisualTreeHelper.GetChildrenCount(border) <= 0)
+        return;
+      var scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
+      if (VisualTreeHelper.GetChildrenCount(scrollViewer) <= 0)
+        return;
+      var scrollViewerBorder = (Border)VisualTreeHelper.GetChild(scrollViewer, 0);
+      if (VisualTreeHelper.GetChildrenCount(scrollViewerBorder) <= 0)
+        return;
+      var grid = (Grid)VisualTreeHelper.GetChild(scrollViewerBorder, 0);
+      if (VisualTreeHelper.GetChildrenCount(grid) <= 0)
+        return;
+      var toggleButton = (ToggleButton)VisualTreeHelper.GetChild(grid, 3);
+      if (toggleButton.IsChecked == true)
+        scrollViewer.ScrollToVerticalOffset(position);
+    }
+
+
   }
 }

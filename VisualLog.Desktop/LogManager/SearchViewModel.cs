@@ -45,6 +45,11 @@ namespace VisualLog.Desktop.LogManager
         this.SearchEntries.Add(new SearchEntryViewModel(searchEntry));
     }
 
+    public void ShowSerchEntryLine(SearchEntryViewModel searchEntryViewModel)
+    {
+      this.logViewModel.ShowLogLine(searchEntryViewModel);
+    }
+
     private void InitCommands()
     {
       this.HideSearchPanelCommand = new Command(

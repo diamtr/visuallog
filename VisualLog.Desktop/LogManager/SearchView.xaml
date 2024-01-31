@@ -74,7 +74,13 @@
         </Grid>
         <Grid Grid.Row="2">
           <ListView ItemsSource="{Binding SearchEntries}"
-                    MinHeight="50"/>
+                    MinHeight="50">
+            <ListView.Resources>
+              <Style TargetType="{x:Type ListViewItem}">
+                <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+              </Style>
+            </ListView.Resources>
+          </ListView>
         </Grid>
         
       </Grid>

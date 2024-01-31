@@ -14,7 +14,21 @@ namespace VisualLog.Desktop.LogManager
     public Command ShowSearchPanelCommand { get; private set; }
     public Command CloseCommand { get; private set; }
     public event Action<LogViewModel> CloseRequested;
+    public event Action<double> ShowLineRequested;
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
+    public MessageInlineViewModel SelectedLogMessage
+    { 
+      get
+      {
+        return this.selectedLogMessage;
+      }
+      set
+      {
+        this.selectedLogMessage = value;
+        this.OnPropertyChanged();
+      }
+    }
+    private MessageInlineViewModel selectedLogMessage;
     public string DisplayName
     {
       get
@@ -145,6 +159,14 @@ namespace VisualLog.Desktop.LogManager
       catch
       {
       }
+    }
+
+    public void ShowLogLine(SearchEntryViewModel searchEntryViewModel)
+    {
+      var lineNumber = searchEntryViewModel.SearchEntry.LineNumber - 1;
+      if (this.ShowLineRequested != null)
+        this.ShowLineRequested.Invoke(lineNumber > 10 ? lineNumber - 10 : 0);
+      this.SelectedLogMessage = this.LogMessages[lineNumber];
     }
 
     public void InitEncodings()

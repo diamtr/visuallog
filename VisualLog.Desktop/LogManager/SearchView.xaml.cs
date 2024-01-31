@@ -24,5 +24,19 @@ namespace VisualLog.Desktop.LogManager
     {
       InitializeComponent();
     }
+
+    private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      var listViewItem = sender as ListViewItem;
+      if (listViewItem == null)
+        return;
+      var searchEntryViewModel = listViewItem.DataContext as SearchEntryViewModel;
+      if (searchEntryViewModel == null)
+        return;
+      var searchViewModel = this.DataContext as SearchViewModel;
+      if (searchViewModel == null)
+        return;
+      searchViewModel.ShowSerchEntryLine(searchEntryViewModel);
+    }
   }
 }

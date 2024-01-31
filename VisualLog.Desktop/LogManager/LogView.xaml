@@ -110,6 +110,7 @@
               x:Name="MessagesListView"
               Template="{StaticResource LogMessagesListViewControlTemplate}"
               ItemsSource="{Binding LogMessages}"
+              SelectedItem="{Binding SelectedLogMessage}"
               SelectionMode="Extended"/>
 
     <Grid Grid.Row="0"
@@ -137,7 +138,7 @@
     </Grid>
     
     <ContentControl Grid.Row="1"
-                    MaxHeight="400"
+                    MaxHeight="600"
                     Content="{Binding SearchViewModel}"
                     Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
 
