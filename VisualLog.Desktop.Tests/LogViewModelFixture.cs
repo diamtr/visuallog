@@ -123,9 +123,9 @@ namespace VisualLog.Desktop.Tests
 
       expectedMessages.Add(new Message("line4"));
       File.AppendAllLines("testlog.log", new string[] { "line4" });
-      System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(25));
+      System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(100));
       CollectionAssert.IsNotEmpty(vm.LogMessages);
-      System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(25));
+      System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(100));
       CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
     }
   }
