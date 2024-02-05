@@ -119,20 +119,14 @@ namespace VisualLog.Desktop.LogManager
           !File.Exists(path))
         return;
 
+      this.LogMessages.Clear();
       this.logPath = path;
       var encoding = Encoding.Default;
       if (!string.IsNullOrWhiteSpace(this.SelectedEncoding))
         encoding = Encoding.GetEncoding(int.Parse(this.SelectedEncoding.Split(' ')[0]));
       this.Log = new Log(this.logPath, encoding);
+      this.Log.CatchNewMessage += this.OnNewLogMessageCatched;
       this.Log.Read();
-      this.LogMessages.Clear();
-      foreach (var message in this.Log.Messages)
-        this.LogMessages.Add(new MessageInlineViewModel(message));
-      if (this.State.FollowTail)
-      {
-        this.Log.CatchNewMessage += this.OnNewLogMessageCatched;
-        this.Log.StartFollowTail();
-      }
     }
 
     public void FollowTail()
@@ -140,8 +134,6 @@ namespace VisualLog.Desktop.LogManager
       this.State.FollowTail = true;
       if (this.Log == null)
         return;
-      this.Log.CatchNewMessage += this.OnNewLogMessageCatched;
-      this.Log.StartFollowTail();
     }
 
     public void OnNewLogMessageCatched(Message message)

@@ -13,6 +13,7 @@ namespace VisualLog.Core
     public Encoding Encoding { get; private set; }
     public Format Format { get; set; }
     public bool ReadingInProcess { get; set; }
+    public LogReader LogReader { get; private set; }
 
     public event Action<Message> CatchNewMessage
     {
@@ -33,19 +34,17 @@ namespace VisualLog.Core
 
     #region ctors
 
-    public Log()
+    public Log(string path)
     {
       this.Messages = new List<Message>();
-    }
-
-    public Log(string path) : this()
-    {
-      this.sourceFilePath = path;
+      this.sourceFilePath = path; // TODO: maybe remove this.sourceFilePath
+      this.LogReader = new LogReader(path);
     }
 
     public Log(string path, Encoding encoding) : this(path)
     {
-      this.Encoding = encoding;
+      this.Encoding = encoding; // TODO: maybe remove this.Encoding
+      this.LogReader.SetEncoding(encoding);
     }
 
     #endregion
@@ -54,62 +53,16 @@ namespace VisualLog.Core
 
     public void Read()
     {
-      this.ReadingInProcess = true;
-      var lines = new List<string>();
-      if (this.Encoding != null)
-        lines = File.ReadAllLines(this.sourceFilePath, this.Encoding).ToList();
-      else
-        lines = File.ReadAllLines(this.sourceFilePath).ToList();
-      foreach (var line in lines)
-        this.Messages.Add(new Message(line));
-      this.ReadingInProcess = false;
+      this.LogReader.LineReaded += this.NewLineReaded;
+      this.LogReader.StartReading();
     }
 
-    public void StartFollowTail()
+    public void NewLineReaded(string s)
     {
-      var fileInfo = new FileInfo(this.sourceFilePath);
-      this.sourceFileWatcher = new FileSystemWatcher(fileInfo.DirectoryName);
-      this.sourceFileWatcher.NotifyFilter = NotifyFilters.LastWrite;
-      this.sourceFileWatcher.Filter = Path.GetFileName(fileInfo.Name);
-      this.sourceFileWatcher.Changed += this.ReadLogUpdates;
-      this.sourceFileWatcher.EnableRaisingEvents = true;
-    }
-
-    public void ReadLogUpdates(object sender, FileSystemEventArgs e)
-    {
-      if (e.ChangeType != WatcherChangeTypes.Changed)
-        return;
-
-      if (this.ReadingInProcess)
-        return;
-
-      this.ReadingInProcess = true;
-      using (var fileStream = new FileStream(this.sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-      using (var streamReader = new StreamReader(fileStream, this.Encoding))
-      {
-        var linesCount = 0;
-        while (streamReader.Peek() >= 0)
-        {
-          var line = streamReader.ReadLine();
-          if (line == null)
-            break;
-          linesCount++;
-          if (linesCount <= this.Messages.Count)
-            continue;
-          try
-          {
-            var newMessage = new Message(line);
-            this.Messages.Add(newMessage);
-            if (this.catchNewMessage != null)
-              this.catchNewMessage.Invoke(newMessage);
-          }
-          catch
-          {
-            continue;
-          }
-        }
-      }
-      this.ReadingInProcess = false;
+      var message = new Message(s);
+      this.Messages.Add(message);
+      if (this.catchNewMessage != null)
+        this.catchNewMessage.Invoke(message);
     }
 
     #endregion
