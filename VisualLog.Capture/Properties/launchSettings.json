@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VisualLog.Capture": {
+      "commandName": "Project",
+      "commandLineArgs": "merge -p \"D:\\\\!!! Uralkaly\\\\07.02\\\\BER-DRX1.WebServer.2024-02-07.log\" -p \"D:\\\\!!! Uralkaly\\\\07.02\\\\BER-DRX2.WebServer.2024-02-07.log\" -d \"composite.log\" -f 2024.02.07T10:00 -t 2024.02.07T12:00"
+    }
+  }
+}

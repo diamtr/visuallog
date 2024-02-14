@@ -45,7 +45,7 @@ namespace VisualLog.Core
         message.TryParse();
     }
 
-    public IEnumerable<JMessage> GetBetween(DateTime from, DateTime to)
+    public IEnumerable<JMessage> GetBetween(DateTime? from, DateTime? to)
     {
       return this.Messages.Where(x => x.MessageDateTimeBetween(from, to));
     }

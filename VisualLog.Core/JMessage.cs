@@ -41,11 +41,12 @@ namespace VisualLog.Core
       return this.Parsed;
     }
 
-    public bool MessageDateTimeBetween(DateTime from, DateTime to)
+    public bool MessageDateTimeBetween(DateTime? from, DateTime? to)
     {
       if (!this.Parsed || !this.DateTime.HasValue)
         return false;
-      return this.DateTime.Value.DateTime >= from && this.DateTime.Value.DateTime <= to;
+      return (!from.HasValue || this.DateTime.Value.DateTime >= from) &&
+             (!to.HasValue || this.DateTime.Value.DateTime <= to);
     }
 
     public void AddLogNamePropertyFirst(string logName)
