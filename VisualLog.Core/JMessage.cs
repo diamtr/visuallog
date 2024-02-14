@@ -9,6 +9,7 @@ namespace VisualLog.Core
   {
     public JObject JsonObject { get; set; }
     public DateTimeOffset? DateTime { get; set; }
+    public string Trace { get; set; }
     public string RawValue { get; set; }
     public bool Parsed { get; private set; }
 
@@ -23,15 +24,9 @@ namespace VisualLog.Core
       {
         var settings = new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None };
         this.JsonObject = JsonConvert.DeserializeObject<JObject>(RawValue, settings);
+        this.FillDateTime();
+        this.FillTrace();
         this.Parsed = true;
-        var tokenName = "t";
-        var token = this.JsonObject.SelectToken(tokenName, false);
-        if (token != null)
-        {
-          DateTimeOffset dt;
-          if (DateTimeOffset.TryParseExact(token.Value<string>(), "yyyy-MM-dd HH:mm:ss.fffzzz", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
-            this.DateTime = dt;
-        }
       }
       catch
       {
@@ -39,6 +34,26 @@ namespace VisualLog.Core
       }
 
       return this.Parsed;
+    }
+
+    public void FillDateTime()
+    {
+      var timeTokenName = "t";
+      var token = this.JsonObject.SelectToken(timeTokenName, false);
+      if (token != null)
+      {
+        DateTimeOffset dt;
+        if (DateTimeOffset.TryParseExact(token.Value<string>(), "yyyy-MM-dd HH:mm:ss.fffzzz", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
+          this.DateTime = dt;
+      }
+    }
+
+    public void FillTrace()
+    {
+      var timeTokenName = "tr";
+      var token = this.JsonObject.SelectToken(timeTokenName, false);
+      if (token != null)
+        this.Trace = token.Value<string>();
     }
 
     public bool MessageDateTimeBetween(DateTime? from, DateTime? to)

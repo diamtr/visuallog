@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -48,6 +47,11 @@ namespace VisualLog.Core
     public IEnumerable<JMessage> GetBetween(DateTime? from, DateTime? to)
     {
       return this.Messages.Where(x => x.MessageDateTimeBetween(from, to));
+    }
+
+    public IEnumerable<JMessage> GetByTrace(string[] trace)
+    {
+      return this.Messages.Where(x => trace.Contains(x.Trace));
     }
 
     public void OrderMessagesByDateTime()
