@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,6 +45,11 @@ namespace VisualLog.Core
         message.TryParse();
     }
 
+    public void Save()
+    {
+      File.WriteAllLines(this.SourceFilePath, this.Messages.Select(x => JsonConvert.SerializeObject(x.JsonObject)));
+    }
+
     public IEnumerable<JMessage> GetBetween(DateTime? from, DateTime? to)
     {
       return this.Messages.Where(x => x.MessageDateTimeBetween(from, to));
@@ -57,6 +63,18 @@ namespace VisualLog.Core
     public void OrderMessagesByDateTime()
     {
       this.Messages = this.Messages.OrderBy(x => x.DateTime).ToList();
+    }
+
+    public void CalculateTimeDelta()
+    {
+      JMessage previousMessage = null;
+      foreach (var message in this.Messages)
+      {
+        message.AddTimeDeltaPropertyFirst();
+        if (previousMessage != null)
+          message.CalculateTimeDeltaFrom(previousMessage);
+        previousMessage = message;
+      }
     }
   }
 }

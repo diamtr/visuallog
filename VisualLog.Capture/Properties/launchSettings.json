@@ -1,8 +1,1 @@
-{
-  "profiles": {
-    "VisualLog.Capture": {
-      "commandName": "Project",
-      "commandLineArgs": "search -p \"D:\\\\!!! Uralkaly\\\\10-12(v1)\" -d \"D:\\\\!!! Uralkaly\\\\10-12(v1)\\\\e54d531f-e9e572.log\" -t \"e54d531f-e9e572\""
-    }
-  }
-}
+{}

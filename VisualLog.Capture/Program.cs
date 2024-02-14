@@ -16,6 +16,7 @@ namespace VisualLog.Capture
         var rootCommand = new RootCommand();
         rootCommand.Add(MergeLogsCommand.GetCommand());
         rootCommand.Add(SearchCommand.GetCommand());
+        rootCommand.Add(TimeDeltaCommand.GetCommand());
         exitCode = rootCommand.Invoke(args);
       }
       catch (Exception ex)

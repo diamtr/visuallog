@@ -30,10 +30,8 @@ namespace VisualLog.Capture
 
     public int SearchCommandHandler(string path, string destination, string[] trace)
     {
-      log.Debug($"Call SearchCommandHandler. Path: {path} Trace {string.Join(", ", trace)}");
-
+      log.Debug($"Call SearchCommandHandler. Path {path} Trace {string.Join(", ", trace)}");
       var fileInfo = new FileInfo(path);
-
       if (!new FileInfo(path).Exists && !new DirectoryInfo(path).Exists)
       {
         log.Error($"Does not exist. {path}");
@@ -51,7 +49,7 @@ namespace VisualLog.Capture
       {
         var result = new JLog();
         var jlog = new JLog(filePath);
-        log.Debug($"Reading: {jlog.SourceFilePath}");
+        log.Debug($"Reading {jlog.SourceFilePath}");
         jlog.Read();
         log.Debug($"Parsing {jlog.SourceFilePath}");
         jlog.Parse();
@@ -73,7 +71,7 @@ namespace VisualLog.Capture
           pathTokens[pathTokens.Length - 2] = secondLastToken;
           destination = string.Join('.', pathTokens);
         }
-        log.Debug($"Writing: {destination}");
+        log.Debug($"Writing {destination}");
         File.WriteAllLines(destination, result.Messages.Select(x => JsonConvert.SerializeObject(x.JsonObject)));
 
         foundInFiles++;

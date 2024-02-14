@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace VisualLog.Core
 {
@@ -70,6 +71,26 @@ namespace VisualLog.Core
         return;
 
       this.JsonObject.AddFirst(new JProperty("logName", logName));
+    }
+
+    public void AddTimeDeltaPropertyFirst()
+    {
+      if (this.JsonObject.ContainsKey("td"))
+        return;
+
+      this.JsonObject.AddFirst(new JProperty("td", 0));
+    }
+
+    public void CalculateTimeDeltaFrom(JMessage message)
+    {
+      var timedelta = this.DateTime - message.DateTime;
+      var token = this.JsonObject.SelectToken("td", false);
+      if (token != null && timedelta.HasValue)
+      {
+        var prop = token.Parent as JProperty;
+        if (prop != null)
+          prop.Value = (int)timedelta.Value.TotalMilliseconds;
+      }
     }
   }
 }
