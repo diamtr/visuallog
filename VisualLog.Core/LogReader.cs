@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace VisualLog.Core
 {
@@ -44,8 +45,8 @@ namespace VisualLog.Core
       this.ReadedBytes = 0;
       try
       {
-        this.SubscribeUpdates();
         this.ReadFromOffset(0);
+        this.SubscribeUpdates();
       }
       catch (Exception ex)
       {
@@ -60,19 +61,19 @@ namespace VisualLog.Core
     public void SubscribeUpdates()
     {
       var fileInfo = new FileInfo(this.Path);
-      this.fileWatcher = new FileSystemWatcher(fileInfo.DirectoryName);
-      this.fileWatcher.NotifyFilter = NotifyFilters.LastWrite;
-      this.fileWatcher.Filter = System.IO.Path.GetFileName(fileInfo.Name);
-      this.fileWatcher.Changed += this.ReadUpdates;
-      this.fileWatcher.EnableRaisingEvents = true;
+      Task.Run(() =>
+      {
+        using (var fileWatcher = new FileWatcher(fileInfo))
+        {
+          fileWatcher.FileSizeChanged += this.ReadUpdates;
+          fileWatcher.StartWatch();
+        }
+      });
     }
 
-    public void ReadUpdates(object sender, FileSystemEventArgs e)
+    public void ReadUpdates()
     {
       if (this.ReadingInProcess)
-        return;
-
-      if (e.ChangeType != WatcherChangeTypes.Changed)
         return;
 
       this.ReadingInProcess = true;
@@ -99,7 +100,7 @@ namespace VisualLog.Core
         while (streamReader.Peek() >= 0)
         {
           var line = streamReader.ReadLine();
-          if (line == null)
+          if (string.IsNullOrEmpty(line))
             continue;
           if (this.lineReaded != null)
             this.lineReaded.Invoke(line);

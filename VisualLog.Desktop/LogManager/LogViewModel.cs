@@ -120,6 +120,11 @@ namespace VisualLog.Desktop.LogManager
         return;
 
       this.LogMessages.Clear();
+      if (this.Log != null)
+      {
+        this.Log.CatchNewMessage -= this.OnNewLogMessageCatched;
+        this.Log = null;
+      }
       this.logPath = path;
       var encoding = Encoding.Default;
       if (!string.IsNullOrWhiteSpace(this.SelectedEncoding))
