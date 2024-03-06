@@ -101,19 +101,28 @@
   <Grid>
 
     <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
-    <ListView Grid.Row="0"
+    <TextBox Grid.Row="0"
+             Text="{Binding LogPath}"
+             IsReadOnly="True"
+             BorderBrush="Transparent"
+             BorderThickness="0"
+             Margin="0, 5, 0, 5"/>
+
+    <ListView Grid.Row="1"
               x:Name="MessagesListView"
               Template="{StaticResource LogMessagesListViewControlTemplate}"
               ItemsSource="{Binding LogMessages}"
               SelectedItem="{Binding SelectedLogMessage}"
-              SelectionMode="Extended"/>
+              SelectionMode="Extended"
+              BorderThickness="0, 1, 0, 0"/>
 
-    <Grid Grid.Row="0"
+    <Grid Grid.Row="1"
           Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
@@ -125,7 +134,7 @@
       </Grid>
     </Grid>
 
-    <Grid Grid.Row="0"
+    <Grid Grid.Row="1"
           Visibility="{Binding ElementName=ShowSelectedMessageHorizontalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
       <Grid.RowDefinitions>
         <RowDefinition Height="*"/>
@@ -137,12 +146,12 @@
       </Grid>
     </Grid>
     
-    <ContentControl Grid.Row="1"
+    <ContentControl Grid.Row="2"
                     MaxHeight="600"
                     Content="{Binding SearchViewModel}"
                     Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
 
-    <Grid Grid.Row="2">
+    <Grid Grid.Row="3">
 
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
