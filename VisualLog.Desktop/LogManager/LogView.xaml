@@ -107,12 +107,26 @@
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
-    <TextBox Grid.Row="0"
+    <Grid Grid.Row="0"
+          Margin="20, 5, 10, 5">
+
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
+
+      <TextBox Grid.Column="0"
              Text="{Binding LogPath}"
              IsReadOnly="True"
              BorderBrush="Transparent"
-             BorderThickness="0"
-             Margin="0, 5, 0, 5"/>
+             BorderThickness="0"/>
+
+      <ComboBox Grid.Column="1"
+                ItemsSource="{Binding Encodings}"
+                SelectedItem="{Binding SelectedEncoding}"
+                BorderThickness="0"/>
+
+    </Grid>
 
     <ListView Grid.Row="1"
               x:Name="MessagesListView"
@@ -157,7 +171,6 @@
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
 
       <ComboBox Grid.Column="1"
@@ -175,10 +188,6 @@
                       Width="25"
                       IsChecked="{Binding State.ShowSelectedMessageHorizontal}"/>
       </StackPanel>
-
-      <ComboBox Grid.Column="3"
-                ItemsSource="{Binding Encodings}"
-                SelectedItem="{Binding SelectedEncoding}"/>
 
     </Grid>
 

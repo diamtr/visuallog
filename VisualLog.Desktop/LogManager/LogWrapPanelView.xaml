@@ -6,25 +6,29 @@
              xmlns:local="clr-namespace:VisualLog.Desktop.LogManager"
              mc:Ignorable="d" 
              d:DesignHeight="20" d:DesignWidth="85">
-  <Grid>
+  <Border BorderThickness="0, 0, 0, 1"
+          BorderBrush="Black">
+    <Grid>
 
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="Auto" />
-    </Grid.ColumnDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
 
-    <TextBlock Grid.Column="0"
+      <TextBlock Grid.Column="0"
                MinWidth="50"
                Text="{Binding DisplayName}"/>
-    <Button Grid.Column="1"
+      <Button Grid.Column="1"
             Margin="15,0,0,0"
             Width="16"
             Height="16"
             Command="{Binding CloseCommand}" >
-      <Path Data="M 1 1 L 9 9 M 1 9 L 9 1"
-            Stroke="Black"
-            StrokeThickness="2"/>
-    </Button>
+        <Path Data="M 1 1 L 9 9 M 1 9 L 9 1"
+              Stroke="Black"
+              StrokeThickness="2"
+              HorizontalAlignment="Center"/>
+      </Button>
 
-  </Grid>
+    </Grid>
+  </Border>
 </UserControl>
