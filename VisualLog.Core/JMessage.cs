@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -91,6 +92,15 @@ namespace VisualLog.Core
         if (prop != null)
           prop.Value = (int)timedelta.Value.TotalMilliseconds;
       }
+    }
+
+    public static List<JMessage> Distinct(IEnumerable<JMessage> sourceMessages)
+    {
+      var messages = new List<JMessage>();
+      foreach (var message in sourceMessages)
+        if (!messages.Any(x => x.RawValue == message.RawValue))
+          messages.Add(message);
+      return messages;
     }
   }
 }
