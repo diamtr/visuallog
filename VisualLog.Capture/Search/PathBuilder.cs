@@ -63,7 +63,10 @@ namespace VisualLog.Capture.Search
       }
 
       if (Path.IsPathRooted(this.output))
+      {
+        this.Output = this.output;
         return;
+      }
 
       if (!string.IsNullOrWhiteSpace(this.WorkingDirectory))
         this.Output = Path.Combine(this.WorkingDirectory, this.output);

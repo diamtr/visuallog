@@ -2,6 +2,7 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
+using System.Linq;
 using VisualLog.Capture.Search;
 
 namespace VisualLog.Capture
@@ -27,10 +28,13 @@ namespace VisualLog.Capture
         aliases: new[] { "--tr" },
         description: "Search by trace (Multiple arguments allowed)")
         { AllowMultipleArgumentsPerToken = true });
+      this.AddOption(new Option<string>(
+        aliases: new[] { "--datetime" },
+        description: "Search by DateTime"));
       this.Handler = CommandHandler.Create(this.SearchCommandHandler);
     }
 
-    public int SearchCommandHandler(string[] log, string[] dir, string output, string[] tr)
+    public int SearchCommandHandler(string[] log, string[] dir, string output, string[] tr, string datetime)
     {
       var pathBuilder = new PathBuilder();
       pathBuilder.WithWorkingDirectory(Environment.CurrentDirectory);
@@ -42,7 +46,11 @@ namespace VisualLog.Capture
       var searchEngine = new SearchEngine();
       searchEngine.PathBuilder = pathBuilder;
       searchEngine.StoreResultsStrategy = new SplitFilesMergeOptionsStoreResultsStrategy();
-      searchEngine.WithOption(new SearchByTracesOption(tr));
+      if (tr != null && tr.Any())
+        searchEngine.WithOption(new SearchByTracesOption(tr));
+      DateTime parsedDateTime;
+      if (DateTime.TryParse(datetime, out parsedDateTime))
+        searchEngine.WithOption(new SearchByDateTimeOption(parsedDateTime));
 
       searchEngine.Search();
       searchEngine.StoreSearchResults();
