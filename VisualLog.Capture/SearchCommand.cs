@@ -28,13 +28,16 @@ namespace VisualLog.Capture
         aliases: new[] { "--tr" },
         description: "Search by trace (Multiple arguments allowed)")
         { AllowMultipleArgumentsPerToken = true });
-      this.AddOption(new Option<string>(
-        aliases: new[] { "--datetime" },
+      this.AddOption(new Option<DateTime>(
+        aliases: new[] { "--t", "--datetime" },
         description: "Search by DateTime"));
+      this.AddOption(new Option<string>(
+        aliases: new[] { "--ti", "--timeinterval" },
+        description: $"Accordinate to --datetime. Search in time interval. Format: {SearchByDateTimeOption.TimeIntervalPattern}. Example: \"-2h\" means \"2 hours before \'--datetime\'\""));
       this.Handler = CommandHandler.Create(this.SearchCommandHandler);
     }
 
-    public int SearchCommandHandler(string[] log, string[] dir, string output, string[] tr, string datetime)
+    public int SearchCommandHandler(string[] log, string[] dir, string output, string[] tr, DateTime? datetime, string timeinterval)
     {
       var pathBuilder = new PathBuilder();
       pathBuilder.WithWorkingDirectory(Environment.CurrentDirectory);
@@ -48,9 +51,8 @@ namespace VisualLog.Capture
       searchEngine.StoreResultsStrategy = new SplitFilesMergeOptionsStoreResultsStrategy();
       if (tr != null && tr.Any())
         searchEngine.WithOption(new SearchByTracesOption(tr));
-      DateTime parsedDateTime;
-      if (DateTime.TryParse(datetime, out parsedDateTime))
-        searchEngine.WithOption(new SearchByDateTimeOption(parsedDateTime));
+      if (datetime.HasValue)
+        searchEngine.WithOption(new SearchByDateTimeOption(datetime.Value, timeinterval));
 
       searchEngine.Search();
       searchEngine.StoreSearchResults();

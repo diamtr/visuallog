@@ -12,6 +12,7 @@ namespace VisualLog.Capture.Search
 
     public void Store(PathBuilder pathBuilder, IEnumerable<SearchResult> searchResults)
     {
+      log.Info("[ Results ]");
       var fileGroups = searchResults.GroupBy(x => x.FilePath);
       foreach (var fileGroup in fileGroups)
       {
@@ -26,8 +27,10 @@ namespace VisualLog.Capture.Search
 
         var outFilePath = Path.Combine(pathBuilder.Output, $"{prefix}-{fileName}");
         File.WriteAllLines(outFilePath, messages.Select(x => x.RawValue));
-        log.Info($"Results: {outFilePath}");
+        log.Info($"{outFilePath}");
       }
+       if (!searchResults.SelectMany(x => x.Result).Where(x => !string.IsNullOrWhiteSpace(x.RawValue)).Any())
+        log.Info("Not found");
     }
   }
 }

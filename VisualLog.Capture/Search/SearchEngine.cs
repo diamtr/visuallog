@@ -28,13 +28,13 @@ namespace VisualLog.Capture.Search
     public void Search()
     {
       this.SearchResults.Clear();
-      log.Info($"Search options");
+      log.Info("[ Search options ]");
       foreach (var searchOption in this.SearchOptions)
-        log.Info($"- {searchOption}");
-      log.Info("Search in:");
+        log.Info($"{searchOption}");
+      log.Info("[ Search in ]");
       foreach (var filePath in this.PathBuilder.Files)
       {
-        log.Info($"- {filePath}");
+        log.Info($"{filePath}");
         this.SearchResults.AddRange(this.FileSearch(filePath));
       }
     }
