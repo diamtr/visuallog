@@ -7,6 +7,6 @@ namespace VisualLog.Capture.Search
   {
     public string FilePath { get; set; }
     public ISearchOption SearchOption { get; set; }
-    public IEnumerable<JMessage> Result { get; set; }
+    public IEnumerable<IMessage> Result { get; set; }
   }
 }

@@ -18,10 +18,10 @@ namespace VisualLog.Capture.Search
       {
         var fileName = Path.GetFileName(fileGroup.Key);
         var prefix = string.Join("-", fileGroup.GroupBy(x => x.SearchOption).Select(x => x.Key.FilePrefix));
-        var messages = new List<JMessage>();
+        var messages = new List<IMessage>();
         foreach (var groupItem in fileGroup)
           messages.AddRange(groupItem.Result);
-        messages = JMessage.Distinct(messages);
+        messages = MessageBase.Distinct(messages);
         if (!messages.Any())
           continue;
 

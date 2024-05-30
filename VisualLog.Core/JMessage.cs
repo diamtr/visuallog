@@ -7,18 +7,14 @@ using System.Linq;
 
 namespace VisualLog.Core
 {
-  public class JMessage
+  public class JMessage : MessageBase
   {
     public JObject JsonObject { get; set; }
     public DateTimeOffset? DateTime { get; set; }
     public string Trace { get; set; }
-    public string RawValue { get; set; }
     public bool Parsed { get; private set; }
 
-    public JMessage(string rawValue)
-    {
-      this.RawValue = rawValue;
-    }
+    public JMessage(string rawValue) : base(rawValue) { }
 
     public bool TryParse()
     {
@@ -92,15 +88,6 @@ namespace VisualLog.Core
         if (prop != null)
           prop.Value = (int)timedelta.Value.TotalMilliseconds;
       }
-    }
-
-    public static List<JMessage> Distinct(IEnumerable<JMessage> sourceMessages)
-    {
-      var messages = new List<JMessage>();
-      foreach (var message in sourceMessages)
-        if (!messages.Any(x => x.RawValue == message.RawValue))
-          messages.Add(message);
-      return messages;
     }
   }
 }

@@ -33,7 +33,7 @@ namespace VisualLog.Capture
         description: "Search by DateTime"));
       this.AddOption(new Option<string>(
         aliases: new[] { "--ti", "--timeinterval" },
-        description: $"Accordinate to --datetime. Search in time interval. Format: {SearchByDateTimeOption.TimeIntervalPattern}. Example: \"-2h\" means \"2 hours before \'--datetime\'\""));
+        description: $"Accordinate to \'--datetime\'. Search in time interval.{Environment.NewLine}Format: {SearchByDateTimeOption.TimeIntervalPattern}{Environment.NewLine}Example: \"-2h\" means \"2 hours before \'--datetime\'\""));
       this.Handler = CommandHandler.Create(this.SearchCommandHandler);
     }
 

@@ -10,42 +10,42 @@ namespace VisualLog.Capture
 {
   public class TimeDeltaCommand : Command
   {
-    internal static ILogger log = LogManager.GetCurrentClassLogger();
+    internal static ILogger logger = LogManager.GetCurrentClassLogger();
 
     public TimeDeltaCommand(string name, string description) : base(name, description)
     {
       this.AddOption(new Option<string>(
-        aliases: new[] { "--path", "-p" },
+        aliases: new[] { "--log" },
         description: "Log path"));
       this.Handler = CommandHandler.Create(this.TimeDeltaCommandHandler);
     }
 
-    public int TimeDeltaCommandHandler(string path)
+    public int TimeDeltaCommandHandler(string log)
     {
-      log.Debug($"Call TimeDeltaCommandHandler. Path {path}");
-      var fileInfo = new FileInfo(path);
-      if (!new FileInfo(path).Exists && !new DirectoryInfo(path).Exists)
+      logger.Debug($"Call TimeDeltaCommandHandler. Path {log}");
+      var fileInfo = new FileInfo(log);
+      if (!new FileInfo(log).Exists && !new DirectoryInfo(log).Exists)
       {
-        log.Error($"Does not exist. {path}");
+        logger.Error($"Does not exist. {log}");
         return -1;
       }
 
       var filePaths = new List<string>();
       if (!fileInfo.Attributes.HasFlag(FileAttributes.Directory))
-        filePaths.Add(path);
+        filePaths.Add(log);
       else
-        filePaths.AddRange(new DirectoryInfo(path).EnumerateFiles().Select(x => x.FullName));
+        filePaths.AddRange(new DirectoryInfo(log).EnumerateFiles().Select(x => x.FullName));
 
       foreach (var filePath in filePaths)
       {
         var jlog = new JLog(filePath);
-        log.Debug($"Reading {jlog.SourceFilePath}");
+        logger.Debug($"Reading {jlog.SourceFilePath}");
         jlog.Read();
-        log.Debug($"Parsing {jlog.SourceFilePath}");
+        logger.Debug($"Parsing {jlog.SourceFilePath}");
         jlog.Parse();
-        log.Debug($"CalculateTimeDelta {jlog.SourceFilePath}");
+        logger.Debug($"CalculateTimeDelta {jlog.SourceFilePath}");
         jlog.CalculateTimeDelta();
-        log.Debug($"Save {jlog.SourceFilePath}");
+        logger.Debug($"Save {jlog.SourceFilePath}");
         jlog.Save();
       }
 
