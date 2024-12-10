@@ -34,11 +34,7 @@ namespace VisualLog.Core
       if (disposing)
       {
         this.fileInfo = null;
-        if (this.timer != null)
-        {
-          this.timer.Stop();
-          this.timer.Dispose();
-        }
+        this.StopWatch();
       }
 
       this.disposed = true;

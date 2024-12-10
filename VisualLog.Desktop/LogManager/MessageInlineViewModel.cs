@@ -30,6 +30,19 @@ namespace VisualLog.Desktop.LogManager
       }
     }
 
+    public string StackTrace
+    {
+      get
+      {
+        return this.stackTrace;
+      }
+      set
+      {
+        this.stackTrace = value;
+        this.OnPropertyChanged();
+      }
+    }
+
     public Message Message
     {
       get { return this.message; }
@@ -38,11 +51,13 @@ namespace VisualLog.Desktop.LogManager
     private Message message;
     private bool onlyRaw;
     private bool copyEnabled;
+    private string stackTrace;
 
     public MessageInlineViewModel(Message message)
     {
       this.message = message;
       this.OnlyRaw = message.Parts == null || !message.Parts.Any();
+      this.StackTrace = message.Parts.ContainsKey("stack") ? message.Parts["stack"] : "stack not found";
     }
   }
 }

@@ -60,6 +60,7 @@ namespace VisualLog.Core
     public void NewLineReaded(string s)
     {
       var message = new Message(s);
+      message.FillParts();
       this.Messages.Add(message);
       if (this.catchNewMessage != null)
         this.catchNewMessage.Invoke(message);

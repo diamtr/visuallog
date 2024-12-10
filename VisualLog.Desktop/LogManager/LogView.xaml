@@ -144,7 +144,18 @@
       </Grid.ColumnDefinitions>
       <Grid Grid.Column="1">
         <Border Margin="20"
-                Background="Pink"/>
+                Padding="5,3,2,2"
+                Background="Pink">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="StackTrace" />
+            <TextBox Grid.Row="1" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True" FontFamily="Consolas"
+                     Text="{Binding SelectedLogMessage.StackTrace}"/>
+          </Grid>
+        </Border>
       </Grid>
     </Grid>
 
@@ -159,11 +170,12 @@
                 Background="Pink"/>
       </Grid>
     </Grid>
-    
-    <ContentControl Grid.Row="2"
-                    MaxHeight="600"
-                    Content="{Binding SearchViewModel}"
-                    Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
+
+    <Expander Grid.Row="2" IsExpanded="{Binding State.ShowSearchPanel}" Header="Search">
+      <ContentControl MaxHeight="600"
+                      Content="{Binding SearchViewModel}"
+                      Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
+    </Expander>
 
     <Grid Grid.Row="3">
 
