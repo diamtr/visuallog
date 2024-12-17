@@ -159,18 +159,6 @@
       </Grid>
     </Grid>
 
-    <Grid Grid.Row="1"
-          Visibility="{Binding ElementName=ShowSelectedMessageHorizontalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="*"/>
-      </Grid.RowDefinitions>
-      <Grid Grid.Row="1">
-        <Border Margin="20"
-                Background="Pink"/>
-      </Grid>
-    </Grid>
-
     <Expander Grid.Row="2" IsExpanded="{Binding State.ShowSearchPanel}" Header="Search">
       <ContentControl MaxHeight="600"
                       Content="{Binding SearchViewModel}"
@@ -195,10 +183,6 @@
                       Content="|"
                       Width="25"
                       IsChecked="{Binding State.ShowSelectedMessageVertical}"/>
-        <ToggleButton x:Name="ShowSelectedMessageHorizontalButton"
-                      Content="--"
-                      Width="25"
-                      IsChecked="{Binding State.ShowSelectedMessageHorizontal}"/>
       </StackPanel>
 
     </Grid>
