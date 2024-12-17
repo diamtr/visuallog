@@ -26,6 +26,15 @@ namespace VisualLog.Desktop.LogManager
     }
     private string stringToSearch;
     public ObservableCollection<SearchEntryViewModel> SearchEntries { get; set; }
+    public DateTime? LastSearchDateTime
+    {
+      get { return this.lastSearchDateTime; }
+      protected set {
+        this.lastSearchDateTime = value;
+        this.OnPropertyChanged();
+      }
+    }
+    private DateTime? lastSearchDateTime;
 
     private LogViewModel logViewModel;
 
@@ -49,6 +58,7 @@ namespace VisualLog.Desktop.LogManager
       var searchResults = this.logViewModel.Log.SearchString(this.StringToSearch);
       foreach (var searchEntry in searchResults.Entries)
         this.SearchEntries.Add(new SearchEntryViewModel(searchEntry));
+      this.LastSearchDateTime = DateTime.Now;
     }
 
     public void ShowSerchEntryLine(SearchEntryViewModel searchEntryViewModel)
