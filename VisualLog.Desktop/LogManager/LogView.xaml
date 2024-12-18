@@ -39,7 +39,7 @@
               <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <ScrollContentPresenter Grid.Column="0" Grid.ColumnSpan="2"
-                                    Grid.Row="0" Grid.RowSpan="2"
+                                    Grid.Row="0"
                                     KeyboardNavigation.DirectionalNavigation="Local"
                                     CanContentScroll="True"
                                     CanHorizontallyScroll="True"
