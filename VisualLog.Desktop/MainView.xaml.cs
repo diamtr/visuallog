@@ -27,11 +27,18 @@ namespace VisualLog.Desktop
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-      if (this.DataContext is MainViewModel)
-      {
-        var mvm = this.DataContext as MainViewModel;
-        mvm.OnWindowLoaded();
-      }
+      var mvm = this.DataContext as MainViewModel;
+      if (mvm == null)
+        return;
+      mvm.OnWindowLoaded();
+    }
+
+    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      var mvm = this.DataContext as MainViewModel;
+      if (mvm == null)
+        return;
+      mvm.OnWindowClosing();
     }
   }
 }
