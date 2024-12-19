@@ -16,13 +16,21 @@ using System.Windows.Shapes;
 namespace VisualLog.Desktop.Dashboard
 {
   /// <summary>
-  /// Interaction logic for Dashboard.xaml
+  /// Interaction logic for RecentLogsView.xaml
   /// </summary>
-  public partial class DashboardView : UserControl
+  public partial class RecentLogsView : UserControl
   {
-    public DashboardView()
+    public RecentLogsView()
     {
       InitializeComponent();
+    }
+
+    private void UserControl_Loaded(object sender, RoutedEventArgs e)
+    {
+      var rlvm = this.DataContext as RecentLogsViewModel;
+      if (rlvm == null)
+        return;
+      rlvm.FillAvailableRecentLogs();
     }
   }
 }

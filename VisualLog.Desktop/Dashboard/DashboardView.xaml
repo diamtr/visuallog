@@ -4,79 +4,45 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop.Dashboard"
-             xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             Loaded="UserControl_Loaded">
+             d:DesignHeight="450" d:DesignWidth="800">
 
   <UserControl.Resources>
-    <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
-      <local:OpenedLogView/>
+    <DataTemplate DataType="{x:Type local:MultipleLogSearchViewModel}">
+      <local:MultipleLogSearchView/>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type local:RecentLogInfo}">
-      <local:AvailableRecentLogView/>
+    <DataTemplate DataType="{x:Type local:OpenedLogsViewModel}">
+      <local:OpenedLogsView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type local:RecentLogsViewModel}">
+      <local:RecentLogsView/>
     </DataTemplate>
   </UserControl.Resources>
-
+  
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="60*"/>
       <ColumnDefinition Width="40*"/>
     </Grid.ColumnDefinitions>
+
+    <Grid Grid.Column="0">
+      <ContentControl Content="{Binding MultipleLogSearchViewModel}" />
+    </Grid>
+    
     <Grid Grid.Column="1">
       <Grid.RowDefinitions>
         <RowDefinition Height="40*" />
         <RowDefinition Height="60*" />
       </Grid.RowDefinitions>
+
       <Grid Grid.Row="0">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto"/>
-          <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Border Grid.Row="0"
-              BorderThickness="0,0,0,2"
-              BorderBrush="Black">
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Opened logs" FontSize="32" TextWrapping="WrapWithOverflow" />
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
-              <Button Content="Go to logs" Command="{Binding ShowOpenedLogsCommand}"/>
-            </StackPanel>
-          </Grid>
-        </Border>
-        <ListView Grid.Row="1"
-                ItemsSource="{Binding MainViewModel.LogManagerViewModel.Logs}"
-                BorderThickness="0"/>
+        <ContentControl Content="{Binding OpenedLogsViewModel}" />
       </Grid>
+
       <Grid Grid.Row="1">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto"/>
-          <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Border Grid.Row="0"
-              BorderThickness="0,0,0,2"
-              BorderBrush="Black">
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Available Recent" FontSize="32" TextWrapping="WrapWithOverflow" />
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
-              <Button Content="Open" Command="{Binding OpenSelectedAvailableRecentLogCommand}" />
-            </StackPanel>
-          </Grid>
-        </Border>
-        <ListView Grid.Row="1"
-                  ItemsSource="{Binding AvailableRecentLogs}"
-                  SelectedItem="{Binding SelectedAvailableRecentLog}"
-                  BorderThickness="0"/>
+        <ContentControl Content="{Binding RecentLogsViewModel}" />
       </Grid>
     </Grid>
 
-    <TextBlock Text="Dashboard" VerticalAlignment="Center" HorizontalAlignment="Center"/>
   </Grid>
 </UserControl>

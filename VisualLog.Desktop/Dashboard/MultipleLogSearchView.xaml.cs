@@ -15,14 +15,14 @@ using System.Windows.Shapes;
 
 namespace VisualLog.Desktop.Dashboard
 {
-  /// <summary>
-  /// Interaction logic for Dashboard.xaml
-  /// </summary>
-  public partial class DashboardView : UserControl
-  {
-    public DashboardView()
+    /// <summary>
+    /// Interaction logic for MultipleLogSearchView.xaml
+    /// </summary>
+    public partial class MultipleLogSearchView : UserControl
     {
-      InitializeComponent();
+        public MultipleLogSearchView()
+        {
+            InitializeComponent();
+        }
     }
-  }
 }
