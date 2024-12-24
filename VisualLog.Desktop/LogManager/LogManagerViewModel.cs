@@ -11,7 +11,7 @@ namespace VisualLog.Desktop.LogManager
     public Command OpenLogsCommand { get; private set; }
     public Command ShowSearchPanelCommand { get; private set; }
     public ObservableCollection<LogViewModel> Logs { get; set; }
-    private LogViewModel activeLog;
+    
     public LogViewModel ActiveLog
     { 
       get
@@ -24,7 +24,23 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
+    private LogViewModel activeLog;
 
+    public MainViewModel MainViewModel
+    {
+      get { return this.mainViewModel; }
+      protected set
+      {
+        this.mainViewModel = value;
+        this.OnPropertyChanged();
+      }
+    }
+    private MainViewModel mainViewModel;
+
+    public LogManagerViewModel(MainViewModel mainViewModel) : this()
+    {
+      this.MainViewModel = mainViewModel;
+    }
     public LogManagerViewModel()
     {
       this.Logs = new ObservableCollection<LogViewModel>();

@@ -38,22 +38,6 @@
   </Window.Resources>
   
   <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-
-    <Menu Grid.Row="0">
-      <MenuItem Header="Logs">
-        <MenuItem Header="Open" Command="{Binding LogManagerViewModel.OpenLogsCommand}"/>
-        <Separator/>
-        <MenuItem Header="Dashboard" Command="{Binding ShowDashboardCommand}"/>
-      </MenuItem>
-      <MenuItem Header="Formats" Command="{Binding ShowFormatManagerCommand}"/>
-    </Menu>
-    
-    <Border Grid.Row="1">
-      <ContentControl Content="{Binding ActiveViewModel}"/>
-    </Border>
+    <ContentControl Content="{Binding ActiveViewModel}"/>
   </Grid>
 </Window>

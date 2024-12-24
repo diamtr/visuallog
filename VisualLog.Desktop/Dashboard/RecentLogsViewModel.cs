@@ -22,16 +22,6 @@ namespace VisualLog.Desktop.Dashboard
     }
     private DashboardViewModel dashboardViewModel;
     public ObservableCollection<RecentLogInfo> AvailableRecentLogs { get; set; }
-    public RecentLogInfo? SelectedAvailableRecentLog
-    {
-      get { return this.selectedAvailableRecentLog; }
-      set
-      {
-        this.selectedAvailableRecentLog = value;
-        this.OnPropertyChanged();
-      }
-    }
-    private RecentLogInfo? selectedAvailableRecentLog;
 
     public RecentLogsViewModel(DashboardViewModel dashboardViewModel) : this()
     {
@@ -48,11 +38,14 @@ namespace VisualLog.Desktop.Dashboard
     {
       this.OpenSelectedAvailableRecentLogCommand = new Command(
         x => {
-          if (this.DashboardViewModel == null ||
-              this.DashboardViewModel.MainViewModel == null ||
-              !this.SelectedAvailableRecentLog.HasValue)
+          var collectionParameter = x as IEnumerable<object>;
+          if (collectionParameter == null)
             return;
-          this.DashboardViewModel.MainViewModel.LogManagerViewModel.OpenLogs(this.SelectedAvailableRecentLog.Value.Path);
+          var selectedLogs = collectionParameter.Cast<RecentLogInfo>();
+          if (this.DashboardViewModel == null ||
+              this.DashboardViewModel.MainViewModel == null)
+            return;
+          this.DashboardViewModel.MainViewModel.LogManagerViewModel.OpenLogs(selectedLogs.Select(x => x.Path).ToArray());
         },
         x => true
         );

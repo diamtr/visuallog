@@ -30,15 +30,18 @@
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Column="0" Text="Available Recent" FontSize="32" TextWrapping="WrapWithOverflow" />
         <StackPanel Grid.Column="1" Orientation="Horizontal">
-          <Button Content="Open" Command="{Binding OpenSelectedAvailableRecentLogCommand}" />
+          <Button Content="Open"
+                  Command="{Binding OpenSelectedAvailableRecentLogCommand}"
+                  CommandParameter="{Binding SelectedItems, ElementName=RecentLogsList}"/>
         </StackPanel>
       </Grid>
     </Border>
 
     <!-- LOGS -->
     <ListView Grid.Row="1"
+              x:Name="RecentLogsList"
               ItemsSource="{Binding AvailableRecentLogs}"
-              SelectedItem="{Binding SelectedAvailableRecentLog}"
+              SelectionMode="Extended"
               BorderThickness="0"/>
   </Grid>
 </UserControl>

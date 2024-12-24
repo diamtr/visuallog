@@ -5,7 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop.Dashboard"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" d:Background="Gray">
+  <UserControl.Resources>
+    <DataTemplate DataType="{x:Type local:SearchResultsViewModel}">
+      <local:SearchResultsView/>
+    </DataTemplate>
+  </UserControl.Resources>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
@@ -28,13 +33,21 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
-      <TextBox Grid.Row="0" Text="{Binding StringToSearch}"/>
-      <StackPanel Grid.Row="1" Orientation="Horizontal">
-        <Button Content="Search in opened logs" Command="{Binding SearchInOpenedLogsCommand}" />
+      <TextBox Grid.Row="0"
+               Margin="25, 15, 25, 10"
+               Text="{Binding StringToSearch}"
+               FontSize="18"/>
+      <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+        <Button MinWidth="100" Content="Search" Command="{Binding SearchInOpenedLogsCommand}"/>
       </StackPanel>
     </Grid>
     
     <!-- RESULTS -->
-    <TextBlock Grid.Row="2" Text="Search Results" VerticalAlignment="Center" HorizontalAlignment="Center" />
+    <ListView Grid.Row="2"
+              ItemsSource="{Binding SearchResults}"
+              HorizontalAlignment="Stretch"
+              HorizontalContentAlignment="Stretch"
+              BorderThickness="0"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
   </Grid>
 </UserControl>

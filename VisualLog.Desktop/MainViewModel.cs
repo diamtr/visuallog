@@ -23,7 +23,7 @@ namespace VisualLog.Desktop
     public MainViewModel()
     {
       this.DashboardViewModel = new DashboardViewModel(this);
-      this.LogManagerViewModel = new LogManagerViewModel();
+      this.LogManagerViewModel = new LogManagerViewModel(this);
       this.LogManagerViewModel.Logs.CollectionChanged += LogManagerViewModelLogsCollectionChanged;
       this.FormatManagerViewModel = new FormatManagerViewModel();
       this.InitCommands();

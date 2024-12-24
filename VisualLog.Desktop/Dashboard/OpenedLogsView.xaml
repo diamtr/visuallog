@@ -24,20 +24,13 @@
               BorderThickness="0,0,0,2"
               BorderBrush="Black">
       <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="0" Text="Opened logs" FontSize="32" TextWrapping="WrapWithOverflow" />
-        <StackPanel Grid.Column="1" Orientation="Horizontal">
-          <Button Content="Go to logs" Command="{Binding ShowOpenedLogsCommand}"/>
-        </StackPanel>
+        <TextBlock Text="Opened logs" FontSize="32" TextWrapping="WrapWithOverflow" />
       </Grid>
     </Border>
     
     <!-- LOGS -->
     <ListView Grid.Row="1"
-                ItemsSource="{Binding DashboardViewModel.MainViewModel.LogManagerViewModel.Logs}"
-                BorderThickness="0"/>
+              ItemsSource="{Binding DashboardViewModel.MainViewModel.LogManagerViewModel.Logs}"
+              BorderThickness="0"/>
   </Grid>
 </UserControl>

@@ -35,7 +35,15 @@ namespace VisualLog.Desktop.LogManager
       }
     }
     private DateTime? lastSearchDateTime;
-
+    public LogViewModel LogViewModel
+    {
+      get { return this.logViewModel; }
+      protected set
+      {
+        this.logViewModel = value;
+        this.OnPropertyChanged();
+      }
+    }
     private LogViewModel logViewModel;
 
     public SearchViewModel()
@@ -46,7 +54,7 @@ namespace VisualLog.Desktop.LogManager
 
     public SearchViewModel(LogViewModel logViewModel) : this()
     {
-      this.logViewModel = logViewModel;
+      this.LogViewModel = logViewModel;
     }
 
     public void Search()
@@ -55,7 +63,7 @@ namespace VisualLog.Desktop.LogManager
       if (string.IsNullOrEmpty(this.StringToSearch))
         return;
 
-      var searchResults = this.logViewModel.Log.SearchString(this.StringToSearch);
+      var searchResults = this.LogViewModel.Log.SearchString(this.StringToSearch);
       foreach (var searchEntry in searchResults.Entries)
         this.SearchEntries.Add(new SearchEntryViewModel(searchEntry));
       this.LastSearchDateTime = DateTime.Now;
@@ -63,7 +71,7 @@ namespace VisualLog.Desktop.LogManager
 
     public void ShowSerchEntryLine(SearchEntryViewModel searchEntryViewModel)
     {
-      this.logViewModel.ShowLogLine(searchEntryViewModel);
+      this.LogViewModel.ShowLogLine(searchEntryViewModel);
     }
 
     public void CopySearchEntriesToClipboard()
@@ -83,7 +91,7 @@ namespace VisualLog.Desktop.LogManager
     {
       this.HideSearchPanelCommand = new Command(
         x => {
-          this.logViewModel.State.ShowSearchPanel = false;
+          this.LogViewModel.State.ShowSearchPanel = false;
         },
         x => true
       );
