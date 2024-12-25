@@ -6,9 +6,9 @@
              xmlns:local="clr-namespace:VisualLog.Desktop.LogManager"
              xmlns:general="clr-namespace:VisualLog.Desktop"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="800"
+             d:DesignHeight="50" d:DesignWidth="800" d:Background="Gray"
              DataContextChanged="UserControl_DataContextChanged">
-  <ContentControl>
+  <Grid>
     <TextBlock x:Name="SearchEntryTextBlock"/>
-  </ContentControl>
+  </Grid>
 </UserControl>

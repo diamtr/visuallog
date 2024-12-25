@@ -84,7 +84,7 @@ namespace VisualLog.Core
         options = options | additionalOptions.Value;
       var re = new Regex(s, options);
 
-      var searchResults = new SearchResults();
+      var searchResults = new SearchResults() { LogPath = this.sourceFilePath };
       var i = 1;
       foreach (var message in this.Messages)
       {

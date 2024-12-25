@@ -4,12 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VisualLog.Desktop"
+        xmlns:dshbrd="clr-namespace:VisualLog.Desktop.Dashboard"
         xmlns:fmtmgr="clr-namespace:VisualLog.Desktop.FormatManager"
         xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
         mc:Ignorable="d"
         Title="VisualLog" Height="450" Width="800"
         WindowState="Maximized"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        Closing="Window_Closing">
   
   <Window.Resources>
     <ResourceDictionary>
@@ -18,6 +20,10 @@
         <ResourceDictionary Source="Styles.xaml"/>
       </ResourceDictionary.MergedDictionaries>
 
+      <DataTemplate DataType="{x:Type dshbrd:DashboardViewModel}">
+        <dshbrd:DashboardView/>
+      </DataTemplate>
+      
       <DataTemplate DataType="{x:Type logmgr:LogManagerViewModel}">
         <logmgr:LogManagerView/>
       </DataTemplate>
@@ -32,22 +38,6 @@
   </Window.Resources>
   
   <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-
-    <Menu Grid.Row="0">
-      <MenuItem Header="Logs">
-        <MenuItem Header="Open" Command="{Binding LogManagerViewModel.OpenLogsCommand}"/>
-        <Separator/>
-        <MenuItem Header="Dashboard" Command="{Binding ShowLogManagerCommand}"/>
-      </MenuItem>
-      <MenuItem Header="Formats" Command="{Binding ShowFormatManagerCommand}"/>
-    </Menu>
-    
-    <Border Grid.Row="1">
-      <ContentControl Content="{Binding ActiveViewModel}"/>
-    </Border>
+    <ContentControl Content="{Binding ActiveViewModel}"/>
   </Grid>
 </Window>
