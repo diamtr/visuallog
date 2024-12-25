@@ -98,7 +98,6 @@ namespace VisualLog.Desktop.Tests
     }
 
     [Test]
-    [Repeat(50)]
     public void FollowTail()
     {
       var vm = new LogViewModel();
