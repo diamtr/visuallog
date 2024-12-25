@@ -27,7 +27,7 @@ namespace VisualLog.Desktop.Tests
     {
       var mvm = new MainViewModel();
       mvm.OnWindowLoaded();
-      Assert.AreEqual(mvm.LogManagerViewModel, mvm.ActiveViewModel);
+      Assert.AreEqual(mvm.DashboardViewModel, mvm.ActiveViewModel);
     }
 
     [Test]
