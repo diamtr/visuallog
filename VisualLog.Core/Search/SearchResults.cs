@@ -5,7 +5,7 @@ namespace VisualLog.Core.Search
 {
   public class SearchResults
   {
-    public List<SearchEntry> Entries { get; set; }
+    public List<Entry> Entries { get; set; }
     public string LogPath { get; set; }
     public string LogName {
       get 
@@ -18,7 +18,7 @@ namespace VisualLog.Core.Search
 
     public SearchResults()
     {
-      this.Entries = new List<SearchEntry>();
+      this.Entries = new List<Entry>();
     }
   }
 }

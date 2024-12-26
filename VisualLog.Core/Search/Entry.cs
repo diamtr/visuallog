@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace VisualLog.Core.Search
 {
-  public class SearchEntry
+  public class Entry
   {
     public int LineNumber { get; set; }
     public List<Match> Matches { get; set; }
     public string RawString { get; set; }
 
-    public SearchEntry()
+    public Entry()
     {
       this.Matches = new List<Match>();
     }
@@ -24,10 +24,10 @@ namespace VisualLog.Core.Search
 
     public override bool Equals(object obj)
     {
-      if (obj is not SearchEntry)
+      if (obj is not Entry)
         return false;
 
-      var entry = obj as SearchEntry;
+      var entry = obj as Entry;
       return 
         this.LineNumber == entry.LineNumber &&
         this.RawString == entry.RawString &&

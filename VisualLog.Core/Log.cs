@@ -105,10 +105,10 @@ namespace VisualLog.Core
     /// <param name="line">Log line.</param>
     /// <param name="re">Regex.</param>
     /// <returns>Entries of the string in the log line.</returns>
-    public SearchEntry SearchStringInLine(int lineNumber, string line, Regex re)
+    public Entry SearchStringInLine(int lineNumber, string line, Regex re)
     {
       var matches = re.Matches(line);
-      return new SearchEntry() {
+      return new Entry() {
         LineNumber = lineNumber,
         RawString = line,
         Matches = matches.Where(x => x.Success)

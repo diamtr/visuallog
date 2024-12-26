@@ -22,23 +22,23 @@ namespace VisualLog.Core.Test
       Assert.IsNotNull(results);
       Assert.IsNotNull(results.Entries);
 
-      var expectedEntries = new List<SearchEntry>()
+      var expectedEntries = new List<Entry>()
       {
-        new SearchEntry() { 
+        new Entry() { 
           LineNumber = 2,
           RawString = "line2 - test",
           Matches = new List<Match>() {
             new Match() { Index = 8, Length = 4 }
           } 
         },
-        new SearchEntry() { 
+        new Entry() { 
           LineNumber = 3,
           RawString = "line3 test line3 Test",
           Matches = new List<Match>() {
             new Match() { Index = 6, Length = 4 }
           } 
         },
-        new SearchEntry() {
+        new Entry() {
           LineNumber = 5,
           RawString = "test Test test",
           Matches = new List<Match>() {
@@ -62,16 +62,16 @@ namespace VisualLog.Core.Test
       Assert.IsNotNull(results);
       Assert.IsNotNull(results.Entries);
 
-      var expectedEntries = new List<SearchEntry>()
+      var expectedEntries = new List<Entry>()
       {
-        new SearchEntry() {
+        new Entry() {
           LineNumber = 2,
           RawString = "line2 - test",
           Matches = new List<Match>() {
             new Match() { Index = 8, Length = 4 } 
           }
         },
-        new SearchEntry() {
+        new Entry() {
           LineNumber = 3,
           RawString = "line3 test line3 Test",
           Matches = new List<Match>() {
@@ -79,7 +79,7 @@ namespace VisualLog.Core.Test
             new Match() { Index = 17, Length = 4 }
           }
         },
-        new SearchEntry() {
+        new Entry() {
           LineNumber = 5,
           RawString = "test Test test",
           Matches = new List<Match>() {
