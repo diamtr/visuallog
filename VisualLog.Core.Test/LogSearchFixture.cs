@@ -29,23 +29,23 @@ namespace VisualLog.Core.Test
         new SearchEntry() { 
           LineNumber = 2,
           RawString = "line2 - test",
-          Matches = new List<Match>() {
-            new Match() { Index = 8, Length = 4 }
+          Matches = new List<MatchEntry>() {
+            new MatchEntry() { Index = 8, Length = 4 }
           } 
         },
         new SearchEntry() { 
           LineNumber = 3,
           RawString = "line3 test line3 Test",
-          Matches = new List<Match>() {
-            new Match() { Index = 6, Length = 4 }
+          Matches = new List<MatchEntry>() {
+            new MatchEntry() { Index = 6, Length = 4 }
           } 
         },
         new SearchEntry() {
           LineNumber = 5,
           RawString = "test Test test",
-          Matches = new List<Match>() {
-            new Match() { Index = 0, Length = 4 },
-            new Match() { Index = 10, Length = 4 }
+          Matches = new List<MatchEntry>() {
+            new MatchEntry() { Index = 0, Length = 4 },
+            new MatchEntry() { Index = 10, Length = 4 }
           }
         },
       };
@@ -72,25 +72,25 @@ namespace VisualLog.Core.Test
         new SearchEntry() {
           LineNumber = 2,
           RawString = "line2 - test",
-          Matches = new List<Match>() {
-            new Match() { Index = 8, Length = 4 } 
+          Matches = new List<MatchEntry>() {
+            new MatchEntry() { Index = 8, Length = 4 } 
           }
         },
         new SearchEntry() {
           LineNumber = 3,
           RawString = "line3 test line3 Test",
-          Matches = new List<Match>() {
-            new Match() { Index = 6, Length = 4 },
-            new Match() { Index = 17, Length = 4 }
+          Matches = new List<MatchEntry>() {
+            new MatchEntry() { Index = 6, Length = 4 },
+            new MatchEntry() { Index = 17, Length = 4 }
           }
         },
         new SearchEntry() {
           LineNumber = 5,
           RawString = "test Test test",
-          Matches = new List<Match>() {
-            new Match() { Index = 0, Length = 4 },
-            new Match() { Index = 5, Length = 4 },
-            new Match() { Index = 10, Length = 4 }
+          Matches = new List<MatchEntry>() {
+            new MatchEntry() { Index = 0, Length = 4 },
+            new MatchEntry() { Index = 5, Length = 4 },
+            new MatchEntry() { Index = 10, Length = 4 }
           }
         },
       };

@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using VisualLog.Core;
+using VisualLog.Core.Search;
 
 namespace VisualLog.Desktop.LogManager
 {
@@ -34,7 +34,7 @@ namespace VisualLog.Desktop.LogManager
 
       var rawString = vm.SearchEntry.RawString;
       var stringParts = new List<Tuple<bool, string>>();
-      var matches = new Queue<Match>(vm.SearchEntry.Matches.OrderBy(x => x.Index));
+      var matches = new Queue<MatchEntry>(vm.SearchEntry.Matches.OrderBy(x => x.Index));
       var index = 0;
       while (matches.Any())
       {

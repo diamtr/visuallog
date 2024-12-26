@@ -35,7 +35,7 @@ namespace VisualLog.Core.Search
         if (!matches.Any())
           continue;
         entry.Matches.AddRange(matches.Where(x => x.Success)
-          .Select(x => new Match() { Index = x.Index, Length = x.Length })
+          .Select(x => new MatchEntry() { Index = x.Index, Length = x.Length })
           .ToList());
       }
 
