@@ -1,5 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using VisualLog.Core;
+using VisualLog.Core.Search;
 using VisualLog.Desktop.LogManager;
 
 namespace VisualLog.Desktop.Dashboard
