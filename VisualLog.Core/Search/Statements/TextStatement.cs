@@ -1,10 +1,10 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace VisualLog.Core.Search
 {
   public class TextStatement : ISearchRequestStatement
   {
-    public int Order { get; set; }
     public string Text
     {
       get { return this.text; }
@@ -34,7 +34,7 @@ namespace VisualLog.Core.Search
       this.regexOptions = System.Text.RegularExpressions.RegexOptions.Compiled;
     }
 
-    public MatchCollection GetMatches(Message message)
+    public IEnumerable<System.Text.RegularExpressions.Match> GetMatches(Message message)
     {
       if (this.compiledRegex == null)
         this.compiledRegex = new Regex(this.Text, this.RegexOptions.Value);

@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace VisualLog.Core.Search
 {
   public class DateTimeStatement : ISearchRequestStatement
   {
-    public int Order { get; set; }
     public DateTime DateTime { get; set; }
     public DateTimeStatementCondition Condition { get; set; }
 
-    public MatchCollection GetMatches(Message message)
+    public IEnumerable<System.Text.RegularExpressions.Match> GetMatches(Message message)
     {
       throw new NotImplementedException("DateTimeStatement.GetMatches not implemented yet");
     }

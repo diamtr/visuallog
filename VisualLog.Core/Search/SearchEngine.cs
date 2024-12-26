@@ -29,7 +29,7 @@ namespace VisualLog.Core.Search
         return null;
 
       var entry = new SearchEntry() { RawString = message.RawValue };
-      foreach (var statement in request.Statements.OrderByDescending(x => x.Order))
+      foreach (var statement in request.Statements)
       {
         var matches = statement.GetMatches(message);
         if (!matches.Any())

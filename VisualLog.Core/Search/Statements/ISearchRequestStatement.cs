@@ -1,10 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 
 namespace VisualLog.Core.Search
 {
   public interface ISearchRequestStatement
   {
-    public int Order { get; set; }
-    public MatchCollection GetMatches(Message message);
+    public IEnumerable<System.Text.RegularExpressions.Match> GetMatches(Message message);
   }
 }
