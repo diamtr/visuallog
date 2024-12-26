@@ -3,9 +3,9 @@ using System.IO;
 
 namespace VisualLog.Core.Search
 {
-  public class Results
+  public class SearchResponse
   {
-    public List<Entry> Entries { get; set; }
+    public List<SearchEntry> Entries { get; set; }
     public string LogPath { get; set; }
     public string LogName {
       get 
@@ -16,9 +16,9 @@ namespace VisualLog.Core.Search
       }
     }
 
-    public Results()
+    public SearchResponse()
     {
-      this.Entries = new List<Entry>();
+      this.Entries = new List<SearchEntry>();
     }
   }
 }

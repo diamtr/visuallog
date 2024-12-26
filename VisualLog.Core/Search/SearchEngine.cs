@@ -2,9 +2,9 @@
 {
   public class SearchEngine
   {
-    public static Results Search(Log log, Request request)
+    public static SearchResponse Search(Log log, SearchRequest request)
     {
-      return new Results();
+      return new SearchResponse();
     }
   }
 }

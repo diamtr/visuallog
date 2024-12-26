@@ -7,7 +7,7 @@ namespace VisualLog.Desktop.Dashboard
   public class SearchResultsViewModel : ViewModelBase
   {
     public ObservableCollection<SearchEntryViewModel> SearchEntries { get; set; }
-    public Results SearchResults
+    public SearchResponse SearchResults
     {
       get { return this.searchResults; }
       protected set
@@ -16,9 +16,9 @@ namespace VisualLog.Desktop.Dashboard
         this.OnPropertyChanged();
       }
     }
-    private Results searchResults;
+    private SearchResponse searchResults;
 
-    public SearchResultsViewModel(Results searchResults) : this()
+    public SearchResultsViewModel(SearchResponse searchResults) : this()
     {
       this.SearchResults = searchResults;
       this.UpdateSearchEntries();

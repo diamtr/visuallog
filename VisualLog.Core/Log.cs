@@ -78,14 +78,14 @@ namespace VisualLog.Core
     /// <param name="additionalOptions">Additional regular expression options.</param>
     /// <returns>String search results.</returns>
     /// <remarks>The entries search is going on through regular expression. It always has the "Compiled" option.</remarks>
-    public Results SearchString(string s, RegexOptions? additionalOptions = null)
+    public SearchResponse SearchString(string s, RegexOptions? additionalOptions = null)
     {
       var options = RegexOptions.Compiled;
       if (additionalOptions.HasValue)
         options = options | additionalOptions.Value;
       var re = new Regex(s, options);
 
-      var searchResults = new Results() { LogPath = this.sourceFilePath };
+      var searchResults = new SearchResponse() { LogPath = this.sourceFilePath };
       var i = 1;
       foreach (var message in this.Messages)
       {
@@ -105,10 +105,10 @@ namespace VisualLog.Core
     /// <param name="line">Log line.</param>
     /// <param name="re">Regex.</param>
     /// <returns>Entries of the string in the log line.</returns>
-    public Entry SearchStringInLine(int lineNumber, string line, Regex re)
+    public SearchEntry SearchStringInLine(int lineNumber, string line, Regex re)
     {
       var matches = re.Matches(line);
-      return new Entry() {
+      return new SearchEntry() {
         LineNumber = lineNumber,
         RawString = line,
         Matches = matches.Where(x => x.Success)

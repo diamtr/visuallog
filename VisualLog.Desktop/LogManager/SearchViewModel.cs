@@ -79,7 +79,7 @@ namespace VisualLog.Desktop.LogManager
       this.CopySearchEntriesToClipboard(this.SearchEntries.Select(x => x.SearchEntry));
     }
 
-    public void CopySearchEntriesToClipboard(IEnumerable<Entry> searchEntries)
+    public void CopySearchEntriesToClipboard(IEnumerable<SearchEntry> searchEntries)
     {
       var sb = new StringBuilder();
       foreach (var value in searchEntries.Select(x => x.RawString))
