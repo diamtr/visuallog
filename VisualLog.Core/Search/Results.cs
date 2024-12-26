@@ -3,7 +3,7 @@ using System.IO;
 
 namespace VisualLog.Core.Search
 {
-  public class SearchResults
+  public class Results
   {
     public List<Entry> Entries { get; set; }
     public string LogPath { get; set; }
@@ -16,7 +16,7 @@ namespace VisualLog.Core.Search
       }
     }
 
-    public SearchResults()
+    public Results()
     {
       this.Entries = new List<Entry>();
     }

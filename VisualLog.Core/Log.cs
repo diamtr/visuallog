@@ -78,14 +78,14 @@ namespace VisualLog.Core
     /// <param name="additionalOptions">Additional regular expression options.</param>
     /// <returns>String search results.</returns>
     /// <remarks>The entries search is going on through regular expression. It always has the "Compiled" option.</remarks>
-    public SearchResults SearchString(string s, RegexOptions? additionalOptions = null)
+    public Results SearchString(string s, RegexOptions? additionalOptions = null)
     {
       var options = RegexOptions.Compiled;
       if (additionalOptions.HasValue)
         options = options | additionalOptions.Value;
       var re = new Regex(s, options);
 
-      var searchResults = new SearchResults() { LogPath = this.sourceFilePath };
+      var searchResults = new Results() { LogPath = this.sourceFilePath };
       var i = 1;
       foreach (var message in this.Messages)
       {
