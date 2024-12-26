@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using VisualLog.Core;
+using VisualLog.Core.Search;
 
 namespace VisualLog.Desktop.LogManager
 {

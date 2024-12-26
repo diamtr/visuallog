@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using VisualLog.Core.Search;
 
 namespace VisualLog.Core
 {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace VisualLog.Core
+namespace VisualLog.Core.Search
 {
   public class SearchEntry
   {

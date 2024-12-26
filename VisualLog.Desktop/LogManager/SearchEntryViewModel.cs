@@ -1,4 +1,4 @@
-﻿using VisualLog.Core;
+﻿using VisualLog.Core.Search;
 
 namespace VisualLog.Desktop.LogManager
 {
