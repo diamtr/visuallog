@@ -18,7 +18,9 @@ namespace VisualLog.Core.Test
       var log = new Log(path);
       log.Read();
 
-      var results = log.SearchString("test");
+      var request = new SearchRequest();
+      request.Statements.Add(new TextStatement() { Text = "test" });
+      var results = SearchEngine.Search(log, request);
       Assert.IsNotNull(results);
       Assert.IsNotNull(results.Entries);
 
@@ -58,7 +60,10 @@ namespace VisualLog.Core.Test
       var log = new Log(path);
       log.Read();
 
-      var results = log.SearchString("test", RegexOptions.IgnoreCase);
+      var request = new SearchRequest();
+      request.Statements.Add(new TextStatement() { Text = "test", RegexOptions = RegexOptions.IgnoreCase });
+      var results = SearchEngine.Search(log, request);
+
       Assert.IsNotNull(results);
       Assert.IsNotNull(results.Entries);
 

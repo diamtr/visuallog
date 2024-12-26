@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using VisualLog.Core.Search;
 
 namespace VisualLog.Desktop.Dashboard
 {
@@ -65,7 +66,9 @@ namespace VisualLog.Desktop.Dashboard
       var logViewModels = this.DashboardViewModel.MainViewModel.LogManagerViewModel.Logs;
       foreach (var logViewModel in logViewModels)
       {
-        var searchResults = logViewModel.Log.SearchString(this.StringToSearch);
+        var searchRequest = new SearchRequest();
+        searchRequest.Statements.Add(new TextStatement() { Text = this.StringToSearch });
+        var searchResults = SearchEngine.Search(logViewModel.Log, searchRequest);
         if (searchResults.Entries.Any())
           this.SearchResults.Add(new SearchResultsViewModel(searchResults));
       }
