@@ -17,13 +17,13 @@ namespace VisualLog.Desktop.Tests
     public void NewLogViewModel()
     {
       var vm = new LogViewModel();
-      CollectionAssert.IsEmpty(vm.LogMessages);
-      CollectionAssert.IsNotEmpty(vm.Encodings);
-      CollectionAssert.AreEquivalent(Encoding.GetEncodings().Select(x => vm.GetEncodingDisplayName(x.GetEncoding())), vm.Encodings);
-      Assert.IsTrue(vm.SelectedEncoding.StartsWith("65001"));
-      Assert.IsNotNull(vm.State);
-      Assert.IsFalse(vm.State.ShowSelectedMessageVertical);
-      Assert.IsTrue(vm.State.FollowTail);
+      Assert.That(vm.LogMessages, Is.Empty);
+      Assert.That(vm.Encodings, Is.Not.Empty);
+      Assert.That(vm.Encodings, Is.EquivalentTo(Encoding.GetEncodings().Select(x => vm.GetEncodingDisplayName(x.GetEncoding()))));
+      Assert.That(vm.SelectedEncoding, Does.StartWith("65001"));
+      Assert.That(vm.State, Is.Not.Null);
+      Assert.That(vm.State.ShowSelectedMessageVertical, Is.False);
+      Assert.That(vm.State.FollowTail, Is.True);
     }
 
     [Test]
@@ -31,19 +31,19 @@ namespace VisualLog.Desktop.Tests
     {
       var vm = new LogViewModel();
       vm.Encodings = new List<string>();
-      CollectionAssert.IsEmpty(vm.Encodings);
+      Assert.That(vm.Encodings, Is.Empty);
       vm.InitEncodings();
-      CollectionAssert.IsNotEmpty(vm.Encodings);
-      CollectionAssert.AreEquivalent(Encoding.GetEncodings().Select(x => vm.GetEncodingDisplayName(x.GetEncoding())), vm.Encodings);
+      Assert.That(vm.Encodings, Is.Not.Empty);
+      Assert.That(vm.Encodings, Is.EquivalentTo(Encoding.GetEncodings().Select(x => vm.GetEncodingDisplayName(x.GetEncoding()))));
     }
 
     [Test]
     public void ReadLog()
     {
       var vm = new LogViewModel();
-      CollectionAssert.IsEmpty(vm.LogMessages);
+      Assert.That(vm.LogMessages, Is.Empty);
       vm.ReadLog();
-      CollectionAssert.IsEmpty(vm.LogMessages);
+      Assert.That(vm.LogMessages, Is.Empty);
 
       var logLines = new string[]
       {
@@ -59,12 +59,12 @@ namespace VisualLog.Desktop.Tests
       expectedMessages.Add(new Message("line3"));
 
       vm.ReadLog("testlog.log");
-      CollectionAssert.IsNotEmpty(vm.LogMessages);
-      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
+      Assert.That(vm.LogMessages, Is.Not.Empty);
+      Assert.That(vm.LogMessages.Select(x => x.Message), Is.EqualTo(expectedMessages));
 
       vm.ReadLog();
-      CollectionAssert.IsNotEmpty(vm.LogMessages);
-      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
+      Assert.That(vm.LogMessages, Is.Not.Empty);
+      Assert.That(vm.LogMessages.Select(x => x.Message), Is.EqualTo(expectedMessages));
 
       File.Delete("testlog.log");
     }
@@ -81,20 +81,20 @@ namespace VisualLog.Desktop.Tests
       };
       File.WriteAllLines("testlog.log", logLines);
 
-      CollectionAssert.IsEmpty(vm.LogMessages);
+      Assert.That(vm.LogMessages, Is.Empty);
 
       var expectedMessages = new List<Message>();
       expectedMessages.Add(new Message("line1"));
       expectedMessages.Add(new Message("line2"));
       expectedMessages.Add(new Message("line3"));
       vm.ReadLog("testlog.log");
-      CollectionAssert.IsNotEmpty(vm.LogMessages);
-      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
+      Assert.That(vm.LogMessages, Is.Not.Empty);
+      Assert.That(vm.LogMessages.Select(x => x.Message), Is.EqualTo(expectedMessages));
 
       expectedMessages.Add(new Message("line4"));
       Assert.DoesNotThrow(() => { vm.OnNewLogMessageCatched(new Message("line4")); });
-      CollectionAssert.IsNotEmpty(vm.LogMessages);
-      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
+      Assert.That(vm.LogMessages, Is.Not.Empty);
+      Assert.That(vm.LogMessages.Select(x => x.Message), Is.EqualTo(expectedMessages));
     }
 
     [Test]
@@ -109,24 +109,25 @@ namespace VisualLog.Desktop.Tests
       };
       File.WriteAllLines("testlog.log", logLines);
 
-      CollectionAssert.IsEmpty(vm.LogMessages);
+      Assert.That(vm.LogMessages, Is.Empty);
       Assert.DoesNotThrow(() => { vm.FollowTail(); });
-      CollectionAssert.IsEmpty(vm.LogMessages);
+      Assert.That(vm.LogMessages, Is.Empty);
 
       var expectedMessages = new List<Message>();
       expectedMessages.Add(new Message("line1"));
       expectedMessages.Add(new Message("line2"));
       expectedMessages.Add(new Message("line3"));
       vm.ReadLog("testlog.log");
-      CollectionAssert.IsNotEmpty(vm.LogMessages);
-      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
+      Assert.That(vm.LogMessages, Is.Not.Empty);
+      Assert.That(vm.LogMessages.Select(x => x.Message), Is.EqualTo(expectedMessages));
 
       expectedMessages.Add(new Message("line4"));
       File.AppendAllLines("testlog.log", new string[] { "line4" });
       Task.Run(() => { System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(FileWatcher.DefaultWatchInterval + 1300)); }).Wait();
-      CollectionAssert.IsNotEmpty(vm.LogMessages);
+      Assert.That(vm.LogMessages, Is.Not.Empty);
+      
       Task.Run(() => { System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(FileWatcher.DefaultWatchInterval + 1300)); }).Wait();
-      CollectionAssert.AreEqual(expectedMessages, vm.LogMessages.Select(x => x.Message));
+      Assert.That(vm.LogMessages.Select(x => x.Message), Is.EqualTo(expectedMessages));
 
       TestContext.WriteLine($"Attempt: {TestContext.CurrentContext.CurrentRepeatCount}");
     }

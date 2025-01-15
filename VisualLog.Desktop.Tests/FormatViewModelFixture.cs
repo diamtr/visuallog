@@ -13,13 +13,13 @@ namespace VisualLog.Desktop.Tests
     public void CreateNewLogFormatViewModel()
     {
       var vm = new FormatViewModel();
-      Assert.IsNull(vm.Format);
-      Assert.IsNull(vm.SelectedFormatter);
+      Assert.That(vm.Format, Is.Null);
+      Assert.That(vm.SelectedFormatter, Is.Null);
 
       var format = new Format();
       vm = new FormatViewModel(format);
-      Assert.AreEqual(format, vm.Format);
-      Assert.IsNull(vm.SelectedFormatter);
+      Assert.That(vm.Format, Is.EqualTo(format));
+      Assert.That(vm.SelectedFormatter, Is.Null);
 
     }
 
@@ -29,9 +29,9 @@ namespace VisualLog.Desktop.Tests
       var format = new Format();
       var formatVM = new FormatViewModel(format);
       formatVM.AddNewFormatter();
-      Assert.AreEqual(1, formatVM.Formatters.Count);
+      Assert.That(formatVM.Formatters.Count, Is.EqualTo(1));
       formatVM.AddNewFormatterCommand.Execute(null);
-      Assert.AreEqual(2, formatVM.Formatters.Count);
+      Assert.That(formatVM.Formatters.Count, Is.EqualTo(2));
     }
 
     [Test]
@@ -46,9 +46,9 @@ namespace VisualLog.Desktop.Tests
       var formatVM = new FormatViewModel(format);
       formatVM.SaveFormat();
       var formats = Formats.Read();
-      Assert.AreEqual(1, formats.Count());
-      Assert.AreEqual(1, formats.First().Id);
-      Assert.AreEqual("test format", formats.First().Name);
+      Assert.That(formats.Count(), Is.EqualTo(1));
+      Assert.That(formats.First().Id, Is.EqualTo(1));
+      Assert.That(formats.First().Name, Is.EqualTo("test format"));
 
       if (File.Exists(fileName))
         File.Delete(fileName);

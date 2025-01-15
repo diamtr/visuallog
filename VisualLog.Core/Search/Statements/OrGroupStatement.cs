@@ -15,7 +15,7 @@ namespace VisualLog.Core.Search.Statements
     public IEnumerable<System.Text.RegularExpressions.Match> GetMatches(Message message)
     {
       var matches = Enumerable.Empty<System.Text.RegularExpressions.Match>();
-      foreach (var statement in this.Statements)
+      foreach (var statement in this.Statements.Where(x => x != null))
         matches = matches.Union(statement.GetMatches(message));
       return matches;
     }

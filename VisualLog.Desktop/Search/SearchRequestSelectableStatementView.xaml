@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="VisualLog.Desktop.Search.SearchRequestSelectableStatementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VisualLog.Desktop.Search"
+             xmlns:top="clr-namespace:VisualLog.Desktop"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="800">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+          <top:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
+        </ResourceDictionary>
+        <ResourceDictionary>
+          <DataTemplate DataType="{x:Type local:TextStatementViewModel}">
+            <local:TextStatementView/>
+          </DataTemplate>
+          <DataTemplate DataType="{x:Type local:DateTimeStatementViewModel}">
+            <local:DateTimeStatementView/>
+          </DataTemplate>
+          <DataTemplate DataType="{x:Type local:AndGroupStatementViewModel}">
+            <local:AndGroupStatementView/>
+          </DataTemplate>
+          <DataTemplate DataType="{x:Type local:OrGroupStatementViewModel}">
+            <local:OrGroupStatementView/>
+          </DataTemplate>
+        </ResourceDictionary>
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    <CheckBox Grid.Column="0"
+              IsChecked="{Binding IsChecked}"
+              Visibility="{Binding ShowCheckBox, Converter={StaticResource VisibilityBoolConverter}}"
+              VerticalAlignment="Center"
+              Margin="15, 0, 10, 0"/>
+    <ContentControl Grid.Column="1"
+                    Content="{Binding StatementViewModel, Mode=OneWay}"
+                    HorizontalContentAlignment="Stretch"
+                    HorizontalAlignment="Stretch"/>
+  </Grid>
+</UserControl>

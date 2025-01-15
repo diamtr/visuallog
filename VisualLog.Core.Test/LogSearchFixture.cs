@@ -21,8 +21,8 @@ namespace VisualLog.Core.Test
       var request = new SearchRequest();
       request.Statements.Add(new TextStatement() { Text = "test" });
       var results = SearchEngine.Search(log, request);
-      Assert.IsNotNull(results);
-      Assert.IsNotNull(results.Entries);
+      Assert.That(results, Is.Not.Null);
+      Assert.That(results.Entries, Is.Not.Null);
 
       var expectedEntries = new List<SearchEntry>()
       {
@@ -49,8 +49,8 @@ namespace VisualLog.Core.Test
           }
         },
       };
-      
-      CollectionAssert.AreEqual(expectedEntries, results.Entries);
+
+      Assert.That(results.Entries, Is.EqualTo(expectedEntries));
     }
 
     [Test]
@@ -64,8 +64,8 @@ namespace VisualLog.Core.Test
       request.Statements.Add(new TextStatement() { Text = "test", RegexOptions = RegexOptions.IgnoreCase });
       var results = SearchEngine.Search(log, request);
 
-      Assert.IsNotNull(results);
-      Assert.IsNotNull(results.Entries);
+      Assert.That(results, Is.Not.Null);
+      Assert.That(results.Entries, Is.Not.Null);
 
       var expectedEntries = new List<SearchEntry>()
       {
@@ -95,7 +95,7 @@ namespace VisualLog.Core.Test
         },
       };
 
-      CollectionAssert.AreEqual(expectedEntries, results.Entries);
+      Assert.That(results.Entries, Is.EqualTo(expectedEntries));
     }
   }
 }

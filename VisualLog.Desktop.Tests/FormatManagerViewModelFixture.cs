@@ -12,18 +12,18 @@ namespace VisualLog.Desktop.Tests
     public void CreateNewFormat()
     {
       var vm = new FormatManagerViewModel();
-      CollectionAssert.IsEmpty(vm.Formats);
-      Assert.IsNull(vm.SelectedFormat);
+      Assert.That(vm.Formats, Is.Empty);
+      Assert.That(vm.SelectedFormat, Is.Null);
 
       vm.CreateFormat();
-      CollectionAssert.IsNotEmpty(vm.Formats);
-      Assert.AreEqual(1, vm.Formats.Count);
-      Assert.IsNotNull(vm.SelectedFormat);
+      Assert.That(vm.Formats, Is.Not.Empty);
+      Assert.That(vm.SelectedFormat, Is.Not.Null);
+      Assert.That(vm.Formats.Count, Is.EqualTo(1));
 
       vm.CreateFormatCommand.Execute(null);
-      CollectionAssert.IsNotEmpty(vm.Formats);
-      Assert.AreEqual(2, vm.Formats.Count);
-      Assert.IsNotNull(vm.SelectedFormat);
+      Assert.That(vm.Formats, Is.Not.Empty);
+      Assert.That(vm.SelectedFormat, Is.Not.Null);
+      Assert.That(vm.Formats.Count, Is.EqualTo(2));
     }
 
     [Test]
@@ -55,10 +55,10 @@ namespace VisualLog.Desktop.Tests
       {
         Assert.DoesNotThrow(() => vm.ReadLogFormats());
 
-        Assert.AreEqual(1, vm.Formats.Count);
+        Assert.That(vm.Formats.Count, Is.EqualTo(1));
         var formatVM = vm.Formats.First();
-        Assert.AreEqual("Seventy four", formatVM.Format.Name);
-        Assert.AreEqual(2, formatVM.Formatters.Count);
+        Assert.That(formatVM.Format.Name, Is.EqualTo("Seventy four"));
+        Assert.That(formatVM.Formatters.Count, Is.EqualTo(2));
         this.CheckFormatterVM(formatVM.Formatters[0], "Year", 256, "\\d{4}");
         this.CheckFormatterVM(formatVM.Formatters[1], "Message", 512, "*");
       }
@@ -76,10 +76,10 @@ namespace VisualLog.Desktop.Tests
 
     private void CheckFormatterVM(MessageFormatterViewModel vm, string name, int priority, string pattern)
     {
-      Assert.IsNotNull(vm);
-      Assert.AreEqual(name, vm.Formatter.Name);
-      Assert.AreEqual(priority, vm.Formatter.Priority);
-      Assert.AreEqual(pattern, vm.Formatter.Pattern);
+      Assert.That(vm, Is.Not.Null);
+      Assert.That(vm.Formatter.Name, Is.EqualTo(name));
+      Assert.That(vm.Formatter.Priority, Is.EqualTo(priority));
+      Assert.That(vm.Formatter.Pattern, Is.EqualTo(pattern));
     }
   }
 }

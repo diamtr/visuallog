@@ -10,7 +10,7 @@ namespace VisualLog.Core.Search
       get { return this.text; }
       set
       {
-        this.text = value;
+        this.text = value ?? string.Empty;
         this.compiledRegex = this.regexOptions.HasValue ? new Regex(this.text, this.regexOptions.Value) : null;
       }
     }

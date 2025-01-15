@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using VisualLog.Core;
 using VisualLog.Desktop.FormatManager;
 
@@ -11,11 +12,11 @@ namespace VisualLog.Desktop.Tests
     public void CreateNewMessageFormatterViewModel()
     {
       var vm = new MessageFormatterViewModel();
-      Assert.IsNull(vm.Formatter);
+      Assert.That(vm.Formatter, Is.Null);
 
       var formatter = new MessageFormatter();
       vm = new MessageFormatterViewModel(formatter);
-      Assert.AreEqual(formatter, vm.Formatter);
+      Assert.That(vm.Formatter, Is.EqualTo(formatter));
     }
   }
 }

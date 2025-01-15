@@ -11,7 +11,7 @@ namespace VisualLog.Core.Test
     public void CreateNewFormats()
     {
       var formats = new Formats();
-      Assert.AreEqual("VisualLog.Formats.json", formats.Source);
+      Assert.That(formats.Source, Is.EqualTo("VisualLog.Formats.json"));
     }
 
     [Test]
@@ -21,11 +21,11 @@ namespace VisualLog.Core.Test
       
       formats.Source = null;
       Assert.DoesNotThrow(() => formats.Read());
-      CollectionAssert.IsEmpty(formats.Read());
+      Assert.That(formats.Read(), Is.Empty);
       
       formats.Source = @"{867F2E4B-25B8-4751-8234-124382930743}";
       Assert.DoesNotThrow(() => formats.Read());
-      CollectionAssert.IsEmpty(formats.Read());
+      Assert.That(formats.Read(), Is.Empty);
 
       var fileName = @"VisualLog.Formats.Test.json";
       var content = "[" +
@@ -53,16 +53,16 @@ namespace VisualLog.Core.Test
       {
         Assert.DoesNotThrow(() => formats.Read());
         var f = formats.Read();
-        Assert.AreEqual(1, f.Count());
-        Assert.AreEqual(1, f.First().Id);
-        Assert.AreEqual("Seventy four", f.First().Name);
-        Assert.AreEqual(2, f.First().Formatters.Count());
+        Assert.That(f.Count(), Is.EqualTo(1));
+        Assert.That(f.First().Id, Is.EqualTo(1));
+        Assert.That(f.First().Name, Is.EqualTo("Seventy four"));
+        Assert.That(f.First().Formatters.Count(), Is.EqualTo(2));
 
         f = Formats.Read(fileName);
-        Assert.AreEqual(1, f.Count());
-        Assert.AreEqual(1, f.First().Id);
-        Assert.AreEqual("Seventy four", f.First().Name);
-        Assert.AreEqual(2, f.First().Formatters.Count());
+        Assert.That(f.Count(), Is.EqualTo(1));
+        Assert.That(f.First().Id, Is.EqualTo(1));
+        Assert.That(f.First().Name, Is.EqualTo("Seventy four"));
+        Assert.That(f.First().Formatters.Count(), Is.EqualTo(2));
       }
       catch
       {
@@ -96,30 +96,30 @@ namespace VisualLog.Core.Test
       formats.Write(format);
 
       var formatsInFile = formats.Read();
-      Assert.AreEqual(1, formatsInFile.Count());
+      Assert.That(formatsInFile.Count(), Is.EqualTo(1));
       var formatInFile = formatsInFile.First();
-      Assert.AreEqual(1, formatInFile.Id);
-      Assert.AreEqual("TestLogFormat", formatInFile.Name);
-      Assert.AreEqual(1, formatInFile.Formatters.Count);
+      Assert.That(formatInFile.Id, Is.EqualTo(1));
+      Assert.That(formatInFile.Name, Is.EqualTo("TestLogFormat"));
+      Assert.That(formatInFile.Formatters.Count, Is.EqualTo(1));
       var formatterInFile = formatInFile.Formatters.First();
-      Assert.AreEqual("TestMessageFormatter", formatterInFile.Name);
-      Assert.AreEqual(0, formatterInFile.Priority);
-      Assert.AreEqual("*", formatterInFile.Pattern);
+      Assert.That(formatterInFile.Name, Is.EqualTo("TestMessageFormatter"));
+      Assert.That(formatterInFile.Priority, Is.EqualTo(0));
+      Assert.That(formatterInFile.Pattern, Is.EqualTo("*"));
 
       if (File.Exists(fileName))
         File.Delete(fileName);
       Formats.InitFrom(fileName);
       Formats.Write(format);
       formatsInFile = Formats.Read();
-      Assert.AreEqual(1, formatsInFile.Count());
+      Assert.That(formatsInFile.Count(), Is.EqualTo(1));
       formatInFile = formatsInFile.First();
-      Assert.AreEqual(1, formatInFile.Id);
-      Assert.AreEqual("TestLogFormat", formatInFile.Name);
-      Assert.AreEqual(1, formatInFile.Formatters.Count);
+      Assert.That(formatInFile.Id, Is.EqualTo(1));
+      Assert.That(formatInFile.Name, Is.EqualTo("TestLogFormat"));
+      Assert.That(formatInFile.Formatters.Count, Is.EqualTo(1));
       formatterInFile = formatInFile.Formatters.First();
-      Assert.AreEqual("TestMessageFormatter", formatterInFile.Name);
-      Assert.AreEqual(0, formatterInFile.Priority);
-      Assert.AreEqual("*", formatterInFile.Pattern);
+      Assert.That(formatterInFile.Name, Is.EqualTo("TestMessageFormatter"));
+      Assert.That(formatterInFile.Priority, Is.EqualTo(0));
+      Assert.That(formatterInFile.Pattern, Is.EqualTo("*"));
 
       if (File.Exists(fileName))
         File.Delete(fileName);
