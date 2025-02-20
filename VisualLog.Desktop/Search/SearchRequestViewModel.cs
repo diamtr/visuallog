@@ -63,23 +63,23 @@ namespace VisualLog.Desktop.Search
     public void AddNewTextStatement()
     {
       var statement = new TextStatementViewModel(this);
-      var selectableStatement = new SearchRequestSelectableStatementViewModel(statement);
+      var selectableStatement = new SearchRequestSelectableStatementViewModel(this, statement);
       this.SearchRequestStatements.Add(selectableStatement);
     }
 
     public void AddNewDateTimeStatement()
     {
       var statement = new DateTimeStatementViewModel(this);
-      var selectableStatement = new SearchRequestSelectableStatementViewModel(statement);
+      var selectableStatement = new SearchRequestSelectableStatementViewModel(this, statement);
       this.SearchRequestStatements.Add(selectableStatement);
     }
 
     public void AddNewAndGroupStatement()
     {
-      var checkedStatements = this.SearchRequestStatements.Where(x => x.IsChecked.GetValueOrDefault()).ToList();
+      var checkedStatements = this.SearchRequestStatements.Where(x => x.Selected.GetValueOrDefault()).ToList();
       var statements = checkedStatements.Select(x => x.StatementViewModel);
       var andGroupStatement = new AndGroupStatementViewModel(statements);
-      var selectableStatement = new SearchRequestSelectableStatementViewModel(andGroupStatement);
+      var selectableStatement = new SearchRequestSelectableStatementViewModel(this, andGroupStatement);
       this.SearchRequestStatements.Add(selectableStatement);
       foreach (var checkedStatement in checkedStatements)
         this.SearchRequestStatements.Remove(checkedStatement);
@@ -87,10 +87,10 @@ namespace VisualLog.Desktop.Search
 
     public void AddNewOrGroupStatement()
     {
-      var checkedStatements = this.SearchRequestStatements.Where(x => x.IsChecked.GetValueOrDefault()).ToList();
+      var checkedStatements = this.SearchRequestStatements.Where(x => x.Selected.GetValueOrDefault()).ToList();
       var statements = checkedStatements.Select(x => x.StatementViewModel);
       var andGroupStatement = new OrGroupStatementViewModel(statements);
-      var selectableStatement = new SearchRequestSelectableStatementViewModel(andGroupStatement);
+      var selectableStatement = new SearchRequestSelectableStatementViewModel(this, andGroupStatement);
       this.SearchRequestStatements.Add(selectableStatement);
       foreach (var checkedStatement in checkedStatements)
         this.SearchRequestStatements.Remove(checkedStatement);

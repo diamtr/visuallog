@@ -33,14 +33,26 @@
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="Auto"/>
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
     <CheckBox Grid.Column="0"
-              IsChecked="{Binding IsChecked}"
+              IsChecked="{Binding Selected}"
               Visibility="{Binding ShowCheckBox, Converter={StaticResource VisibilityBoolConverter}}"
               VerticalAlignment="Center"
               Margin="15, 0, 10, 0"/>
-    <ContentControl Grid.Column="1"
+    <Button Grid.Column="1"
+            Command="{Binding RemoveStatementCommand}"
+            Visibility="{Binding ShowCheckBox, Converter={StaticResource VisibilityBoolConverter}}"
+            VerticalAlignment="Center"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center"
+            Margin="0, 0, 10, 0">
+      <Path Data="M5,0L9,0M1,1L13,1M0,2L14,2M1,3L3,13M13,3L11,13M3,14L11,14M7,5L7,10M4,5L4,10M10,5L10,10"
+            Stroke="Black"
+            StrokeThickness="1" />
+    </Button>
+    <ContentControl Grid.Column="2"
                     Content="{Binding StatementViewModel, Mode=OneWay}"
                     HorizontalContentAlignment="Stretch"
                     HorizontalAlignment="Stretch"/>

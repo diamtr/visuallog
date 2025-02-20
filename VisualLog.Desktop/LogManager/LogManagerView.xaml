@@ -13,6 +13,7 @@
     </Grid.RowDefinitions>
     <StackPanel Grid.Row="0" Orientation="Horizontal">
       <Button Content="To Dashboard" Command="{Binding MainViewModel.ShowDashboardCommand}" />
+      <Button Content="Open" Command="{Binding OpenLogsCommand}" />
     </StackPanel>
     <Grid Grid.Row="1"
           Background="Transparent">

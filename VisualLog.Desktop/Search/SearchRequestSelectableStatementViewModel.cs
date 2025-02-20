@@ -2,6 +2,7 @@
 {
   public class SearchRequestSelectableStatementViewModel : ViewModelBase
   {
+    public Command RemoveStatementCommand { get; private set; }
     public bool ShowCheckBox {
       get { return this.showCheckBox; }
       set {
@@ -10,15 +11,15 @@
       }
     }
     private bool showCheckBox;
-    public bool? IsChecked
+    public bool? Selected
     {
-      get { return this.isChecked; }
+      get { return this.selected; }
       set {
-        this.isChecked = value;
+        this.selected = value;
         this.OnPropertyChanged();
       }
     }
-    private bool? isChecked;
+    private bool? selected;
     public ISearchRequestStatementViewModel StatementViewModel {
       get { return this.statementViewModel; }
       private set {
@@ -28,12 +29,28 @@
     }
     private ISearchRequestStatementViewModel statementViewModel;
 
-    public SearchRequestSelectableStatementViewModel(ISearchRequestStatementViewModel statement) : this()
+    private SearchRequestViewModel searchRequestViewModel;
+
+    public SearchRequestSelectableStatementViewModel(SearchRequestViewModel searchRequestViewModel, ISearchRequestStatementViewModel statement) : this()
     {
+      this.searchRequestViewModel = searchRequestViewModel;
       this.StatementViewModel = statement;
-      this.IsChecked = false;
-      this.ShowCheckBox = true;
     }
-    public SearchRequestSelectableStatementViewModel() { }
+    public SearchRequestSelectableStatementViewModel()
+    {
+      this.Selected = false;
+      this.ShowCheckBox = true;
+      this.InitCommands();
+    }
+
+    public void InitCommands()
+    {
+      this.RemoveStatementCommand = new Command(
+        x => { this.searchRequestViewModel.SearchRequestStatements.Remove(this); },
+        x => true
+      );
+    }
+
+
   }
 }
