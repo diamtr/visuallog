@@ -104,7 +104,6 @@
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
       <RowDefinition Height="Auto"/>
-      <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
     
     <!-- Log Path, Encoding -->
@@ -186,30 +185,11 @@
     </Grid>
 
     <WrapPanel Grid.Row="2" Orientation="Horizontal">
-      <ToggleButton Content="Serch Panel" IsChecked="{Binding State.ShowSearchPanel}" />
+      <ToggleButton Content="Serch Panel"
+                    IsChecked="{Binding State.ShowSearchPanel}" />
+      <ToggleButton Content="Line" x:Name="ShowSelectedMessageVerticalButton"
+                    IsChecked="{Binding State.ShowSelectedMessageVertical}"/>
     </WrapPanel>
-    
-    <Grid Grid.Row="3">
-
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="Auto"/>
-      </Grid.ColumnDefinitions>
-
-      <ComboBox Grid.Column="1"
-                ItemsSource="{Binding LogFormats}"/>
-
-      <StackPanel Grid.Column="2"
-                  Orientation="Horizontal"
-                  Margin="15,0,15,0">
-        <ToggleButton x:Name="ShowSelectedMessageVerticalButton"
-                      Content="|"
-                      Width="25"
-                      IsChecked="{Binding State.ShowSelectedMessageVertical}"/>
-      </StackPanel>
-
-    </Grid>
 
   </Grid>
   
