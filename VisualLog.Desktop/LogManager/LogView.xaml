@@ -129,56 +129,61 @@
 
     </Grid>
 
-    <DockPanel Grid.Row="1"
-               LastChildFill="True">
+    <Grid Grid.Row="1">
 
-      <!-- Serch Panel -->
-      <ContentControl DockPanel.Dock="Bottom" Height="250"
-        Content="{Binding SearchViewModel}"
-        Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
+      <DockPanel LastChildFill="True">
+        
+        <!-- Serch Panel -->
+        <Grid DockPanel.Dock="Bottom"
+              Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="3" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
+          <ContentControl Grid.Row="2"
+                          MinHeight="200"
+                          Content="{Binding SearchViewModel}"
+                          Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
+        </Grid>
 
-      <!-- Log Lines -->
-      <Grid>
+        <!-- Line Info -->
+        <Grid DockPanel.Dock="Left"
+              Background="Red"
+              Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
+
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+
+          <Border Grid.Column="0" Background="Pink" MinWidth="350">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+              <TextBlock Grid.Row="0" Text="StackTrace" />
+              <TextBox Grid.Row="1" Text="{Binding SelectedLogMessage.StackTrace}" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True" FontFamily="Consolas" />
+            </Grid>
+          </Border>
+          <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+          
+        </Grid>
 
         <ListView 
-            x:Name="MessagesListView"
-            Template="{StaticResource LogMessagesListViewControlTemplate}"
-            ItemsSource="{Binding LogMessages}"
-            SelectedItem="{Binding SelectedLogMessage}"
-            SelectionMode="Extended"
-            BorderThickness="0, 1, 0, 0"/>
+          x:Name="MessagesListView"
+          Template="{StaticResource LogMessagesListViewControlTemplate}"
+          ItemsSource="{Binding LogMessages}"
+          SelectedItem="{Binding SelectedLogMessage}"
+          SelectionMode="Extended"
+          BorderThickness="0, 1, 0, 0"/>
 
-        <DockPanel LastChildFill="True">
+      </DockPanel>
 
-          <!-- Line Info -->
-          <Grid DockPanel.Dock="Right"
-Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*"/>
-              <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="1">
-              <Border Margin="20"
-Padding="5,3,2,2"
-Background="Pink">
-                <Grid>
-                  <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                  </Grid.RowDefinitions>
-                  <TextBlock Grid.Row="0" Text="StackTrace" />
-                  <TextBox Grid.Row="1" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True" FontFamily="Consolas"
-     Text="{Binding SelectedLogMessage.StackTrace}"/>
-                </Grid>
-              </Border>
-            </Grid>
-          </Grid>
-
-        </DockPanel>
-
-      </Grid>
-      
-    </DockPanel>
+    </Grid>
 
     <WrapPanel Grid.Row="2" Orientation="Horizontal">
       <ToggleButton Content="Serch Panel" IsChecked="{Binding State.ShowSearchPanel}" />
