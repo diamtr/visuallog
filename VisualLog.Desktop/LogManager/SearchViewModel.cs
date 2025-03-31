@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using VisualLog.Core;
+using VisualLog.Core.Search;
 
 namespace VisualLog.Desktop.LogManager
 {
@@ -63,8 +63,10 @@ namespace VisualLog.Desktop.LogManager
       if (string.IsNullOrEmpty(this.StringToSearch))
         return;
 
-      var searchResults = this.LogViewModel.Log.SearchString(this.StringToSearch);
-      foreach (var searchEntry in searchResults.Entries)
+      var searchRequest = new SearchRequest();
+      searchRequest.Statements.Add(new TextStatement() { Text = this.StringToSearch });
+      var searchResponse = SearchEngine.Search(this.LogViewModel.Log, searchRequest);
+      foreach (var searchEntry in searchResponse.Entries)
         this.SearchEntries.Add(new SearchEntryViewModel(searchEntry));
       this.LastSearchDateTime = DateTime.Now;
     }

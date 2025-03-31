@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace VisualLog.Core
+namespace VisualLog.Core.Search
 {
   public class SearchEntry
   {
     public int LineNumber { get; set; }
-    public List<Match> Matches { get; set; }
+    public List<MatchEntry> Matches { get; set; }
     public string RawString { get; set; }
 
     public SearchEntry()
     {
-      this.Matches = new List<Match>();
+      this.Matches = new List<MatchEntry>();
     }
 
     public override int GetHashCode()

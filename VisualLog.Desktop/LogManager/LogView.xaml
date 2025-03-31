@@ -104,9 +104,9 @@
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
       <RowDefinition Height="Auto"/>
-      <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
-
+    
+    <!-- Log Path, Encoding -->
     <Grid Grid.Row="0"
           Margin="20, 5, 10, 5">
 
@@ -128,64 +128,68 @@
 
     </Grid>
 
-    <ListView Grid.Row="1"
-              x:Name="MessagesListView"
-              Template="{StaticResource LogMessagesListViewControlTemplate}"
-              ItemsSource="{Binding LogMessages}"
-              SelectedItem="{Binding SelectedLogMessage}"
-              SelectionMode="Extended"
-              BorderThickness="0, 1, 0, 0"/>
+    <Grid Grid.Row="1">
 
-    <Grid Grid.Row="1"
-          Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-      <Grid Grid.Column="1">
-        <Border Margin="20"
-                Padding="5,3,2,2"
-                Background="Pink">
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="StackTrace" />
-            <TextBox Grid.Row="1" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True" FontFamily="Consolas"
-                     Text="{Binding SelectedLogMessage.StackTrace}"/>
-          </Grid>
-        </Border>
-      </Grid>
-    </Grid>
+      <DockPanel LastChildFill="True">
+        
+        <!-- Serch Panel -->
+        <Grid DockPanel.Dock="Bottom"
+              Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="3" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
+          <ContentControl Grid.Row="2"
+                          MinHeight="200"
+                          Content="{Binding SearchViewModel}"
+                          Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
+        </Grid>
 
-    <Expander Grid.Row="2" IsExpanded="{Binding State.ShowSearchPanel}" Header="Search">
-      <ContentControl MaxHeight="600"
-                      Content="{Binding SearchViewModel}"
-                      Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
-    </Expander>
+        <!-- Line Info -->
+        <Grid DockPanel.Dock="Left"
+              Background="Red"
+              Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
 
-    <Grid Grid.Row="3">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
 
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="Auto"/>
-      </Grid.ColumnDefinitions>
+          <Border Grid.Column="0" Background="Pink" MinWidth="350">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+              <TextBlock Grid.Row="0" Text="StackTrace" />
+              <TextBox Grid.Row="1" Text="{Binding SelectedLogMessage.StackTrace}" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True" FontFamily="Consolas" />
+            </Grid>
+          </Border>
+          <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+          
+        </Grid>
 
-      <ComboBox Grid.Column="1"
-                ItemsSource="{Binding LogFormats}"/>
+        <ListView 
+          x:Name="MessagesListView"
+          Template="{StaticResource LogMessagesListViewControlTemplate}"
+          ItemsSource="{Binding LogMessages}"
+          SelectedItem="{Binding SelectedLogMessage}"
+          SelectionMode="Extended"
+          BorderThickness="0, 1, 0, 0"/>
 
-      <StackPanel Grid.Column="2"
-                  Orientation="Horizontal"
-                  Margin="15,0,15,0">
-        <ToggleButton x:Name="ShowSelectedMessageVerticalButton"
-                      Content="|"
-                      Width="25"
-                      IsChecked="{Binding State.ShowSelectedMessageVertical}"/>
-      </StackPanel>
+      </DockPanel>
 
     </Grid>
+
+    <WrapPanel Grid.Row="2" Orientation="Horizontal">
+      <ToggleButton Content="Serch Panel"
+                    IsChecked="{Binding State.ShowSearchPanel}" />
+      <ToggleButton Content="Line" x:Name="ShowSelectedMessageVerticalButton"
+                    IsChecked="{Binding State.ShowSelectedMessageVertical}"/>
+    </WrapPanel>
 
   </Grid>
   

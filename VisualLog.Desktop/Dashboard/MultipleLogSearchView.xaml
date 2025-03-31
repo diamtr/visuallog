@@ -4,11 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop.Dashboard"
+             xmlns:search="clr-namespace:VisualLog.Desktop.Search"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" d:Background="Gray">
   <UserControl.Resources>
     <DataTemplate DataType="{x:Type local:SearchResultsViewModel}">
       <local:SearchResultsView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type search:SearchRequestViewModel}">
+      <search:SearchRequestView/>
     </DataTemplate>
   </UserControl.Resources>
   <Grid>
@@ -26,20 +30,10 @@
         <TextBlock Text="Search" FontSize="32" TextWrapping="WrapWithOverflow" />
       </Grid>
     </Border>
-    
-    <!-- SEARCH PANEL -->
+
+    <!-- SEARCH REQUEST -->
     <Grid Grid.Row="1">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-      </Grid.RowDefinitions>
-      <TextBox Grid.Row="0"
-               Margin="25, 15, 25, 10"
-               Text="{Binding StringToSearch}"
-               FontSize="18"/>
-      <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-        <Button MinWidth="100" Content="Search" Command="{Binding SearchInOpenedLogsCommand}"/>
-      </StackPanel>
+      <ContentControl Content="{Binding SearchRequestViewModel}" />
     </Grid>
     
     <!-- RESULTS -->
@@ -48,6 +42,13 @@
               HorizontalAlignment="Stretch"
               HorizontalContentAlignment="Stretch"
               BorderThickness="0"
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+              Background="Transparent"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+      <ListView.ItemContainerStyle>
+        <Style TargetType="ListViewItem">
+          <Setter Property="Focusable" Value="false"/>
+        </Style>
+      </ListView.ItemContainerStyle>
+    </ListView>
   </Grid>
 </UserControl>

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace VisualLog.Core
+namespace VisualLog.Core.Search
 {
-  public class SearchResults
+  public class SearchResponse
   {
     public List<SearchEntry> Entries { get; set; }
     public string LogPath { get; set; }
@@ -16,7 +16,7 @@ namespace VisualLog.Core
       }
     }
 
-    public SearchResults()
+    public SearchResponse()
     {
       this.Entries = new List<SearchEntry>();
     }

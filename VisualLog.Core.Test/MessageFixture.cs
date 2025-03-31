@@ -11,7 +11,7 @@ namespace VisualLog.Core.Test
     {
       var m1 = new Message("1234567890");
       var m2 = new JMessage("1234567890");
-      Assert.IsTrue(m1.Equals(m2), "Different derevided type messages must be equal");
+      Assert.That(m1, Is.EqualTo(m2), "Different derevided type messages must be equal");
     }
 
     [Test]
@@ -27,10 +27,10 @@ namespace VisualLog.Core.Test
       };
 
       var messages = MessageBase.Distinct(sourceMessages);
-      CollectionAssert.AreEquivalent(new List<IMessage>() { new Message("1234567890"),
-                                                            new Message("0000000000"),
-                                                            new JMessage("0987654321") },
-                                     messages);
+      Assert.That(messages, Is.EquivalentTo(new List<IMessage>() { 
+        new Message("1234567890"),
+        new Message("0000000000"),
+        new JMessage("0987654321") }));
     }
   }
 }

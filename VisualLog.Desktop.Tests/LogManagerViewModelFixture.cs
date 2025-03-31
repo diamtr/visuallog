@@ -12,7 +12,7 @@ namespace VisualLog.Desktop.Tests
     {
       var lmvm = new LogManagerViewModel();
 
-      Assert.IsTrue(lmvm.OpenLogsCommand.CanExecute(null));
+      Assert.That(lmvm.OpenLogsCommand.CanExecute(null), Is.True);
       Assert.DoesNotThrow(() => { lmvm.OpenLogsCommand.Execute("doc\\simpletest.log"); });
     }
 
@@ -23,48 +23,48 @@ namespace VisualLog.Desktop.Tests
 
       // Without parameters
       Assert.DoesNotThrow(() => { lmvm.OpenLogs(); });
-      CollectionAssert.IsEmpty(lmvm.Logs);
-      Assert.IsNull(lmvm.ActiveLog);
+      Assert.That(lmvm.Logs, Is.Empty);
+      Assert.That(lmvm.ActiveLog, Is.Null);
 
       // Parameter is null
       Assert.DoesNotThrow(() => { lmvm.OpenLogs(null); });
-      CollectionAssert.IsEmpty(lmvm.Logs);
-      Assert.IsNull(lmvm.ActiveLog);
+      Assert.That(lmvm.Logs, Is.Empty);
+      Assert.That(lmvm.ActiveLog, Is.Null);
 
       // Path does not exist
       Assert.DoesNotThrow(() => { lmvm.OpenLogs("thepathdoesnotexist"); });
-      CollectionAssert.IsEmpty(lmvm.Logs);
-      Assert.IsNull(lmvm.ActiveLog);
+      Assert.That(lmvm.Logs, Is.Empty);
+      Assert.That(lmvm.ActiveLog, Is.Null);
 
       // Ordinary. Single Path
       Assert.DoesNotThrow(() => { lmvm.OpenLogs("doc\\simpletest.log"); });
-      CollectionAssert.IsNotEmpty(lmvm.Logs);
-      CollectionAssert.AllItemsAreNotNull(lmvm.Logs);
-      Assert.AreEqual(1, lmvm.Logs.Count);
+      Assert.That(lmvm.Logs, Is.Not.Empty);
+      Assert.That(lmvm.Logs, Is.All.Not.Null);
+      Assert.That(lmvm.Logs.Count, Is.EqualTo(1));
       var log = lmvm.Logs.First();
-      Assert.AreEqual("simpletest.log", log.DisplayName);
-      CollectionAssert.IsNotEmpty(log.LogMessages);
-      Assert.AreEqual(3, log.LogMessages.Count);
-      Assert.IsNotNull(lmvm.ActiveLog);
-      Assert.AreEqual("simpletest.log", lmvm.ActiveLog.DisplayName);
+      Assert.That(log.DisplayName, Is.EqualTo("simpletest.log"));
+      Assert.That(log.LogMessages, Is.Not.Empty);
+      Assert.That(log.LogMessages.Count, Is.EqualTo(3));
+      Assert.That(lmvm.ActiveLog, Is.Not.Null);
+      Assert.That(lmvm.ActiveLog.DisplayName, Is.EqualTo("simpletest.log"));
 
       // Ordinary. Open the log again
       Assert.DoesNotThrow(() => { lmvm.OpenLogs("doc\\simpletest.log"); });
-      CollectionAssert.IsNotEmpty(lmvm.Logs);
-      CollectionAssert.AllItemsAreNotNull(lmvm.Logs);
-      Assert.AreEqual(1, lmvm.Logs.Count);
+      Assert.That(lmvm.Logs, Is.Not.Empty);
+      Assert.That(lmvm.Logs, Is.All.Not.Null);
+      Assert.That(lmvm.Logs.Count, Is.EqualTo(1));
       log = lmvm.Logs.First();
-      Assert.AreEqual("simpletest.log", log.DisplayName);
-      Assert.IsNotNull(lmvm.ActiveLog);
-      Assert.AreEqual("simpletest.log", lmvm.ActiveLog.DisplayName);
+      Assert.That(log.DisplayName, Is.EqualTo("simpletest.log"));
+      Assert.That(lmvm.ActiveLog, Is.Not.Null);
+      Assert.That(lmvm.ActiveLog.DisplayName, Is.EqualTo("simpletest.log"));
 
       // Trash call
       Assert.DoesNotThrow(() => { lmvm.OpenLogs("thepathdoesnotexist"); });
-      CollectionAssert.IsNotEmpty(lmvm.Logs);
-      CollectionAssert.AllItemsAreNotNull(lmvm.Logs);
-      Assert.AreEqual(1, lmvm.Logs.Count);
-      Assert.IsNotNull(lmvm.ActiveLog);
-      Assert.AreEqual("simpletest.log", lmvm.ActiveLog.DisplayName);
+      Assert.That(lmvm.Logs, Is.Not.Empty);
+      Assert.That(lmvm.Logs, Is.All.Not.Null);
+      Assert.That(lmvm.Logs.Count, Is.EqualTo(1));
+      Assert.That(lmvm.ActiveLog, Is.Not.Null);
+      Assert.That(lmvm.ActiveLog.DisplayName, Is.EqualTo("simpletest.log"));
     }
   }
 }

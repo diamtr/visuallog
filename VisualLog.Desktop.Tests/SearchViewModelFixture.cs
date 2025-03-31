@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using VisualLog.Desktop.LogManager;
 
 namespace VisualLog.Desktop.Tests
@@ -10,7 +11,7 @@ namespace VisualLog.Desktop.Tests
     public void NewSearchViewModel()
     {
       var vm = new SearchViewModel();
-      Assert.IsNull(vm.StringToSearch);
+      Assert.That(vm.StringToSearch, Is.Null);
     }
   }
 }

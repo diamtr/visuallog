@@ -1,5 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using VisualLog.Core;
+using VisualLog.Core.Search;
 using VisualLog.Desktop.LogManager;
 
 namespace VisualLog.Desktop.Dashboard
@@ -7,7 +7,7 @@ namespace VisualLog.Desktop.Dashboard
   public class SearchResultsViewModel : ViewModelBase
   {
     public ObservableCollection<SearchEntryViewModel> SearchEntries { get; set; }
-    public SearchResults SearchResults
+    public SearchResponse SearchResults
     {
       get { return this.searchResults; }
       protected set
@@ -16,9 +16,9 @@ namespace VisualLog.Desktop.Dashboard
         this.OnPropertyChanged();
       }
     }
-    private SearchResults searchResults;
+    private SearchResponse searchResults;
 
-    public SearchResultsViewModel(SearchResults searchResults) : this()
+    public SearchResultsViewModel(SearchResponse searchResults) : this()
     {
       this.SearchResults = searchResults;
       this.UpdateSearchEntries();

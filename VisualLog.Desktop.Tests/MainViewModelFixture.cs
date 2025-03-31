@@ -10,8 +10,8 @@ namespace VisualLog.Desktop.Tests
     {
       var mvm = new MainViewModel();
 
-      Assert.IsNotNull(mvm.LogManagerViewModel);
-      Assert.IsNotNull(mvm.FormatManagerViewModel);
+      Assert.That(mvm.LogManagerViewModel, Is.Not.Null);
+      Assert.That(mvm.FormatManagerViewModel, Is.Not.Null);
     }
 
     [Test]
@@ -19,7 +19,7 @@ namespace VisualLog.Desktop.Tests
     {
       var mvm = new MainViewModel();
       mvm.SetAsActive(mvm.FormatManagerViewModel);
-      Assert.AreEqual(mvm.FormatManagerViewModel, mvm.ActiveViewModel);
+      Assert.That(mvm.ActiveViewModel, Is.EqualTo(mvm.FormatManagerViewModel));
     }
 
     [Test]
@@ -27,7 +27,7 @@ namespace VisualLog.Desktop.Tests
     {
       var mvm = new MainViewModel();
       mvm.OnWindowLoaded();
-      Assert.AreEqual(mvm.DashboardViewModel, mvm.ActiveViewModel);
+      Assert.That(mvm.ActiveViewModel, Is.EqualTo(mvm.DashboardViewModel));
     }
 
     [Test]
@@ -35,7 +35,7 @@ namespace VisualLog.Desktop.Tests
     {
       var mvm = new MainViewModel();
       mvm.ShowLogManagerCommand.Execute(null);
-      Assert.AreEqual(mvm.LogManagerViewModel, mvm.ActiveViewModel);
+      Assert.That(mvm.ActiveViewModel, Is.EqualTo(mvm.LogManagerViewModel));
     }
 
     [Test]
@@ -43,7 +43,7 @@ namespace VisualLog.Desktop.Tests
     {
       var mvm = new MainViewModel();
       mvm.ShowFormatManagerCommand.Execute(null);
-      Assert.AreEqual(mvm.FormatManagerViewModel, mvm.ActiveViewModel);
+      Assert.That(mvm.ActiveViewModel, Is.EqualTo(mvm.FormatManagerViewModel));
     }
   }
 }

@@ -1,26 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using VisualLog.Core.Search;
+using VisualLog.Desktop.Search;
 
 namespace VisualLog.Desktop.Dashboard
 {
   public class MultipleLogSearchViewModel : ViewModelBase
   {
-    public Command SearchInOpenedLogsCommand { get; private set; }
-
-    public string StringToSearch
-    {
-      get
-      {
-        return this.stringToSearch;
-      }
-      set
-      {
-        this.stringToSearch = value;
-        this.OnPropertyChanged();
-      }
-    }
-    private string stringToSearch;
-
     public DashboardViewModel DashboardViewModel
     {
       get { return this.dashboardViewModel; }
@@ -32,6 +18,17 @@ namespace VisualLog.Desktop.Dashboard
     }
     private DashboardViewModel dashboardViewModel;
 
+    public SearchRequestViewModel SearchRequestViewModel
+    {
+      get { return this.searchRequestViewModel; }
+      set
+      {
+        this.searchRequestViewModel = value;
+        this.OnPropertyChanged();
+      }
+    }
+    private SearchRequestViewModel searchRequestViewModel;
+
     public ObservableCollection<SearchResultsViewModel> SearchResults { get; set; }
 
     public MultipleLogSearchViewModel(DashboardViewModel dashboardViewModel) : this()
@@ -41,19 +38,12 @@ namespace VisualLog.Desktop.Dashboard
 
     public MultipleLogSearchViewModel()
     {
+      this.SearchRequestViewModel = new SearchRequestViewModel();
+      this.SearchRequestViewModel.SearchRequested += SearchRequestViewModel_SearchRequested;
       this.SearchResults = new ObservableCollection<SearchResultsViewModel>();
-      this.InitCommands();
     }
 
-    public void InitCommands()
-    {
-      this.SearchInOpenedLogsCommand = new Command(
-        x => { this.SearchInOpenedLogs(); },
-        x => true
-        );
-    }
-
-    public void SearchInOpenedLogs()
+    private void SearchRequestViewModel_SearchRequested(SearchRequest searchRequest)
     {
       if (this.DashboardViewModel == null ||
           this.DashboardViewModel.MainViewModel == null ||
@@ -65,7 +55,7 @@ namespace VisualLog.Desktop.Dashboard
       var logViewModels = this.DashboardViewModel.MainViewModel.LogManagerViewModel.Logs;
       foreach (var logViewModel in logViewModels)
       {
-        var searchResults = logViewModel.Log.SearchString(this.StringToSearch);
+        var searchResults = SearchEngine.Search(logViewModel.Log, searchRequest);
         if (searchResults.Entries.Any())
           this.SearchResults.Add(new SearchResultsViewModel(searchResults));
       }

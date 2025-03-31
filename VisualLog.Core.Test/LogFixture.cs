@@ -18,10 +18,10 @@ namespace VisualLog.Core.Test
       var log = new Log(path);
       log.Read();
 
-      Assert.AreEqual(3, log.Messages.Count);
-      Assert.AreEqual("line0", log.Messages[0].RawValue);
-      Assert.AreEqual("line1", log.Messages[1].RawValue);
-      Assert.AreEqual("line2", log.Messages[2].RawValue);
+      Assert.That(log.Messages.Count, Is.EqualTo(3));
+      Assert.That(log.Messages[0].RawValue, Is.EqualTo("line0"));
+      Assert.That(log.Messages[1].RawValue, Is.EqualTo("line1"));
+      Assert.That(log.Messages[2].RawValue, Is.EqualTo("line2"));
     }
 
     [Test]
@@ -32,44 +32,42 @@ namespace VisualLog.Core.Test
       var log = new Log(path);
       log.Read();
 
-      Assert.AreEqual(3, log.Messages.Count);
-      Assert.AreEqual("line0", log.Messages[0].RawValue);
-      Assert.AreEqual("линия1", log.Messages[1].RawValue);
-      Assert.AreEqual("line2", log.Messages[2].RawValue);
+      Assert.That(log.Messages.Count, Is.EqualTo(3));
+      Assert.That(log.Messages[0].RawValue, Is.EqualTo("line0"));
+      Assert.That(log.Messages[1].RawValue, Is.EqualTo("линия1"));
+      Assert.That(log.Messages[2].RawValue, Is.EqualTo("line2"));
 
       log = new Log(path, Encoding.UTF8);
       log.Read();
 
-      Assert.AreEqual(3, log.Messages.Count);
-      Assert.AreEqual("line0", log.Messages[0].RawValue);
-      Assert.AreEqual("линия1", log.Messages[1].RawValue);
-      Assert.AreEqual("line2", log.Messages[2].RawValue);
+      Assert.That(log.Messages.Count, Is.EqualTo(3));
+      Assert.That(log.Messages[0].RawValue, Is.EqualTo("line0"));
+      Assert.That(log.Messages[1].RawValue, Is.EqualTo("линия1"));
+      Assert.That(log.Messages[2].RawValue, Is.EqualTo("line2"));
 
       log = new Log(path, Encoding.ASCII);
       log.Read();
 
-      Assert.AreEqual(3, log.Messages.Count);
-      Assert.AreEqual("line0", log.Messages[0].RawValue);
-      Assert.AreEqual("??????????1", log.Messages[1].RawValue);
-      var s = log.Messages[1].RawValue;
-      Assert.AreEqual("line2", log.Messages[2].RawValue);
-
+      Assert.That(log.Messages.Count, Is.EqualTo(3));
+      Assert.That(log.Messages[0].RawValue, Is.EqualTo("line0"));
+      Assert.That(log.Messages[1].RawValue, Is.EqualTo("??????????1"));
+      Assert.That(log.Messages[2].RawValue, Is.EqualTo("line2"));
 
       path = Path.Combine(TestLogsDirName, "0002_ru_ascii.log");
 
       log = new Log(path);
       log.Read();
-      Assert.AreEqual(3, log.Messages.Count);
-      Assert.AreEqual("line0", log.Messages[0].RawValue);
-      Assert.AreEqual("?????1", log.Messages[1].RawValue);
-      Assert.AreEqual("line2", log.Messages[2].RawValue);
+      Assert.That(log.Messages.Count, Is.EqualTo(3));
+      Assert.That(log.Messages[0].RawValue, Is.EqualTo("line0"));
+      Assert.That(log.Messages[1].RawValue, Is.EqualTo("?????1"));
+      Assert.That(log.Messages[2].RawValue, Is.EqualTo("line2"));
 
       log = new Log(path, Encoding.UTF8);
       log.Read();
-      Assert.AreEqual(3, log.Messages.Count);
-      Assert.AreEqual("line0", log.Messages[0].RawValue);
-      Assert.AreEqual("?????1", log.Messages[1].RawValue);
-      Assert.AreEqual("line2", log.Messages[2].RawValue);
+      Assert.That(log.Messages.Count, Is.EqualTo(3));
+      Assert.That(log.Messages[0].RawValue, Is.EqualTo("line0"));
+      Assert.That(log.Messages[1].RawValue, Is.EqualTo("?????1"));
+      Assert.That(log.Messages[2].RawValue, Is.EqualTo("line2"));
     }
 
     [Test]
@@ -92,15 +90,15 @@ namespace VisualLog.Core.Test
       log.Format = format;
       Assert.DoesNotThrow(() => log.ApplyFormat());
 
-      CollectionAssert.IsNotEmpty(log.Messages[0].Parts);
+      Assert.That(log.Messages[0].Parts, Is.Not.Empty);
       var expected = new Dictionary<string, string>();
       expected.Add("Line", "line1");
-      CollectionAssert.AreEquivalent(expected, log.Messages[0].Parts);
+      Assert.That(log.Messages[0].Parts, Is.EquivalentTo(expected));
 
-      CollectionAssert.IsNotEmpty(log.Messages[1].Parts);
+      Assert.That(log.Messages[1].Parts, Is.Not.Empty);
       expected = new Dictionary<string, string>();
       expected.Add("Line", "line2");
-      CollectionAssert.AreEquivalent(expected, log.Messages[1].Parts);
+      Assert.That(log.Messages[1].Parts, Is.EquivalentTo(expected));
     }
 
     [Test]
@@ -116,22 +114,22 @@ namespace VisualLog.Core.Test
       log.Format = format;
       Assert.DoesNotThrow(() => log.ApplyFormat());
 
-      CollectionAssert.IsNotEmpty(log.Messages[0].Parts);
+      Assert.That(log.Messages[0].Parts, Is.Not.Empty);
       var expected = new Dictionary<string, string>();
       expected.Add("DateTime", "09.09.2009 09:09:09");
       expected.Add("Text", "line1");
-      CollectionAssert.AreEquivalent(expected, log.Messages[0].Parts);
+      Assert.That(log.Messages[0].Parts, Is.EquivalentTo(expected));
 
-      CollectionAssert.IsNotEmpty(log.Messages[1].Parts);
+      Assert.That(log.Messages[1].Parts, Is.Not.Empty);
       expected = new Dictionary<string, string>();
       expected.Add("DateTime", "09.09.2009 09:09:09");
       expected.Add("Text", "line2");
-      CollectionAssert.AreEquivalent(expected, log.Messages[1].Parts);
+      Assert.That(log.Messages[1].Parts, Is.EquivalentTo(expected));
 
-      CollectionAssert.IsNotEmpty(log.Messages[2].Parts);
+      Assert.That(log.Messages[2].Parts, Is.Not.Empty);
       expected = new Dictionary<string, string>();
       expected.Add("Text", "line3");
-      CollectionAssert.AreEquivalent(expected, log.Messages[2].Parts);
+      Assert.That(log.Messages[2].Parts, Is.EquivalentTo(expected));
     }
 
     [Test]
@@ -142,17 +140,17 @@ namespace VisualLog.Core.Test
       var log = new Log(path);
       var newMessagesCount = 0;
       log.CatchNewMessage += (Message message) => { newMessagesCount++; };
-      CollectionAssert.IsEmpty(log.Messages);
+      Assert.That(log.Messages, Is.Empty);
 
       Assert.DoesNotThrow(() => { log.Read(); });
 
       File.AppendAllLines(path, new List<string>() { "xx.xx.xxxx xx:xx:xx.xxxx Trace First update followtail.log" });
       Task.Run(() => { System.Threading.Thread.Sleep(System.TimeSpan.FromMilliseconds(FileWatcher.DefaultWatchInterval + 1300)); }).Wait();
-      Assert.AreEqual(1, newMessagesCount);
+      Assert.That(newMessagesCount, Is.EqualTo(1));
 
       File.AppendAllLines(path, new List<string>() { "xx.xx.xxxx xx:xx:xx.xxxx Trace Second update followtail.log" });
       Task.Run(() => { System.Threading.Thread.Sleep(System.TimeSpan.FromMilliseconds(FileWatcher.DefaultWatchInterval + 1300)); }).Wait();
-      Assert.AreEqual(2, newMessagesCount);
+      Assert.That(newMessagesCount, Is.EqualTo(2));
 
       File.WriteAllText(path, null);
 
