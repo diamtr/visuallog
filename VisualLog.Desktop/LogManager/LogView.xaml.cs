@@ -32,59 +32,34 @@ namespace VisualLog.Desktop.LogManager
       InitializeComponent();
     }
 
-    private void MessagesListView_SourceUpdated(object sender, NotifyCollectionChangedEventArgs e)
-    {
-      this.ScrollToBottom();
-    }
-
-    private void PART_AutoSrollToBottomButton_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-      this.ScrollToBottom();
-    }
-
-    private void PART_AutoSrollToBottomButton_Checked(object sender, RoutedEventArgs e)
-    {
-      this.ScrollToBottom();
-      var sourceCollection = (INotifyCollectionChanged)this.MessagesListView.Items.SourceCollection;
-      if (sourceCollection == null)
-        return;
-      sourceCollection.CollectionChanged += this.MessagesListView_SourceUpdated;
-    }
-
-    private void PART_AutoSrollToBottomButton_Unchecked(object sender, RoutedEventArgs e)
-    {
-      var sourceCollection = (INotifyCollectionChanged)this.MessagesListView.Items.SourceCollection;
-      if (sourceCollection == null)
-        return;
-      sourceCollection.CollectionChanged -= this.MessagesListView_SourceUpdated;
-    }
-
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
       this.ScrollToBottom();
       var logViewModel = this.DataContext as LogViewModel;
       if (logViewModel != null)
+      {
         logViewModel.ShowLineRequested += this.ShowLine;
+        logViewModel.LogMessages.CollectionChanged += this.LogMessages_CollectionChanged;
+      }
+    }
+
+    private void LogMessages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+      this.ScrollToBottom();
+    }
+
+    private void FollowTailCheckBox_Checked(object sender, RoutedEventArgs e)
+    {
+      this.ScrollToBottom();
     }
 
     private void ScrollToBottom()
     {
-      if (VisualTreeHelper.GetChildrenCount(this.MessagesListView) <= 0)
+      var scrollViewer = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.MessagesListView, 0), 0) as ScrollViewer;
+      if (scrollViewer == null)
         return;
-      var border = (Border)VisualTreeHelper.GetChild(this.MessagesListView, 0);
-      if (VisualTreeHelper.GetChildrenCount(border) <= 0)
-        return;
-      var scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
-      if (VisualTreeHelper.GetChildrenCount(scrollViewer) <= 0)
-        return;
-      var scrollViewerBorder = (Border)VisualTreeHelper.GetChild(scrollViewer, 0);
-      if (VisualTreeHelper.GetChildrenCount(scrollViewerBorder) <= 0)
-        return;
-      var grid = (Grid)VisualTreeHelper.GetChild(scrollViewerBorder, 0);
-      if (VisualTreeHelper.GetChildrenCount(grid) <= 0)
-        return;
-      var toggleButton = (ToggleButton)VisualTreeHelper.GetChild(grid, 3);
-      if (toggleButton.IsChecked == true)
+
+      if (this.FollowTailCheckBox.IsChecked.GetValueOrDefault())
         scrollViewer.ScrollToBottom();
     }
 
@@ -93,23 +68,12 @@ namespace VisualLog.Desktop.LogManager
       if (position < 0)
         return;
 
-      if (VisualTreeHelper.GetChildrenCount(this.MessagesListView) <= 0)
+      var scrollViewer = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.MessagesListView, 0), 0) as ScrollViewer;
+      if (scrollViewer == null)
         return;
-      var border = (Border)VisualTreeHelper.GetChild(this.MessagesListView, 0);
-      if (VisualTreeHelper.GetChildrenCount(border) <= 0)
-        return;
-      var scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
-      if (VisualTreeHelper.GetChildrenCount(scrollViewer) <= 0)
-        return;
-      var scrollViewerBorder = (Border)VisualTreeHelper.GetChild(scrollViewer, 0);
-      if (VisualTreeHelper.GetChildrenCount(scrollViewerBorder) <= 0)
-        return;
-      var grid = (Grid)VisualTreeHelper.GetChild(scrollViewerBorder, 0);
-      if (VisualTreeHelper.GetChildrenCount(grid) <= 0)
-        return;
-      var toggleButton = (ToggleButton)VisualTreeHelper.GetChild(grid, 3);
-      if (toggleButton.IsChecked == true)
-        scrollViewer.ScrollToVerticalOffset(position);
+
+      this.FollowTailCheckBox.IsChecked = false;
+      scrollViewer.ScrollToVerticalOffset(position);
     }
 
     private void MessagesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -187,5 +151,7 @@ namespace VisualLog.Desktop.LogManager
         this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = rightWidth;
       }
     }
+
+    
   }
 }
