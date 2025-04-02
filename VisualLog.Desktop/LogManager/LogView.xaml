@@ -7,15 +7,21 @@
              xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             Loaded="UserControl_Loaded">
+             Loaded="UserControl_Loaded"
+             DataContextChanged="LogView_DataContextChanged">
 
   <UserControl.Resources>
     <ResourceDictionary>
         
       <root:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
+      <root:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter"/>
 
       <DataTemplate DataType="{x:Type logmgr:MessageInlineViewModel}">
         <logmgr:MessageInlineView />
+      </DataTemplate>
+      
+      <DataTemplate DataType="{x:Type logmgr:SelectedMessagesViewModel}">
+        <logmgr:SelectedMessagesView />
       </DataTemplate>
 
       <DataTemplate DataType="{x:Type logmgr:SearchViewModel}">
@@ -128,6 +134,7 @@
 
     </Grid>
 
+    <!-- Log -->
     <Grid Grid.Row="1">
 
       <DockPanel LastChildFill="True">
@@ -147,38 +154,42 @@
                           Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
         </Grid>
 
-        <!-- Line Info -->
-        <Grid DockPanel.Dock="Left"
-              Background="Red"
-              Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}">
+        <!-- Log & Selected Log Messages -->
+        <Grid x:Name="LogAndSelectedMessagesGrid">
 
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="3"/>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource BoolToGridLengthConverter}}"
+                              MinWidth="0"/>
+            <ColumnDefinition Width="3" />
+            <ColumnDefinition Width="2*" />
           </Grid.ColumnDefinitions>
 
-          <Border Grid.Column="0" Background="Pink" MinWidth="350">
-            <Grid>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-              </Grid.RowDefinitions>
-              <TextBlock Grid.Row="0" Text="StackTrace" />
-              <TextBox Grid.Row="1" Text="{Binding SelectedLogMessage.StackTrace}" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True" FontFamily="Consolas" />
-            </Grid>
+          <Border x:Name="SelectedLogMessages"
+                  Grid.Column="0"
+                  Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
+                  IsVisibleChanged="SelectedLogMessages_IsVisibleChanged">
+            <ContentControl Content="{Binding SelectedLogMessages}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"/>
           </Border>
-          <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
           
+          <GridSplitter Grid.Column="1"
+                        Width="3"
+                        ResizeBehavior="PreviousAndNext"
+                        ResizeDirection="Columns"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"/>
+          
+          <ListView x:Name="MessagesListView"
+                    Grid.Column="2"
+                    Template="{StaticResource LogMessagesListViewControlTemplate}"
+                    ItemsSource="{Binding LogMessages}"
+                    SelectedItem="{Binding SelectedLogMessage}"
+                    SelectionMode="Extended"
+                    BorderThickness="0, 1, 0, 0"
+                    SelectionChanged="MessagesListView_SelectionChanged"/>
         </Grid>
-
-        <ListView 
-          x:Name="MessagesListView"
-          Template="{StaticResource LogMessagesListViewControlTemplate}"
-          ItemsSource="{Binding LogMessages}"
-          SelectedItem="{Binding SelectedLogMessage}"
-          SelectionMode="Extended"
-          BorderThickness="0, 1, 0, 0"/>
 
       </DockPanel>
 
@@ -188,7 +199,7 @@
       <ToggleButton Content="Serch Panel"
                     IsChecked="{Binding State.ShowSearchPanel}" />
       <ToggleButton Content="Line" x:Name="ShowSelectedMessageVerticalButton"
-                    IsChecked="{Binding State.ShowSelectedMessageVertical}"/>
+                    IsChecked="{Binding State.ShowSelectedMessageVertical}" />
     </WrapPanel>
 
   </Grid>

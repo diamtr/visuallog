@@ -16,6 +16,15 @@ namespace VisualLog.Desktop.LogManager
     public event Action<LogViewModel> CloseRequested;
     public event Action<double> ShowLineRequested;
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
+    public SelectedMessagesViewModel SelectedLogMessages
+    {
+      get { return this.selectedLogMessages; }
+      set {
+        this.selectedLogMessages = value;
+        this.OnPropertyChanged();
+      }
+    }
+    private SelectedMessagesViewModel selectedLogMessages;
     public MessageInlineViewModel SelectedLogMessage
     { 
       get
@@ -29,6 +38,7 @@ namespace VisualLog.Desktop.LogManager
       }
     }
     private MessageInlineViewModel selectedLogMessage;
+    
     public string DisplayName
     {
       get
@@ -83,6 +93,7 @@ namespace VisualLog.Desktop.LogManager
     public LogViewModel()
     {
       this.LogMessages = new ObservableCollection<MessageInlineViewModel>();
+      this.SelectedLogMessages = new SelectedMessagesViewModel();
       this.Encodings = new List<string>();
       this.LogFormats = new List<Format>();
       this.State = new LogViewStateViewModel();

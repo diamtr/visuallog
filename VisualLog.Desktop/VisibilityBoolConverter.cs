@@ -23,9 +23,7 @@ namespace VisualLog.Desktop
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-      throw new InvalidOperationException("Converter cannot convert back.");
-    }
+      => throw new NotSupportedException();
 
     public Boolean Reverse { get; set; }
   }

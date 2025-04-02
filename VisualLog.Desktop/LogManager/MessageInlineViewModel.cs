@@ -7,51 +7,39 @@ namespace VisualLog.Desktop.LogManager
   {
     public bool OnlyRaw
     {
-      get
-      { 
-        return this.onlyRaw;
-      }
-      set
-      {
+      get { return this.onlyRaw; }
+      set {
         this.onlyRaw = value;
         this.OnPropertyChanged();
       }
     }
+    private bool onlyRaw;
+
     public bool CopyEnabled
     {
-      get
-      {
-        return this.copyEnabled;
-      }
-      set
-      {
+      get { return this.copyEnabled; }
+      set {
         this.copyEnabled = value;
         this.OnPropertyChanged();
       }
     }
+    private bool copyEnabled;
 
     public string StackTrace
     {
-      get
-      {
-        return this.stackTrace;
-      }
-      set
-      {
+      get { return this.stackTrace; }
+      set {
         this.stackTrace = value;
         this.OnPropertyChanged();
       }
     }
+    private string stackTrace;
 
     public Message Message
     {
       get { return this.message; }
     }
-
     private Message message;
-    private bool onlyRaw;
-    private bool copyEnabled;
-    private string stackTrace;
 
     public MessageInlineViewModel(Message message)
     {
