@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -43,6 +45,21 @@ namespace VisualLog.Desktop.LogManager
       }
     }
 
+    private void LogView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (e.NewValue == null)
+        return;
+      var viewModel = e.NewValue as LogViewModel;
+      if (viewModel != null)
+      {
+        if (viewModel.State.ShowSelectedMessageVertical)
+          this.ShowLogAndSelectedMessagesGridLeftPart(e.NewValue.GetHashCode());
+        else
+          this.HideLogAndSelectedMessagesGridLeftPart(e.NewValue.GetHashCode());
+      }
+      this.ScrollToBottom();
+    }
+
     private void LogMessages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
       this.ScrollToBottom();
@@ -55,6 +72,9 @@ namespace VisualLog.Desktop.LogManager
 
     private void ScrollToBottom()
     {
+      if (!this.IsLoaded)
+        return;
+
       var scrollViewer = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.MessagesListView, 0), 0) as ScrollViewer;
       if (scrollViewer == null)
         return;
@@ -109,49 +129,37 @@ namespace VisualLog.Desktop.LogManager
       if (border == null)
         return;
 
-      var hash = border.DataContext.GetHashCode();
-
-      if (border.Visibility == Visibility.Collapsed)
+      if (border.DataContext != null)
       {
-        var leftWidth = this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width;
-        this.lastSelectedLogMessagesWidth[hash] = leftWidth;
-        var rightWidth = this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width;
-        this.lastLogWidth[hash] = rightWidth;
-        this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width = new GridLength(0);
-        this.LogAndSelectedMessagesGrid.ColumnDefinitions[1].Width = new GridLength(0);
-        this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
-      }
-      else
-      {
-        var leftWidth = this.lastSelectedLogMessagesWidth.ContainsKey(hash) ?
-          this.lastSelectedLogMessagesWidth[hash] :
-          new GridLength(1, GridUnitType.Star);
-        this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width = leftWidth;
-        this.LogAndSelectedMessagesGrid.ColumnDefinitions[1].Width = new GridLength(3);
-        var rightWidth = this.lastLogWidth.ContainsKey(hash) ?
-          this.lastLogWidth[hash] :
-          new GridLength(2, GridUnitType.Star);
-        this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = rightWidth;
+        if (border.Visibility == Visibility.Collapsed)
+          this.HideLogAndSelectedMessagesGridLeftPart(border.DataContext.GetHashCode());
+        else
+          this.ShowLogAndSelectedMessagesGridLeftPart(border.DataContext.GetHashCode());
       }
     }
 
-    private void LogView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    private void ShowLogAndSelectedMessagesGridLeftPart(int hash)
     {
-      var hash = e.NewValue.GetHashCode();
-      if (this.SelectedLogMessages.Visibility != Visibility.Collapsed)
-      {
-        var leftWidth = this.lastSelectedLogMessagesWidth.ContainsKey(hash) ?
+      var leftWidth = this.lastSelectedLogMessagesWidth.ContainsKey(hash) ?
           this.lastSelectedLogMessagesWidth[hash] :
           new GridLength(1, GridUnitType.Star);
-        this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width = leftWidth;
-        this.LogAndSelectedMessagesGrid.ColumnDefinitions[1].Width = new GridLength(3);
-        var rightWidth = this.lastLogWidth.ContainsKey(hash) ?
-          this.lastLogWidth[hash] :
-          new GridLength(2, GridUnitType.Star);
-        this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = rightWidth;
-      }
+      this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width = leftWidth;
+      this.LogAndSelectedMessagesGrid.ColumnDefinitions[1].Width = new GridLength(3);
+      var rightWidth = this.lastLogWidth.ContainsKey(hash) ?
+        this.lastLogWidth[hash] :
+        new GridLength(2, GridUnitType.Star);
+      this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = rightWidth;
     }
 
-    
+    private void HideLogAndSelectedMessagesGridLeftPart(int hash)
+    {
+      var leftWidth = this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width;
+      this.lastSelectedLogMessagesWidth[hash] = leftWidth;
+      var rightWidth = this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width;
+      this.lastLogWidth[hash] = rightWidth;
+      this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width = new GridLength(0);
+      this.LogAndSelectedMessagesGrid.ColumnDefinitions[1].Width = new GridLength(0);
+      this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
+    }
   }
 }

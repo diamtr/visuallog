@@ -38,7 +38,7 @@
     </ResourceDictionary>
   </Window.Resources>
   
-  <Grid>
+  <Grid Background="{StaticResource DefaultBackgroundBrush}">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="50" />
       <ColumnDefinition Width="*" />
