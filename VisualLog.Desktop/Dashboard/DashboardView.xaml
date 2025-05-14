@@ -19,34 +19,24 @@
     </DataTemplate>
   </UserControl.Resources>
 
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-    <StackPanel Grid.Row="0" Orientation="Horizontal">
-      <Button Content="To Logs" Command="{Binding MainViewModel.ShowLogManagerCommand}"/>
-      <Button Content="Open" Command="{Binding MainViewModel.LogManagerViewModel.OpenLogsCommand}"/>
-    </StackPanel>
-    <Grid Grid.Row="1">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="60*"/>
-        <ColumnDefinition Width="40*"/>
-      </Grid.ColumnDefinitions>
-      <Grid Grid.Column="0" Margin="10, 0, 10, 0">
-        <ContentControl Content="{Binding MultipleLogSearchViewModel}" />
+  <Grid Margin="15,10,0,0">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="60*"/>
+      <ColumnDefinition Width="40*"/>
+    </Grid.ColumnDefinitions>
+    <Grid Grid.Column="0" Margin="10, 0, 10, 0">
+      <ContentControl Content="{Binding MultipleLogSearchViewModel}" />
+    </Grid>
+    <Grid Grid.Column="1" Margin="10, 0, 10, 0">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="40*" />
+        <RowDefinition Height="60*" />
+      </Grid.RowDefinitions>
+      <Grid Grid.Row="0">
+        <ContentControl Content="{Binding OpenedLogsViewModel}" />
       </Grid>
-      <Grid Grid.Column="1" Margin="10, 0, 10, 0">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="40*" />
-          <RowDefinition Height="60*" />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-          <ContentControl Content="{Binding OpenedLogsViewModel}" />
-        </Grid>
-        <Grid Grid.Row="1">
-          <ContentControl Content="{Binding RecentLogsViewModel}" />
-        </Grid>
+      <Grid Grid.Row="1">
+        <ContentControl Content="{Binding RecentLogsViewModel}" />
       </Grid>
     </Grid>
   </Grid>

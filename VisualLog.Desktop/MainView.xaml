@@ -7,6 +7,7 @@
         xmlns:dshbrd="clr-namespace:VisualLog.Desktop.Dashboard"
         xmlns:fmtmgr="clr-namespace:VisualLog.Desktop.FormatManager"
         xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
+        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         mc:Ignorable="d"
         Title="VisualLog" Height="450" Width="800"
         WindowState="Maximized"
@@ -38,6 +39,30 @@
   </Window.Resources>
   
   <Grid>
-    <ContentControl Content="{Binding ActiveViewModel}"/>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="50" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Border Grid.Column="0"
+            Padding="0, 20, 0, 10"
+            Background="{StaticResource PanelBackgroundBrush}">
+      <StackPanel Orientation="Vertical"
+                  HorizontalAlignment="Center">
+        <Button Style="{StaticResource LeftMenuButton}"
+                Command="{Binding OpenLogsCommand}">
+          <svgc:SvgViewbox Source="/img/LeftMenu/FileOpen.svg"/>
+        </Button>
+        <Button Style="{StaticResource LeftMenuButton}"
+                Command="{Binding ShowLogManagerCommand}">
+          <svgc:SvgViewbox Source="/img/LeftMenu/Logs.svg"/>
+        </Button>
+        <Button Style="{StaticResource LeftMenuButton}"
+                Command="{Binding ShowDashboardCommand}">
+          <svgc:SvgViewbox Source="/img/LeftMenu/Dashboard.svg"/>
+        </Button>
+      </StackPanel>
+    </Border>
+    
+    <ContentControl Grid.Column="1" Content="{Binding ActiveViewModel}"/>
   </Grid>
 </Window>

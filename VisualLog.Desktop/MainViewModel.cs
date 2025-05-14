@@ -1,4 +1,7 @@
-﻿using VisualLog.Desktop.Dashboard;
+﻿using Microsoft.Win32;
+using System.Collections.Generic;
+using System.Linq;
+using VisualLog.Desktop.Dashboard;
 using VisualLog.Desktop.FormatManager;
 using VisualLog.Desktop.LogManager;
 
@@ -16,8 +19,9 @@ namespace VisualLog.Desktop
     public DashboardViewModel DashboardViewModel { get; private set; }
     public LogManagerViewModel LogManagerViewModel { get; private set; }
     public FormatManagerViewModel FormatManagerViewModel { get; private set; }
-    public Command ShowDashboardCommand { get; private set; }
+    public Command OpenLogsCommand { get; private set; }
     public Command ShowLogManagerCommand { get; private set; }
+    public Command ShowDashboardCommand { get; private set; }
     public Command ShowFormatManagerCommand { get; private set; }
 
     public MainViewModel()
@@ -47,12 +51,30 @@ namespace VisualLog.Desktop
 
     private void InitCommands()
     {
-      this.ShowDashboardCommand = new Command(
-        x => { this.SetAsActive(this.DashboardViewModel); },
+      this.OpenLogsCommand = new Command(
+        x => {
+          List<string> paths = new List<string>();
+          if (x is not null && x is string)
+          {
+            paths.Add((string)x);
+          }
+          else
+          {
+            var dialog = new OpenFileDialog();
+            dialog.Multiselect = true;
+            if (dialog.ShowDialog() == true)
+              paths = dialog.FileNames.ToList();
+          }
+          this.LogManagerViewModel.OpenLogs(paths.ToArray());
+        },
         x => true
         );
       this.ShowLogManagerCommand = new Command(
         x => { this.SetAsActive(this.LogManagerViewModel); },
+        x => true
+        );
+      this.ShowDashboardCommand = new Command(
+        x => { this.SetAsActive(this.DashboardViewModel); },
         x => true
         );
       this.ShowFormatManagerCommand = new Command(

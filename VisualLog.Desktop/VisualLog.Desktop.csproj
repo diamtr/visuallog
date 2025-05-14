@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="img\LeftMenu\Dashboard.svg" />
+    <None Remove="img\LeftMenu\FileOpen.svg" />
+    <None Remove="img\LeftMenu\Logs.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="img\ico64.ico" />
   </ItemGroup>
 
@@ -15,6 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="5.1.1" />
+    <PackageReference Include="SharpVectors" Version="1.8.4.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +32,12 @@
     <None Update="img\logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="img\LeftMenu\Dashboard.svg" />
+    <Resource Include="img\LeftMenu\FileOpen.svg" />
+    <Resource Include="img\LeftMenu\Logs.svg" />
   </ItemGroup>
 
 </Project>

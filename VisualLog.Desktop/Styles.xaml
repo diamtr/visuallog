@@ -2,11 +2,35 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   
   <SolidColorBrush x:Key="DefaultBorderBrush" Color="Black"/>
+  <SolidColorBrush x:Key="DefaultBackgroundBrush" Color="#525252"/>
+  <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#414141"/>
 
   <Style x:Key="LeftMenuButton"
          TargetType="{x:Type Button}">
-    <Setter Property="Width" Value="50"/>
-    <Setter Property="Height" Value="50"/>
+    <Setter Property="Width" Value="30"/>
+    <Setter Property="Height" Value="30"/>
+    <Setter Property="Margin" Value="0,0,0,30"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0,0,0,0"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0,0,0,3"/>
+        <Setter Property="BorderBrush" Value="Yellow"/>
+      </Trigger>
+    </Style.Triggers>
   </Style>
 
   <Style x:Key="PanelHeader1" TargetType="{x:Type TextBlock}">

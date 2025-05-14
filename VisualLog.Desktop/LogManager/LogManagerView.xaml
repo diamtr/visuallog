@@ -6,52 +6,42 @@
              xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" d:Background="Gray">
-  <Grid>
+  
+  <Grid Background="Transparent"
+        Margin="15,10,0,0">
+    <Grid.Resources>
+      <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
+        <logmgr:LogView/>
+      </DataTemplate>
+    </Grid.Resources>
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-    <StackPanel Grid.Row="0" Orientation="Horizontal">
-      <Button Content="To Dashboard" Command="{Binding MainViewModel.ShowDashboardCommand}" />
-      <Button Content="Open" Command="{Binding OpenLogsCommand}" />
-    </StackPanel>
-    <Grid Grid.Row="1"
-          Background="Transparent">
-      <Grid.Resources>
-        <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
-          <logmgr:LogView/>
-        </DataTemplate>
-      </Grid.Resources>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="*"/>
-      </Grid.RowDefinitions>
-      <Grid Grid.Row="0"
+    <Grid Grid.Row="0"
           Margin="0, 10, 0, 0"
           Background="Transparent">
-
-        <ListBox FlowDirection="LeftToRight"
+      <ListBox FlowDirection="LeftToRight"
                MinHeight="20"
                ItemsSource="{Binding Logs}"
                SelectedItem="{Binding ActiveLog}"
                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                BorderThickness="0, 0, 0, 0"
                Background="{Binding Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}">
-          <ListBox.Resources>
-            <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
-              <logmgr:LogWrapPanelView/>
-            </DataTemplate>
-          </ListBox.Resources>
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel Orientation="Horizontal"/>
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-        </ListBox>
-      </Grid>
-      <ContentControl Grid.Row="1"
-                    Content="{Binding ActiveLog}"/>
+        <ListBox.Resources>
+          <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
+            <logmgr:LogWrapPanelView/>
+          </DataTemplate>
+        </ListBox.Resources>
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal"/>
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+      </ListBox>
     </Grid>
+    <ContentControl Grid.Row="1"
+                    Content="{Binding ActiveLog}"/>
   </Grid>
-  
+
 </UserControl>
