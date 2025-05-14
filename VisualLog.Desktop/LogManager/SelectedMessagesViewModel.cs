@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace VisualLog.Desktop.LogManager
@@ -46,6 +48,13 @@ namespace VisualLog.Desktop.LogManager
         x => { this.ShowNextMessage(); },
         x => true
         );
+    }
+
+    public void SetMessages(IEnumerable<SearchEntryViewModel> searchEntries)
+    {
+      this.Messages.Clear();
+      foreach (var entry in searchEntries)
+        this.Messages.Add(new MessagePanelViewModel(entry.SearchEntry.Message));
     }
 
     private void Messages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

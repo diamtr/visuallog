@@ -28,7 +28,7 @@ namespace VisualLog.Core.Search
       if (message == null || request == null)
         return null;
 
-      var entry = new SearchEntry() { RawString = message.RawValue };
+      var entry = new SearchEntry(message);
       foreach (var statement in request.Statements)
       {
         var matches = statement.GetMatches(message);

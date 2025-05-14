@@ -46,6 +46,11 @@
             <Button Content="Search"
                     Command="{Binding SearchCommand}"
                     Margin="0,0,0,30"/>
+            <Button Content="View All"
+                    Command="{Binding ViewAllCommand}"/>
+            <Button Content="View Selected"
+                    Command="{Binding ViewSelectedCommand}"
+                    CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
             <Button Content="Copy All"
                     Command="{Binding CopyAllCommand}"/>
             <Button Content="Copy Selected"

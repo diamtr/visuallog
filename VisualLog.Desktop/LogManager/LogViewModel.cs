@@ -177,6 +177,14 @@ namespace VisualLog.Desktop.LogManager
       this.SelectedLogMessage = this.LogMessages[lineNumber];
     }
 
+    public void SelectLogLines(IEnumerable<SearchEntryViewModel> searchEntries)
+    {
+      this.SelectedLogMessage = null;
+      var firstEntry = searchEntries.FirstOrDefault();
+      this.SelectedLogMessage = firstEntry != null ? this.LogMessages[firstEntry.SearchEntry.LineNumber] : null;
+      this.SelectedLogMessages.SetMessages(searchEntries);
+    }
+
     public void InitEncodings()
     {
       var encodings = Encoding.GetEncodings();

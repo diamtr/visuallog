@@ -32,7 +32,7 @@ namespace VisualLog.Desktop.LogManager
       if (vm == null || vm.SearchEntry == null || vm.SearchEntry.Matches == null)
         return;
 
-      var rawString = vm.SearchEntry.RawString;
+      var rawString = vm.SearchEntry.Message?.RawValue;
       var stringParts = new List<Tuple<bool, string>>();
       var matches = new Queue<MatchEntry>(vm.SearchEntry.Matches.OrderBy(x => x.Index));
       var index = 0;
