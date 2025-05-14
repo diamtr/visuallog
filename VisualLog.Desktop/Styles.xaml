@@ -5,8 +5,7 @@
   <SolidColorBrush x:Key="DefaultBackgroundBrush" Color="#f2f2f2"/>
   <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#414141"/>
 
-  <Style x:Key="LeftMenuButton"
-         TargetType="{x:Type Button}">
+  <Style x:Key="LeftMenuButton" TargetType="{x:Type Button}">
     <Setter Property="Width" Value="30"/>
     <Setter Property="Height" Value="30"/>
     <Setter Property="Margin" Value="0,0,0,30"/>
@@ -33,6 +32,10 @@
     </Style.Triggers>
   </Style>
 
+  <Style x:Key="TopLogMenuToggleButton" TargetType="{x:Type ToggleButton}">
+    <Setter Property="Margin" Value="10,3,10,2"/>
+  </Style>
+  
   <Style x:Key="PanelHeader1" TargetType="{x:Type TextBlock}">
     <Setter Property="FontWeight" Value="ExtraBold" />
     <Setter Property="FontStretch" Value="SemiExpanded" />
