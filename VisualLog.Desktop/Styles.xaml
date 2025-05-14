@@ -4,6 +4,7 @@
   <SolidColorBrush x:Key="DefaultBorderBrush" Color="Black"/>
   <SolidColorBrush x:Key="DefaultBackgroundBrush" Color="#f2f2f2"/>
   <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#414141"/>
+  <SolidColorBrush x:Key="ToggleButtonIsChackedBackgroundBrush" Color="#CA3E47"/>
 
   <Style x:Key="LeftMenuButton" TargetType="{x:Type Button}">
     <Setter Property="Width" Value="30"/>
@@ -33,7 +34,34 @@
   </Style>
 
   <Style x:Key="TopLogMenuToggleButton" TargetType="{x:Type ToggleButton}">
-    <Setter Property="Margin" Value="10,3,10,2"/>
+    <Setter Property="Margin" Value="10,5,10,5"/>
+    <Setter Property="Padding" Value="3,3,3,3"/>
+    <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource DefaultBackgroundBrush}"/>
+    <Setter Property="BorderThickness" Value="1,1,1,1" />
+    <Setter Property="Foreground" Value="{StaticResource DefaultBackgroundBrush}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ToggleButton}">
+          <Border Padding="{TemplateBinding Padding}"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="2,2,2,2">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="IsChecked" Value="True">
+        <Setter Property="Background" Value="{StaticResource ToggleButtonIsChackedBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="Yellow"/>
+      </Trigger>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="Cursor" Value="Hand"/>
+      </Trigger>
+    </Style.Triggers>
   </Style>
   
   <Style x:Key="PanelHeader1" TargetType="{x:Type TextBlock}">

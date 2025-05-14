@@ -14,8 +14,8 @@
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </UserControl.Resources>
-  
-  <Border BorderThickness="3,0,0,0"
+
+  <Border BorderThickness="5,0,0,0"
           BorderBrush="{StaticResource PanelBackgroundBrush}"
           Margin="3,0,0,0">
     <Grid Background="Transparent">
@@ -30,13 +30,17 @@
       </Grid.RowDefinitions>
       <Grid Grid.Row="0"
             Background="Transparent">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="3*"/>
+          <RowDefinition/>
+        </Grid.RowDefinitions>
         <ListBox FlowDirection="LeftToRight"
              MinHeight="20"
              ItemsSource="{Binding Logs}"
              SelectedItem="{Binding ActiveLog}"
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
              BorderThickness="0, 0, 0, 0"
-             Background="{Binding Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}">
+             Background="{Binding Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" Grid.RowSpan="2">
           <ListBox.Resources>
             <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
               <logmgr:LogWrapPanelView/>

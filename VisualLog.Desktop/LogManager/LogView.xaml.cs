@@ -154,9 +154,11 @@ namespace VisualLog.Desktop.LogManager
     private void HideLogAndSelectedMessagesGridLeftPart(int hash)
     {
       var leftWidth = this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width;
-      this.lastSelectedLogMessagesWidth[hash] = leftWidth;
+      if (leftWidth.Value > 0)
+        this.lastSelectedLogMessagesWidth[hash] = leftWidth;
       var rightWidth = this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width;
-      this.lastLogWidth[hash] = rightWidth;
+      if (rightWidth.Value > 0)
+        this.lastLogWidth[hash] = rightWidth;
       this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width = new GridLength(0);
       this.LogAndSelectedMessagesGrid.ColumnDefinitions[1].Width = new GridLength(0);
       this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
