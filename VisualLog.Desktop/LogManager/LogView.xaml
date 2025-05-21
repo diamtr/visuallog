@@ -111,7 +111,7 @@
         <ColumnDefinition Width="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource BoolToGridLengthConverter}}"
                           MinWidth="0"/>
         <ColumnDefinition Width="3" />
-        <ColumnDefinition Width="2*" />
+        <ColumnDefinition Width="4*" />
       </Grid.ColumnDefinitions>
 
       <Border x:Name="SelectedLogMessages"

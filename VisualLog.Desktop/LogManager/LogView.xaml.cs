@@ -47,6 +47,8 @@ namespace VisualLog.Desktop.LogManager
       {
         this.actualViewModel.ShowLineRequested += this.ShowLine;
         this.actualViewModel.LogMessages.CollectionChanged += this.LogMessages_CollectionChanged;
+        this.HideSelectedMessagesPanel();
+        this.HideSearchPanel();
       }
     }
 
@@ -55,12 +57,11 @@ namespace VisualLog.Desktop.LogManager
       if (e.NewValue == null)
         return;
 
-      if (this.actualViewModel != null)
-      {
-        this.RememberSelectedMessagesPanelState(this.actualViewModel.Guid);
-        this.RememberSearchPanelState(this.actualViewModel.Guid);
-      }
+      this.RememberSelectedMessagesPanelState();
+      this.RememberSearchPanelState();
       this.actualViewModel = e.NewValue as LogViewModel;
+      this.ShowSelectedMessagesPanel();
+      this.ShowSearchPanel();
 
       this.ScrollToBottom();
     }
@@ -132,9 +133,9 @@ namespace VisualLog.Desktop.LogManager
       if (this.actualViewModel != null)
       {
         if (border.Visibility == Visibility.Collapsed)
-          this.HideSelectedMessagesPanel(this.actualViewModel.Guid);
+          this.HideSelectedMessagesPanel();
         else
-          this.ShowSelectedMessagesPanel(this.actualViewModel.Guid);
+          this.ShowSelectedMessagesPanel();
       }
     }
 
@@ -147,82 +148,92 @@ namespace VisualLog.Desktop.LogManager
       if (this.actualViewModel != null)
       {
         if (border.Visibility == Visibility.Collapsed)
-          this.HideSearchPanel(this.actualViewModel.Guid);
+          this.HideSearchPanel();
         else
-          this.ShowSearchPanel(this.actualViewModel.Guid);
+          this.ShowSearchPanel();
       }
     }
 
-    private void ShowSelectedMessagesPanel(Guid viewModelGuid)
+    private void ShowSelectedMessagesPanel()
     {
-      var selectedMessagesWidth = this.lastSelectedMessagesPanelWidth.ContainsKey(viewModelGuid) ?
-          this.lastSelectedMessagesPanelWidth[viewModelGuid] :
+      if (!this.actualViewModel?.State?.ShowSelectedMessagesPanel ?? true)
+        return;
+
+      var selectedMessagesWidth = this.lastSelectedMessagesPanelWidth.ContainsKey(this.actualViewModel.Guid) ?
+          this.lastSelectedMessagesPanelWidth[this.actualViewModel.Guid] :
           new GridLength(1, GridUnitType.Star);
       this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width = selectedMessagesWidth;
       this.LogAndSelectedMessagesGrid.ColumnDefinitions[1].Width = new GridLength(3);
-      var logWidth = this.lastLogWidth.ContainsKey(viewModelGuid) ?
-        this.lastLogWidth[viewModelGuid] :
-        new GridLength(2, GridUnitType.Star);
+      var logWidth = this.lastLogWidth.ContainsKey(this.actualViewModel.Guid) ?
+        this.lastLogWidth[this.actualViewModel.Guid] :
+        new GridLength(4, GridUnitType.Star);
       this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = logWidth;
     }
 
-    private void HideSelectedMessagesPanel(Guid viewModelGuid)
+    private void HideSelectedMessagesPanel()
     {
       this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width = new GridLength(0);
       this.LogAndSelectedMessagesGrid.ColumnDefinitions[1].Width = new GridLength(0);
       this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
     }
 
-    private void ShowSearchPanel(Guid viewModelGuid)
+    private void ShowSearchPanel()
     {
-      var searchHeight = this.lastSearchPanelHeight.ContainsKey(viewModelGuid) ?
-          this.lastSearchPanelHeight[viewModelGuid] :
+      if (!this.actualViewModel?.State?.ShowSearchPanel ?? true)
+        return;
+
+      var searchHeight = this.lastSearchPanelHeight.ContainsKey(this.actualViewModel.Guid) ?
+          this.lastSearchPanelHeight[this.actualViewModel.Guid] :
           new GridLength(1, GridUnitType.Star);
       this.LogAndSearchGrid.RowDefinitions[0].Height = searchHeight;
       this.LogAndSearchGrid.RowDefinitions[1].Height = new GridLength(3);
-      var logHeight = this.lastLogHeight.ContainsKey(viewModelGuid) ?
-        this.lastLogHeight[viewModelGuid] :
+      var logHeight = this.lastLogHeight.ContainsKey(this.actualViewModel.Guid) ?
+        this.lastLogHeight[this.actualViewModel.Guid] :
         new GridLength(2, GridUnitType.Star);
       this.LogAndSearchGrid.RowDefinitions[2].Height = logHeight;
     }
 
-    private void HideSearchPanel(Guid viewModelGuid)
+    private void HideSearchPanel()
     {
       this.LogAndSearchGrid.RowDefinitions[0].Height = new GridLength(0);
       this.LogAndSearchGrid.RowDefinitions[1].Height = new GridLength(0);
       this.LogAndSearchGrid.RowDefinitions[2].Height = new GridLength(1, GridUnitType.Star);
     }
 
-    private void RememberSelectedMessagesPanelState(Guid viewModelGuid)
+    private void RememberSelectedMessagesPanelState()
     {
+      if (!this.actualViewModel?.State?.ShowSelectedMessagesPanel ?? true)
+        return;
+
       var panelWidth = this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width;
       if (panelWidth.Value > 0)
-        this.lastSelectedMessagesPanelWidth[viewModelGuid] = panelWidth;
+        this.lastSelectedMessagesPanelWidth[this.actualViewModel.Guid] = panelWidth;
       var logWidth = this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width;
       if (logWidth.Value > 0)
-        this.lastLogWidth[viewModelGuid] = logWidth;
+        this.lastLogWidth[this.actualViewModel.Guid] = logWidth;
     }
 
-    private void RememberSearchPanelState(Guid viewModelGuid)
+    private void RememberSearchPanelState()
     {
+      if (!this.actualViewModel?.State?.ShowSearchPanel ?? true)
+        return;
+
       var panelHeight = this.LogAndSearchGrid.RowDefinitions[0].Height;
       if (panelHeight.Value > 0)
-        this.lastSearchPanelHeight[viewModelGuid] = panelHeight;
+        this.lastSearchPanelHeight[this.actualViewModel.Guid] = panelHeight;
       var logHeight = this.LogAndSearchGrid.RowDefinitions[2].Height;
       if (logHeight.Value > 0)
-        this.lastLogHeight[viewModelGuid] = logHeight;
+        this.lastLogHeight[this.actualViewModel.Guid] = logHeight;
     }
 
     private void SearchGridSplitter_DragCompleted(object sender, DragCompletedEventArgs e)
     {
-      if (this.actualViewModel != null)
-        this.RememberSearchPanelState(this.actualViewModel.Guid);
+      this.RememberSearchPanelState();
     }
 
     private void SelectedMessagesGridSplitter_DragCompleted(object sender, DragCompletedEventArgs e)
     {
-      if (this.actualViewModel != null)
-        this.RememberSelectedMessagesPanelState(this.actualViewModel.Guid);
+      this.RememberSelectedMessagesPanelState();
     }
   }
 }
