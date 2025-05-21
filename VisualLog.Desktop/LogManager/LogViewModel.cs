@@ -6,6 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using VisualLog.Core;
+using VisualLog.Core.Search;
+using VisualLog.Desktop.Dashboard;
+using VisualLog.Desktop.Search;
 
 namespace VisualLog.Desktop.LogManager
 {
@@ -13,9 +16,12 @@ namespace VisualLog.Desktop.LogManager
   {
     public Command ShowSearchPanelCommand { get; private set; }
     public Command CloseCommand { get; private set; }
+
     public event Action<LogViewModel> CloseRequested;
     public event Action<double> ShowLineRequested;
+
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
+
     public SelectedMessagesViewModel SelectedLogMessages
     {
       get { return this.selectedLogMessages; }
@@ -84,6 +90,7 @@ namespace VisualLog.Desktop.LogManager
     public LogViewStateViewModel State { get; set; }
     public SearchViewModel SearchViewModel { get; set; }
     public Log Log { get; private set; }
+    public Guid Guid { get; private set; }
 
     public LogViewModel(string path) : this()
     {
@@ -92,6 +99,7 @@ namespace VisualLog.Desktop.LogManager
     
     public LogViewModel()
     {
+      this.Guid = Guid.NewGuid();
       this.LogMessages = new ObservableCollection<MessageInlineViewModel>();
       this.SelectedLogMessages = new SelectedMessagesViewModel();
       this.Encodings = new List<string>();

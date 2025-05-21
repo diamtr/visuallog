@@ -11,7 +11,7 @@
       }
     }
     private bool showSearchPanel;
-    public bool ShowSelectedMessageVertical
+    public bool ShowSelectedMessagesPanel
     {
       get { return this.showSelectedMessagesVertical; }
       set {

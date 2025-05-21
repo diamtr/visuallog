@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:root="clr-namespace:VisualLog.Desktop"
              xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
+             xmlns:search="clr-namespace:VisualLog.Desktop.Search"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="UserControl_Loaded"
@@ -23,7 +24,7 @@
       <DataTemplate DataType="{x:Type logmgr:MessageInlineViewModel}">
         <logmgr:MessageInlineView />
       </DataTemplate>
-      
+
       <DataTemplate DataType="{x:Type logmgr:SelectedMessagesViewModel}">
         <logmgr:SelectedMessagesView />
       </DataTemplate>
@@ -31,24 +32,25 @@
       <DataTemplate DataType="{x:Type logmgr:SearchViewModel}">
         <logmgr:SearchView/>
       </DataTemplate>
-      
+
     </ResourceDictionary>
   </UserControl.Resources>
 
   <UserControl.InputBindings>
     <KeyBinding Gesture="Ctrl+F" Command="{Binding ShowSearchPanelCommand}"/>
   </UserControl.InputBindings>
-  
+
   <Grid>
 
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-    
+
     <!-- Top panel -->
     <Grid Grid.Row="0"
-          Margin="0, 5, 10, 5">
+          Margin="0, 5, 10, 0">
 
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
@@ -63,13 +65,14 @@
               VerticalAlignment="Center">
         <StackPanel Orientation="Horizontal"
                     Margin="0,0,10,0">
-          <ToggleButton IsChecked="{Binding State.ShowSearchPanel}"
+          <ToggleButton x:Name="ShowSearchPanelButton"
+                        IsChecked="{Binding State.ShowSearchPanel}"
                         Style="{StaticResource TopLogMenuToggleButton}">
             <TextBlock Text="Search"/>
           </ToggleButton>
 
-          <ToggleButton x:Name="ShowSelectedMessageVerticalButton"
-                        IsChecked="{Binding State.ShowSelectedMessageVertical}"
+          <ToggleButton x:Name="ShowSelectedMessagesPanelButton"
+                        IsChecked="{Binding State.ShowSelectedMessagesPanel}"
                         Style="{StaticResource TopLogMenuToggleButton}">
             <TextBlock Text="Line"/>
           </ToggleButton>
@@ -83,7 +86,7 @@
                 Checked="FollowTailCheckBox_Checked"
                 Margin="20,0,0,0"
                 VerticalAlignment="Center"/>
-      
+
       <TextBox Grid.Column="2"
                Text="{Binding LogPath}"
                IsReadOnly="True"
@@ -100,67 +103,76 @@
                 VerticalAlignment="Center"/>
 
     </Grid>
+    
+    <!-- Log & Selected Log Messages -->
+    <Grid Grid.Row="2" x:Name="LogAndSelectedMessagesGrid">
 
-    <!-- Log -->
-    <Grid Grid.Row="1">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource BoolToGridLengthConverter}}"
+                          MinWidth="0"/>
+        <ColumnDefinition Width="3" />
+        <ColumnDefinition Width="2*" />
+      </Grid.ColumnDefinitions>
 
-      <DockPanel LastChildFill="True">
-        
-        <!-- Serch Panel -->
-        <Grid DockPanel.Dock="Bottom"
-              Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="3" />
-            <RowDefinition Height="Auto" />
-          </Grid.RowDefinitions>
-          <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
-          <ContentControl Grid.Row="2"
-                          MinHeight="200"
-                          Content="{Binding SearchViewModel}"
-                          Visibility="{Binding State.ShowSearchPanel, Converter={StaticResource VisibilityBoolConverter}}"/>
-        </Grid>
-
-        <!-- Log & Selected Log Messages -->
-        <Grid x:Name="LogAndSelectedMessagesGrid">
-
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource BoolToGridLengthConverter}}"
-                              MinWidth="0"/>
-            <ColumnDefinition Width="3" />
-            <ColumnDefinition Width="2*" />
-          </Grid.ColumnDefinitions>
-
-          <Border x:Name="SelectedLogMessages"
-                  Grid.Column="0"
-                  Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
-                  IsVisibleChanged="SelectedLogMessages_IsVisibleChanged">
-            <ContentControl Content="{Binding SelectedLogMessages}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch"/>
-          </Border>
-          
-          <GridSplitter Grid.Column="1"
-                        Width="3"
-                        ResizeBehavior="PreviousAndNext"
-                        ResizeDirection="Columns"
-                        VerticalAlignment="Stretch"
+      <Border x:Name="SelectedLogMessages"
+              Grid.Column="0"
+              Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
+              IsVisibleChanged="SelectedLogMessages_IsVisibleChanged">
+        <ContentControl Content="{Binding SelectedLogMessages}"
                         HorizontalAlignment="Stretch"
-                        Visibility="{Binding ElementName=ShowSelectedMessageVerticalButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"/>
-          
-          <ListView x:Name="MessagesListView"
-                    Grid.Column="2"
-                    ItemsSource="{Binding LogMessages}"
-                    SelectedItem="{Binding SelectedLogMessage}"
-                    SelectionMode="Extended"
-                    BorderThickness="0, 1, 0, 0"
-                    SelectionChanged="MessagesListView_SelectionChanged" />
+                        HorizontalContentAlignment="Stretch"/>
+      </Border>
+
+      <GridSplitter Grid.Column="1"
+                    Width="3"
+                    ResizeBehavior="PreviousAndNext"
+                    ResizeDirection="Columns"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch"
+                    Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
+                    DragCompleted="SelectedMessagesGridSplitter_DragCompleted"/>
+
+      <Grid Grid.Column="2" x:Name="LogAndSearchGrid">
+
+        <Grid.RowDefinitions>
+          <RowDefinition Height="{Binding ElementName=ShowSearchPanelButton, Path=IsChecked, Converter={StaticResource BoolToGridLengthConverter}}"
+                         MinHeight="0"/>
+          <RowDefinition Height="3" />
+          <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+
+        <!-- Serach panel -->
+        <Grid Grid.Row="0"
+              Background="{StaticResource PanelBackgroundBrush}">
+          <Border Visibility="{Binding ElementName=ShowSearchPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
+                  IsVisibleChanged="SearchPanel_VisibilityChanged">
+            <ContentControl Content="{Binding SearchViewModel}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"/>
+          </Border>
         </Grid>
 
-      </DockPanel>
+        <GridSplitter Grid.Row="1"
+                      Height="3"
+                      ResizeBehavior="PreviousAndNext"
+                      ResizeDirection="Rows"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      Background="{StaticResource PanelBackgroundBrush}"
+                      Visibility="{Binding ElementName=ShowSearchPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
+                      DragCompleted="SearchGridSplitter_DragCompleted"/>
 
+        <ListView x:Name="MessagesListView"
+                  Grid.Row="2"
+                  ItemsSource="{Binding LogMessages}"
+                  SelectedItem="{Binding SelectedLogMessage}"
+                  SelectionMode="Extended"
+                  BorderThickness="0,0,0,0"
+                  SelectionChanged="MessagesListView_SelectionChanged" />
+      </Grid>
+      
     </Grid>
 
   </Grid>
-  
+
 </UserControl>

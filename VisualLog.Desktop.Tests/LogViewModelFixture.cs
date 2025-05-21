@@ -22,7 +22,7 @@ namespace VisualLog.Desktop.Tests
       Assert.That(vm.Encodings, Is.EquivalentTo(Encoding.GetEncodings().Select(x => vm.GetEncodingDisplayName(x.GetEncoding()))));
       Assert.That(vm.SelectedEncoding, Does.StartWith("65001"));
       Assert.That(vm.State, Is.Not.Null);
-      Assert.That(vm.State.ShowSelectedMessageVertical, Is.False);
+      Assert.That(vm.State.ShowSelectedMessagesPanel, Is.False);
       Assert.That(vm.State.FollowTail, Is.True);
     }
 

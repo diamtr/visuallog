@@ -123,7 +123,7 @@ namespace VisualLog.Desktop.LogManager
       this.ViewAllCommand = new Command(
         x => { 
           this.ViewSelected(this.SearchEntries);
-          this.LogViewModel.State.ShowSelectedMessageVertical = true;
+          this.LogViewModel.State.ShowSelectedMessagesPanel = true;
         },
         x => true
         );
@@ -135,7 +135,7 @@ namespace VisualLog.Desktop.LogManager
           var searchEntries = collectionParameter.Cast<SearchEntryViewModel>();
           if (searchEntries.Any())
             this.ViewSelected(searchEntries);
-          this.LogViewModel.State.ShowSelectedMessageVertical = true;
+          this.LogViewModel.State.ShowSelectedMessagesPanel = true;
         },
         x => true
         );

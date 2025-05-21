@@ -4,7 +4,7 @@
   <SolidColorBrush x:Key="DefaultBorderBrush" Color="Black"/>
   <SolidColorBrush x:Key="DefaultBackgroundBrush" Color="#f2f2f2"/>
   <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#414141"/>
-  <SolidColorBrush x:Key="ToggleButtonIsChackedBackgroundBrush" Color="#CA3E47"/>
+  <SolidColorBrush x:Key="RedBrush" Color="#CA3E47"/>
 
   <Style x:Key="LeftMenuButton" TargetType="{x:Type Button}">
     <Setter Property="Width" Value="30"/>
@@ -55,7 +55,6 @@
     </Setter>
     <Style.Triggers>
       <Trigger Property="IsChecked" Value="True">
-        <Setter Property="Background" Value="{StaticResource ToggleButtonIsChackedBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="Yellow"/>
       </Trigger>
       <Trigger Property="IsMouseOver" Value="True">
