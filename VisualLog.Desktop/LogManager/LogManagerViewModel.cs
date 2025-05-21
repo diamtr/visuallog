@@ -63,11 +63,20 @@ namespace VisualLog.Desktop.LogManager
         }
     }
 
-    private void OnLogCloseRequested(LogViewModel logViewModel)
+    private void OnLogCloseRequested(LogViewModel closedViewModel)
     {
-      this.Logs.Remove(logViewModel);
-      if (Equals(this.ActiveLog, logViewModel))
-        this.ActiveLog = this.Logs.FirstOrDefault();
+      var closedViewModelIndex = this.Logs.IndexOf(closedViewModel);
+      var nearestViewModelIndex = -1;
+      if (this.Logs.Count > 1)
+      {
+        if (closedViewModelIndex < this.Logs.Count - 1)
+          nearestViewModelIndex = closedViewModelIndex;
+        else
+          nearestViewModelIndex = closedViewModelIndex - 1;
+      }
+      this.Logs.Remove(closedViewModel);
+      if (nearestViewModelIndex >= 0 && this.Logs.Any())
+        this.ActiveLog = this.Logs[nearestViewModelIndex];
     }
   }
 }
