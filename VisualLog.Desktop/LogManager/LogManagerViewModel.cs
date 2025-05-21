@@ -65,6 +65,12 @@ namespace VisualLog.Desktop.LogManager
 
     private void OnLogCloseRequested(LogViewModel closedViewModel)
     {
+      if (!Equals(this.ActiveLog, closedViewModel))
+      {
+        this.Logs.Remove(closedViewModel);
+        return;
+      }
+
       var closedViewModelIndex = this.Logs.IndexOf(closedViewModel);
       var nearestViewModelIndex = -1;
       if (this.Logs.Count > 1)
