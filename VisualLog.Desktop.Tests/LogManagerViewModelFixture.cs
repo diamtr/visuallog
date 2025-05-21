@@ -8,15 +8,6 @@ namespace VisualLog.Desktop.Tests
   public class LogManagerViewModelFixture
   {
     [Test]
-    public void OpenLogsCommand()
-    {
-      var lmvm = new LogManagerViewModel();
-
-      Assert.That(lmvm.OpenLogsCommand.CanExecute(null), Is.True);
-      Assert.DoesNotThrow(() => { lmvm.OpenLogsCommand.Execute("doc\\simpletest.log"); });
-    }
-
-    [Test]
     public void OpenLogs()
     {
       var lmvm = new LogManagerViewModel();

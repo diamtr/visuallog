@@ -5,37 +5,60 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop.LogManager"
              xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="400"
              d:Background="White">
   <UserControl.Resources>
     <ResourceDictionary>
+
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+      
       <DataTemplate DataType="{x:Type logmgr:MessagePanelViewModel}">
         <logmgr:MessagePanelView />
       </DataTemplate>
     </ResourceDictionary>
   </UserControl.Resources>
-  
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="*"/>
-    </Grid.RowDefinitions>
-    <Grid Grid.Row="0">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="Auto" />
-      </Grid.ColumnDefinitions>
-      <StackPanel Grid.Column="0" Orientation="Horizontal">
-        <Button Content="Prev" Command="{Binding ShowPreviousMessageCommand}" />
-        <Button Content="Next" Command="{Binding ShowNextMessageCommand}" />
-      </StackPanel>
-      <StackPanel Grid.Column="1" Orientation="Horizontal">
-        <TextBlock Text="{Binding Position}" />
-        <TextBlock Text=" / " />
-        <TextBlock Text="{Binding Messages.Count}" />
-      </StackPanel>
+
+  <Border Background="{StaticResource PanelBackgroundBrush}"
+          TextBlock.Foreground="{StaticResource ForegroundBrush}">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Grid Grid.Row="0"
+            Margin="0,5,0,10">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0"
+                    Orientation="Horizontal"
+                    Margin="7,0,0,0">
+          <Button Style="{StaticResource SelectedLinesMenuButton}"
+                  Command="{Binding ShowPreviousMessageCommand}" >
+            <svgc:SvgViewbox Source="pack://application:,,,/img/SelectedLines/up.svg"/>
+          </Button>
+          <Button Style="{StaticResource SelectedLinesMenuButton}"
+                  Command="{Binding ShowNextMessageCommand}"
+                  Margin="15,0,0,0">
+            <svgc:SvgViewbox Source="pack://application:,,,/img/SelectedLines/down.svg"/>
+          </Button>
+        </StackPanel>
+        <StackPanel Grid.Column="1"
+                    Orientation="Horizontal"
+                    Margin="15,0,15,0">
+          <TextBlock Text="{Binding Position}" />
+          <TextBlock Text=" / " />
+          <TextBlock Text="{Binding Messages.Count}" />
+        </StackPanel>
+      </Grid>
+      <ContentControl Grid.Row="1" Content="{Binding MessageToShow}" />
     </Grid>
-    <ContentControl Grid.Row="1" Content="{Binding MessageToShow}" />
-  </Grid>
+  </Border>
+  
+  
 </UserControl>
