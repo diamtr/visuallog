@@ -5,10 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop.LogManager"
              mc:Ignorable="d" 
-             d:DesignHeight="20" d:DesignWidth="85">
-  <Border BorderThickness="0, 0, 0, 1"
-          BorderBrush="Black">
-    <Grid>
+             d:DesignHeight="30" d:DesignWidth="105">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Styles.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  
+  <Border Background="{StaticResource PanelBackgroundBrush}"
+          CornerRadius="2"
+          TextBlock.Foreground="{StaticResource ForegroundBrush}">
+    <Grid Margin="5,3,5,2">
 
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
@@ -16,8 +25,8 @@
       </Grid.ColumnDefinitions>
 
       <TextBlock Grid.Column="0"
-               MinWidth="50"
-               Text="{Binding DisplayName}"/>
+                 MinWidth="50"
+                 Text="{Binding DisplayName}"/>
       <Button Grid.Column="1"
             Margin="15,0,0,0"
             Width="16"

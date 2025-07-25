@@ -50,7 +50,7 @@
 
     <!-- Top panel -->
     <Grid Grid.Row="0"
-          Margin="0, 5, 10, 0">
+          Margin="0, 0, 10, 0">
 
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
@@ -74,7 +74,7 @@
           <ToggleButton x:Name="ShowSelectedMessagesPanelButton"
                         IsChecked="{Binding State.ShowSelectedMessagesPanel}"
                         Style="{StaticResource TopLogMenuToggleButton}">
-            <TextBlock Text="Line"/>
+            <TextBlock Text="Selected Lines"/>
           </ToggleButton>
         </StackPanel>
       </Border>

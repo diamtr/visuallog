@@ -7,10 +7,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="350"
              d:Background="White">
-  <StackPanel Orientation="Vertical">
-    <TextBlock Text="Text" />
-    <TextBox Text="{Binding Message.RawValue}" TextWrapping="Wrap" IsReadOnly="True" FontFamily="Consolas" />
-    <TextBlock Text="StackTrace" />
-    <TextBox Text="{Binding StackTrace}" TextWrapping="NoWrap" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True" FontFamily="Consolas" />
-  </StackPanel>
+  <Grid VerticalAlignment="Stretch">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Orientation="Vertical">
+        <TextBlock Text="Text" />
+        <TextBox Text="{Binding Message.RawValue}" TextWrapping="Wrap" IsReadOnly="True" FontFamily="Consolas" />
+        <TextBlock Text="StackTrace" />
+        <TextBox Text="{Binding StackTrace}" TextWrapping="NoWrap" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True" FontFamily="Consolas" />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
 </UserControl>
