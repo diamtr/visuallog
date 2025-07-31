@@ -93,6 +93,7 @@ namespace VisualLog.Desktop.Tests
 
       expectedMessages.Add(new Message("line4"));
       Assert.DoesNotThrow(() => { vm.OnNewLogMessageCatched(new Message("line4")); });
+      vm.FlushPendingMessages();
       Assert.That(vm.LogMessages, Is.Not.Empty);
       Assert.That(vm.LogMessages.Select(x => x.Message), Is.EqualTo(expectedMessages));
     }
@@ -124,9 +125,11 @@ namespace VisualLog.Desktop.Tests
       expectedMessages.Add(new Message("line4"));
       File.AppendAllLines("testlog.log", new string[] { "line4" });
       Task.Run(() => { System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(FileWatcher.DefaultWatchInterval + 1300)); }).Wait();
+      vm.FlushPendingMessages();
       Assert.That(vm.LogMessages, Is.Not.Empty);
       
       Task.Run(() => { System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(FileWatcher.DefaultWatchInterval + 1300)); }).Wait();
+      vm.FlushPendingMessages();
       Assert.That(vm.LogMessages.Select(x => x.Message), Is.EqualTo(expectedMessages));
 
       TestContext.WriteLine($"Attempt: {TestContext.CurrentContext.CurrentRepeatCount}");

@@ -156,6 +156,7 @@ namespace VisualLog.Desktop.LogManager
       this.Log = new Log(this.logPath, encoding);
       this.Log.MessageCatched += this.OnNewLogMessageCatched;
       this.Log.Read();
+      this.FlushPendingMessages();
     }
 
     public void FollowTail()
