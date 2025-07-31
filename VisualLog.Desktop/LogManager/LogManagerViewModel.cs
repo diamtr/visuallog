@@ -68,6 +68,7 @@ namespace VisualLog.Desktop.LogManager
       if (!Equals(this.ActiveLog, closedViewModel))
       {
         this.Logs.Remove(closedViewModel);
+        closedViewModel.Dispose();
         return;
       }
 
@@ -81,6 +82,7 @@ namespace VisualLog.Desktop.LogManager
           nearestViewModelIndex = closedViewModelIndex - 1;
       }
       this.Logs.Remove(closedViewModel);
+      closedViewModel.Dispose();
       if (nearestViewModelIndex >= 0 && this.Logs.Any())
         this.ActiveLog = this.Logs[nearestViewModelIndex];
     }

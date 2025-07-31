@@ -5,14 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Threading;
 using VisualLog.Core;
-using VisualLog.Core.Search;
-using VisualLog.Desktop.Dashboard;
-using VisualLog.Desktop.Search;
 
 namespace VisualLog.Desktop.LogManager
 {
-  public class LogViewModel : ViewModelBase
+  public class LogViewModel : ViewModelBase, IDisposable
   {
     public Command ShowSearchPanelCommand { get; private set; }
     public Command CloseCommand { get; private set; }
@@ -21,6 +19,10 @@ namespace VisualLog.Desktop.LogManager
     public event Action<double> ShowLineRequested;
 
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
+    private readonly List<MessageInlineViewModel> pendingMessages = new List<MessageInlineViewModel>();
+    private readonly DispatcherTimer batchTimer;
+    private const int BatchSize = 50;
+    private const int BatchTimeoutMs = 100;
 
     public SelectedMessagesViewModel SelectedLogMessages
     {
@@ -109,6 +111,8 @@ namespace VisualLog.Desktop.LogManager
       this.InitEncodings();
       this.PropertyChanged += SelectedEncoding_PropertyChanged;
       this.InitCommands();
+      this.batchTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(BatchTimeoutMs), DispatcherPriority.Background, this.ProcessBatch, Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher);
+      this.batchTimer.Stop();
     }
 
     private void InitCommands()
@@ -138,6 +142,7 @@ namespace VisualLog.Desktop.LogManager
           !File.Exists(path))
         return;
 
+      this.FlushPendingMessages();
       this.LogMessages.Clear();
       if (this.Log != null)
       {
@@ -166,15 +171,55 @@ namespace VisualLog.Desktop.LogManager
         return;
       try
       {
+        var messageViewModel = new MessageInlineViewModel(message);
+        
         // UI thread safety
         if (Application.Current != null)
-          Application.Current.Dispatcher.Invoke(() => { this.LogMessages.Add(new MessageInlineViewModel(message)); });
+          Application.Current.Dispatcher.Invoke(() => { this.AddToBatch(messageViewModel); });
         else
-          this.LogMessages.Add(new MessageInlineViewModel(message));
+          this.AddToBatch(messageViewModel);
       }
       catch
       {
       }
+    }
+
+    private void AddToBatch(MessageInlineViewModel messageViewModel)
+    {
+      this.pendingMessages.Add(messageViewModel);
+      if (this.pendingMessages.Count >= BatchSize)
+        this.ProcessBatchNow();
+      else if (!this.batchTimer.IsEnabled)
+        this.batchTimer.Start();
+    }
+
+    private void ProcessBatch(object sender, EventArgs e)
+    {
+      this.batchTimer.Stop();
+      this.ProcessBatchNow();
+    }
+
+    private void ProcessBatchNow()
+    {
+      if (this.pendingMessages.Count == 0)
+        return;
+
+      var messagesToAdd = this.pendingMessages.ToList();
+      this.pendingMessages.Clear();
+      foreach (var message in messagesToAdd)
+        this.LogMessages.Add(message);
+    }
+
+    public void FlushPendingMessages()
+    {
+      this.batchTimer.Stop();
+      this.ProcessBatchNow();
+    }
+
+    public void Dispose()
+    {
+      this.FlushPendingMessages();
+      this.batchTimer?.Stop();
     }
 
     public void ShowLogLine(SearchEntryViewModel searchEntryViewModel)
