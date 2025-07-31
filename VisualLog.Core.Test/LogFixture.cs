@@ -90,15 +90,15 @@ namespace VisualLog.Core.Test
       log.Format = format;
       Assert.DoesNotThrow(() => log.ApplyFormat());
 
-      Assert.That(log.Messages[0].Parts, Is.Not.Empty);
+      Assert.That(log.Messages[0].Items, Is.Not.Empty);
       var expected = new Dictionary<string, string>();
       expected.Add("Line", "line1");
-      Assert.That(log.Messages[0].Parts, Is.EquivalentTo(expected));
+      Assert.That(log.Messages[0].Items, Is.EquivalentTo(expected));
 
-      Assert.That(log.Messages[1].Parts, Is.Not.Empty);
+      Assert.That(log.Messages[1].Items, Is.Not.Empty);
       expected = new Dictionary<string, string>();
       expected.Add("Line", "line2");
-      Assert.That(log.Messages[1].Parts, Is.EquivalentTo(expected));
+      Assert.That(log.Messages[1].Items, Is.EquivalentTo(expected));
     }
 
     [Test]
@@ -114,22 +114,22 @@ namespace VisualLog.Core.Test
       log.Format = format;
       Assert.DoesNotThrow(() => log.ApplyFormat());
 
-      Assert.That(log.Messages[0].Parts, Is.Not.Empty);
+      Assert.That(log.Messages[0].Items, Is.Not.Empty);
       var expected = new Dictionary<string, string>();
       expected.Add("DateTime", "09.09.2009 09:09:09");
       expected.Add("Text", "line1");
-      Assert.That(log.Messages[0].Parts, Is.EquivalentTo(expected));
+      Assert.That(log.Messages[0].Items, Is.EquivalentTo(expected));
 
-      Assert.That(log.Messages[1].Parts, Is.Not.Empty);
+      Assert.That(log.Messages[1].Items, Is.Not.Empty);
       expected = new Dictionary<string, string>();
       expected.Add("DateTime", "09.09.2009 09:09:09");
       expected.Add("Text", "line2");
-      Assert.That(log.Messages[1].Parts, Is.EquivalentTo(expected));
+      Assert.That(log.Messages[1].Items, Is.EquivalentTo(expected));
 
-      Assert.That(log.Messages[2].Parts, Is.Not.Empty);
+      Assert.That(log.Messages[2].Items, Is.Not.Empty);
       expected = new Dictionary<string, string>();
       expected.Add("Text", "line3");
-      Assert.That(log.Messages[2].Parts, Is.EquivalentTo(expected));
+      Assert.That(log.Messages[2].Items, Is.EquivalentTo(expected));
     }
 
     [Test]
@@ -139,7 +139,7 @@ namespace VisualLog.Core.Test
       File.WriteAllText(path, null);
       var log = new Log(path);
       var newMessagesCount = 0;
-      log.CatchNewMessage += (Message message) => { newMessagesCount++; };
+      log.MessageCatched += (Message message) => { newMessagesCount++; };
       Assert.That(log.Messages, Is.Empty);
 
       Assert.DoesNotThrow(() => { log.Read(); });

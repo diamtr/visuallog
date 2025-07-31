@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -16,14 +15,20 @@ namespace VisualLog.Core
 
     public JMessage(string rawValue) : base(rawValue) { }
 
+    public override void Read()
+    {
+      var settings = new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None };
+      this.JsonObject = JsonConvert.DeserializeObject<JObject>(RawValue, settings);
+      this.Items = this.JsonObject.Properties().ToDictionary(x => x.Name, x => (object)x.Value);
+      this.FillDateTime();
+      this.FillTrace();
+    }
+
     public bool TryParse()
     {
       try
       {
-        var settings = new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None };
-        this.JsonObject = JsonConvert.DeserializeObject<JObject>(RawValue, settings);
-        this.FillDateTime();
-        this.FillTrace();
+        this.Read();
         this.Parsed = true;
       }
       catch
@@ -53,6 +58,8 @@ namespace VisualLog.Core
       if (token != null)
         this.Trace = token.Value<string>();
     }
+
+
 
     public bool MessageDateTimeBetween(DateTime? from, DateTime? to)
     {

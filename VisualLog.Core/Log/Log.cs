@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -8,28 +7,27 @@ namespace VisualLog.Core
 {
   public class Log
   {
-    public List<Message> Messages { get; set; }
+    public List<Message> Messages { get; private set; }
     public Encoding Encoding { get; private set; }
     public Format Format { get; set; }
-    public bool ReadingInProcess { get; set; }
-    public LogReader LogReader { get; private set; }
     public string SourceFilePath { get; private set; }
 
-    public event Action<Message> CatchNewMessage
+    private Action<Message> messageCatched;
+    public event Action<Message> MessageCatched
     {
       add
       {
-        if (catchNewMessage == null || !catchNewMessage.GetInvocationList().Contains(value))
-          this.catchNewMessage += value;
+        if (messageCatched == null ||
+            !messageCatched.GetInvocationList().Contains(value))
+          this.messageCatched += value;
       }
       remove
       {
-        this.catchNewMessage -= value;
+        this.messageCatched -= value;
       }
     }
-    
-    private FileSystemWatcher sourceFileWatcher;
-    private Action<Message> catchNewMessage;
+
+    private LogReader reader;
 
     #region ctors
 
@@ -37,13 +35,13 @@ namespace VisualLog.Core
     {
       this.Messages = new List<Message>();
       this.SourceFilePath = path;
-      this.LogReader = new LogReader(path);
+      this.reader = new LogReader(path);
     }
 
     public Log(string path, Encoding encoding) : this(path)
     {
       this.Encoding = encoding; // TODO: maybe remove this.Encoding
-      this.LogReader.SetEncoding(encoding);
+      this.reader.SetEncoding(encoding);
     }
 
     #endregion
@@ -52,17 +50,16 @@ namespace VisualLog.Core
 
     public void Read()
     {
-      this.LogReader.LineReaded += this.NewLineReaded;
-      this.LogReader.StartReading();
+      this.reader.LineReaded += this.CatchMessage;
+      this.reader.ReadAndSubscribeUpdates();
     }
 
-    public void NewLineReaded(string s)
+    public void CatchMessage(string s)
     {
       var message = new Message(s);
-      message.FillParts();
+      message.Read();
       this.Messages.Add(message);
-      if (this.catchNewMessage != null)
-        this.catchNewMessage.Invoke(message);
+      this.messageCatched?.Invoke(message);
     }
 
     #endregion
@@ -73,7 +70,7 @@ namespace VisualLog.Core
         return;
 
       foreach (var message in this.Messages)
-        message.Parts = this.Format.Deserialize(message);
+        message.Items = this.Format.Deserialize(message);
     }
   }
 }

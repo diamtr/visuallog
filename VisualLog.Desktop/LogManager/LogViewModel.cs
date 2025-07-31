@@ -141,7 +141,7 @@ namespace VisualLog.Desktop.LogManager
       this.LogMessages.Clear();
       if (this.Log != null)
       {
-        this.Log.CatchNewMessage -= this.OnNewLogMessageCatched;
+        this.Log.MessageCatched -= this.OnNewLogMessageCatched;
         this.Log = null;
       }
       this.logPath = path;
@@ -149,7 +149,7 @@ namespace VisualLog.Desktop.LogManager
       if (!string.IsNullOrWhiteSpace(this.SelectedEncoding))
         encoding = Encoding.GetEncoding(int.Parse(this.SelectedEncoding.Split(' ')[0]));
       this.Log = new Log(this.logPath, encoding);
-      this.Log.CatchNewMessage += this.OnNewLogMessageCatched;
+      this.Log.MessageCatched += this.OnNewLogMessageCatched;
       this.Log.Read();
     }
 

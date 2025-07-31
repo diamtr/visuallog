@@ -6,9 +6,11 @@ namespace VisualLog.Core
   public abstract class MessageBase : IMessage
   {
     public string RawValue { get; set; }
+    public IDictionary<string, object> Items { get; set; }
 
     public MessageBase(string rawValue)
     {
+      this.Items = new Dictionary<string, object>();
       this.RawValue = rawValue;
     }
 
@@ -31,11 +33,14 @@ namespace VisualLog.Core
 
     public static List<IMessage> Distinct(IEnumerable<IMessage> sourceMessages)
     {
+      // TODO: delete
       var messages = new List<IMessage>();
       foreach (var message in sourceMessages)
         if (!messages.Any(x => x.RawValue == message.RawValue))
           messages.Add(message);
       return messages;
     }
+
+    public abstract void Read();
   }
 }

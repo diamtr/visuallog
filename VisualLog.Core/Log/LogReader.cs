@@ -10,13 +10,16 @@ namespace VisualLog.Core
   {
     public string Path { get; private set; }
     public Encoding Encoding { get; private set; }
-    public long ReadedBytes { get; private set; }
+    public long ReadedBytesCount { get; private set; }
     public bool ReadingInProcess { get; private set; }
+
+    private Action<string> lineReaded;
     public event Action<string> LineReaded
     {
       add
       {
-        if (this.lineReaded == null || !this.lineReaded.GetInvocationList().Contains(value))
+        if (this.lineReaded == null ||
+            !this.lineReaded.GetInvocationList().Contains(value))
           this.lineReaded += value;
       }
       remove
@@ -24,9 +27,6 @@ namespace VisualLog.Core
         this.lineReaded -= value;
       }
     }
-
-    private Action<string> lineReaded;
-    private FileSystemWatcher fileWatcher;
 
     public LogReader(string path)
     {
@@ -39,10 +39,10 @@ namespace VisualLog.Core
       this.Encoding = encoding;
     }
 
-    public void StartReading()
+    public void ReadAndSubscribeUpdates()
     {
       this.ReadingInProcess = true;
-      this.ReadedBytes = 0;
+      this.ReadedBytesCount = 0;
       try
       {
         this.ReadFromOffset(0);
@@ -79,7 +79,7 @@ namespace VisualLog.Core
       this.ReadingInProcess = true;
       try
       {
-        this.ReadFromOffset(this.ReadedBytes);
+        this.ReadFromOffset(this.ReadedBytesCount);
       }
       catch (Exception ex)
       {
@@ -105,7 +105,7 @@ namespace VisualLog.Core
           if (this.lineReaded != null)
             this.lineReaded.Invoke(line);
         }
-        this.ReadedBytes = streamReader.BaseStream.Length;
+        this.ReadedBytesCount = streamReader.BaseStream.Length;
       }
     }
   }

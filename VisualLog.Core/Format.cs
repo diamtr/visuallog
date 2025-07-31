@@ -14,9 +14,9 @@ namespace VisualLog.Core
       this.Formatters = new List<MessageFormatter>();
     }
 
-    public IDictionary<string, string> Deserialize(Message message)
+    public IDictionary<string, object> Deserialize(Message message)
     {
-      var result = new Dictionary<string, string>();
+      var result = new Dictionary<string, object>();
       var input = message.RawValue.Trim();
 
       foreach (var formatter in this.Formatters.OrderBy(x => x.Priority))
