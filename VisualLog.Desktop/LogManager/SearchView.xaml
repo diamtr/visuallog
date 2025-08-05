@@ -75,6 +75,9 @@
             <TextBox x:Name="StringToSearch"
                      Text="{Binding StringToSearch}"
                      Height="20"/>
+            <ToggleButton HorizontalAlignment="Right"
+                          Content="RegEx"
+                          IsChecked="{Binding UseRegex}"/>
           </Grid>
           <Grid Grid.Row="2"
                 Margin="0,0,0,10">

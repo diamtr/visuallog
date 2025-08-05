@@ -49,16 +49,16 @@
       <StackPanel Orientation="Vertical"
                   HorizontalAlignment="Center">
         <Button Style="{StaticResource LeftMenuButton}"
+        Command="{Binding ShowDashboardCommand}">
+          <svgc:SvgViewbox Source="pack://application:,,,/img/LeftMenu/dashboard.svg"/>
+        </Button>
+        <Button Style="{StaticResource LeftMenuButton}"
                 Command="{Binding OpenLogsCommand}">
           <svgc:SvgViewbox Source="pack://application:,,,/img/LeftMenu/fileOpen.svg"/>
         </Button>
         <Button Style="{StaticResource LeftMenuButton}"
                 Command="{Binding ShowLogManagerCommand}">
           <svgc:SvgViewbox Source="pack://application:,,,/img/LeftMenu/logs.svg"/>
-        </Button>
-        <Button Style="{StaticResource LeftMenuButton}"
-                Command="{Binding ShowDashboardCommand}">
-          <svgc:SvgViewbox Source="pack://application:,,,/img/LeftMenu/dashboard.svg"/>
         </Button>
       </StackPanel>
     </Border>

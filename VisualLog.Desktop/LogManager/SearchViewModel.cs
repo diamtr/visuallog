@@ -17,6 +17,10 @@ namespace VisualLog.Desktop.LogManager
     public Command ViewSelectedCommand { get; private set; }
     public Command CopyAllCommand { get; private set; }
     public Command CopySelectedCommand { get; private set; }
+
+    public ObservableCollection<SearchEntryViewModel> SearchEntries { get; set; }
+
+    private string stringToSearch;
     public string StringToSearch {
       get {
         return this.stringToSearch;
@@ -26,8 +30,20 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
-    private string stringToSearch;
-    public ObservableCollection<SearchEntryViewModel> SearchEntries { get; set; }
+
+    private bool useRegex;
+    public bool UseRegex
+    {
+      get {
+        return this.useRegex;
+      }
+      set {
+        this.useRegex = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private DateTime? lastSearchDateTime;
     public DateTime? LastSearchDateTime
     {
       get { return this.lastSearchDateTime; }
@@ -36,7 +52,8 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
-    private DateTime? lastSearchDateTime;
+
+    private LogViewModel logViewModel;
     public LogViewModel LogViewModel
     {
       get { return this.logViewModel; }
@@ -46,11 +63,11 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged();
       }
     }
-    private LogViewModel logViewModel;
 
     public SearchViewModel()
     {
       this.SearchEntries = new ObservableCollection<SearchEntryViewModel>();
+      this.UseRegex = true;
       this.InitCommands();
     }
 
@@ -66,7 +83,7 @@ namespace VisualLog.Desktop.LogManager
         return;
 
       var searchRequest = new SearchRequest();
-      searchRequest.Statements.Add(new TextStatement() { Text = this.StringToSearch });
+      searchRequest.Statements.Add(new TextStatement() { Text = this.StringToSearch, UseRegex = this.UseRegex });
       var searchResponse = SearchEngine.Search(this.LogViewModel.Log, searchRequest);
       foreach (var searchEntry in searchResponse.Entries)
         this.SearchEntries.Add(new SearchEntryViewModel(searchEntry));
