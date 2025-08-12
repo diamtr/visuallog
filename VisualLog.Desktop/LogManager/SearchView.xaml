@@ -21,7 +21,7 @@
       <DataTemplate DataType="{x:Type logmgr:SearchEntryViewModel}">
         <logmgr:SearchEntryView />
       </DataTemplate>
-          
+
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -33,64 +33,71 @@
 
   <Border>
     <Border Margin="10,10,5,5">
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto"/>
-          <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+      <Grid Grid.IsSharedSizeScope="True">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0">
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" SharedSizeGroup="Buttons"/>
+            <ColumnDefinition Width="15"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
 
-          <StackPanel Orientation="Vertical"
-                      Margin="0,0,15,5">
-            <Button Content="Search"
-                    Command="{Binding SearchCommand}"
-                    Margin="0,0,0,30"/>
-            <Button Content="View All"
-                    Command="{Binding ViewAllCommand}"/>
-            <Button Content="View Selected"
-                    Command="{Binding ViewSelectedCommand}"
-                    CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
-            <Button Content="Copy All"
-                    Command="{Binding CopyAllCommand}"/>
-            <Button Content="Copy Selected"
-                    Command="{Binding CopySelectedCommand}"
-                    CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
-            <Button Content="Clear"
-                    Command="{Binding ClearCommand}"
-                    Margin="0,15,0,0"/>
-          </StackPanel>
+          <Button Grid.Column="0" Content="Search" Command="{Binding SearchCommand}"
+                  VerticalAlignment="Top"/>
           
-        </Grid>
-        
-        <Grid Grid.Column="1">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*" />
-          </Grid.RowDefinitions>
+          <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-          <Grid Grid.Row="1">
-            <TextBox x:Name="StringToSearch"
-                     Text="{Binding StringToSearch}"
-                     Height="20"/>
-            <ToggleButton HorizontalAlignment="Right"
-                          Content="RegEx"
-                          IsChecked="{Binding UseRegex}"/>
+            <TextBox Grid.Row="0" x:Name="StringToSearch" Text="{Binding StringToSearch}" Height="20"/>
+
+            <Grid Grid.Row="1">
+              <StackPanel Orientation="Horizontal">
+                <ToggleButton HorizontalAlignment="Right"
+                              Content="RegEx"
+                              IsChecked="{Binding UseRegex}"
+                              Style="{StaticResource TopLogMenuToggleButton}"
+                              FontSize="10" FontStyle="Italic" Margin="3,3,15,3" Padding="10,0"/>
+                <TextBlock Foreground="Gray"
+                           FontSize="10" FontStyle="Italic" VerticalAlignment="Center">
+                  <Run Text="Found:"/>
+                  <Run Text="{Binding SearchEntries.Count, Mode=OneWay}"/>
+                  <Run Text="lines."/>
+                  <Run Text="{Binding LastSearchDateTime, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss', TargetNullValue=''}"/>
+                </TextBlock>
+              </StackPanel>
+            </Grid>
+
           </Grid>
-          <Grid Grid.Row="2"
-                Margin="0,0,0,10">
-            <TextBlock Foreground="Gray"
-                       FontStyle="Italic"
-                       FontSize="10">
-              <Run Text="Found:"/>
-              <Run Text="{Binding SearchEntries.Count, Mode=OneWay}"/>
-              <Run Text="lines."/>
-              <Run Text="{Binding LastSearchDateTime, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss', TargetNullValue=''}"/>
-            </TextBlock>
+        
+        </Grid>
+
+        <Grid Grid.Row="1">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" SharedSizeGroup="Buttons"/>
+            <ColumnDefinition Width="15"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <Grid Grid.Column="0">
+
+            <StackPanel Orientation="Vertical">
+              <Button Content="View All" Command="{Binding ViewAllCommand}"/>
+              <Button Content="View Selected" Command="{Binding ViewSelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
+              <Button Content="Copy All" Command="{Binding CopyAllCommand}"/>
+              <Button Content="Copy Selected" Command="{Binding CopySelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
+              <Button Content="Clear" Command="{Binding ClearCommand}"/>
+            </StackPanel>
+
           </Grid>
-          <Grid Grid.Row="3">
+
+          <Grid Grid.Column="2">
             <ListView x:Name="SearchEntriesList"
                       ItemsSource="{Binding SearchEntries}"
                       SelectionMode="Extended"
@@ -106,7 +113,6 @@
         </Grid>
 
       </Grid>
-      
     </Border>
   </Border>
 </UserControl>
