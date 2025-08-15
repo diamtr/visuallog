@@ -26,16 +26,14 @@ namespace VisualLog.Desktop.LogManager
   {
     private Dictionary<Guid, GridLength> lastSelectedMessagesPanelWidth;
     private Dictionary<Guid, GridLength> lastLogWidth;
-    private Dictionary<Guid, GridLength> lastSearchPanelHeight;
-    private Dictionary<Guid, GridLength> lastLogHeight;
+    private Dictionary<Guid, double> lastSearchPanelHeight;
     private LogViewModel actualViewModel;
 
     public LogView()
     {
       this.lastSelectedMessagesPanelWidth = new Dictionary<Guid, GridLength>();
       this.lastLogWidth = new Dictionary<Guid, GridLength>();
-      this.lastSearchPanelHeight = new Dictionary<Guid, GridLength>();
-      this.lastLogHeight = new Dictionary<Guid, GridLength>();
+      this.lastSearchPanelHeight = new Dictionary<Guid, double>();
       InitializeComponent();
     }
 
@@ -48,7 +46,6 @@ namespace VisualLog.Desktop.LogManager
         this.actualViewModel.ShowLineRequested += this.ShowLine;
         this.actualViewModel.LogMessages.CollectionChanged += this.LogMessages_CollectionChanged;
         this.HideSelectedMessagesPanel();
-        this.HideSearchPanel();
       }
     }
 
@@ -58,10 +55,8 @@ namespace VisualLog.Desktop.LogManager
         return;
 
       this.RememberSelectedMessagesPanelState();
-      this.RememberSearchPanelState();
       this.actualViewModel = e.NewValue as LogViewModel;
       this.ShowSelectedMessagesPanel();
-      this.ShowSearchPanel();
 
       this.ScrollToBottom();
     }
@@ -139,21 +134,6 @@ namespace VisualLog.Desktop.LogManager
       }
     }
 
-    private void SearchPanel_VisibilityChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-      var border = sender as Border;
-      if (border == null)
-        return;
-
-      if (this.actualViewModel != null)
-      {
-        if (border.Visibility == Visibility.Collapsed)
-          this.HideSearchPanel();
-        else
-          this.ShowSearchPanel();
-      }
-    }
-
     private void ShowSelectedMessagesPanel()
     {
       if (!this.actualViewModel?.State?.ShowSelectedMessagesPanel ?? true)
@@ -177,29 +157,6 @@ namespace VisualLog.Desktop.LogManager
       this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
     }
 
-    private void ShowSearchPanel()
-    {
-      if (!this.actualViewModel?.State?.ShowSearchPanel ?? true)
-        return;
-
-      var searchHeight = this.lastSearchPanelHeight.ContainsKey(this.actualViewModel.Guid) ?
-          this.lastSearchPanelHeight[this.actualViewModel.Guid] :
-          new GridLength(1, GridUnitType.Star);
-      this.LogAndSearchGrid.RowDefinitions[0].Height = searchHeight;
-      this.LogAndSearchGrid.RowDefinitions[1].Height = new GridLength(3);
-      var logHeight = this.lastLogHeight.ContainsKey(this.actualViewModel.Guid) ?
-        this.lastLogHeight[this.actualViewModel.Guid] :
-        new GridLength(2, GridUnitType.Star);
-      this.LogAndSearchGrid.RowDefinitions[2].Height = logHeight;
-    }
-
-    private void HideSearchPanel()
-    {
-      this.LogAndSearchGrid.RowDefinitions[0].Height = new GridLength(0);
-      this.LogAndSearchGrid.RowDefinitions[1].Height = new GridLength(0);
-      this.LogAndSearchGrid.RowDefinitions[2].Height = new GridLength(1, GridUnitType.Star);
-    }
-
     private void RememberSelectedMessagesPanelState()
     {
       if (!this.actualViewModel?.State?.ShowSelectedMessagesPanel ?? true)
@@ -218,17 +175,9 @@ namespace VisualLog.Desktop.LogManager
       if (!this.actualViewModel?.State?.ShowSearchPanel ?? true)
         return;
 
-      var panelHeight = this.LogAndSearchGrid.RowDefinitions[0].Height;
-      if (panelHeight.Value > 0)
+      var panelHeight = this.SearchPaneContentControl.Height;
+      if (panelHeight > 0)
         this.lastSearchPanelHeight[this.actualViewModel.Guid] = panelHeight;
-      var logHeight = this.LogAndSearchGrid.RowDefinitions[2].Height;
-      if (logHeight.Value > 0)
-        this.lastLogHeight[this.actualViewModel.Guid] = logHeight;
-    }
-
-    private void SearchGridSplitter_DragCompleted(object sender, DragCompletedEventArgs e)
-    {
-      this.RememberSearchPanelState();
     }
 
     private void SelectedMessagesGridSplitter_DragCompleted(object sender, DragCompletedEventArgs e)

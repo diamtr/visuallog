@@ -132,44 +132,27 @@
                     Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
                     DragCompleted="SelectedMessagesGridSplitter_DragCompleted"/>
 
-      <Grid Grid.Column="2" x:Name="LogAndSearchGrid">
+      <DockPanel Grid.Column="2" >
 
-        <Grid.RowDefinitions>
-          <RowDefinition Height="{Binding ElementName=ShowSearchPanelButton, Path=IsChecked, Converter={StaticResource BoolToGridLengthConverter}}"
-                         MinHeight="0"/>
-          <RowDefinition Height="3" />
-          <RowDefinition Height="2*" />
-        </Grid.RowDefinitions>
-
-        <!-- Serach panel -->
-        <Grid Grid.Row="0"
-              Background="{StaticResource PanelBackgroundBrush}">
-          <Border Visibility="{Binding ElementName=ShowSearchPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
-                  IsVisibleChanged="SearchPanel_VisibilityChanged">
-            <ContentControl Content="{Binding SearchViewModel}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"/>
-          </Border>
-        </Grid>
-
-        <GridSplitter Grid.Row="1"
-                      Height="3"
-                      ResizeBehavior="PreviousAndNext"
-                      ResizeDirection="Rows"
-                      VerticalAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      Background="{StaticResource PanelBackgroundBrush}"
-                      Visibility="{Binding ElementName=ShowSearchPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
-                      DragCompleted="SearchGridSplitter_DragCompleted"/>
+        <Border DockPanel.Dock="Top"
+                MaxHeight="500"
+                Background="{StaticResource PanelBackgroundBrush}">
+          <ContentControl x:Name="SearchPaneContentControl"
+                Visibility="{Binding ElementName=ShowSearchPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
+                Content="{Binding SearchViewModel}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"/>
+        </Border>
 
         <ListView x:Name="MessagesListView"
-                  Grid.Row="2"
+                  DockPanel.Dock="Bottom"
                   ItemsSource="{Binding LogMessages}"
                   SelectedItem="{Binding SelectedLogMessage}"
                   SelectionMode="Extended"
                   BorderThickness="0,0,0,0"
                   SelectionChanged="MessagesListView_SelectionChanged" />
-      </Grid>
+        
+      </DockPanel>
       
     </Grid>
 
