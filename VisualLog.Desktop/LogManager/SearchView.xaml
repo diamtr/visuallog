@@ -38,80 +38,51 @@
       <Grid Grid.IsSharedSizeScope="True">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
           <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,10">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" SharedSizeGroup="Buttons"/>
-            <ColumnDefinition Width="15"/>
-            <ColumnDefinition Width="*"/>
-          </Grid.ColumnDefinitions>
+        <TextBox Grid.Row="0" x:Name="StringToSearch" Text="{Binding StringToSearch}" Height="20"/>
 
-          <Button Grid.Column="0" Content="Search" Command="{Binding SearchCommand}"
-                  VerticalAlignment="Top"/>
-          
-          <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <TextBox Grid.Row="0" x:Name="StringToSearch" Text="{Binding StringToSearch}" Height="20"/>
-
-            <Grid Grid.Row="1">
-              <StackPanel Orientation="Horizontal">
-                <ToggleButton HorizontalAlignment="Right"
-                              Content="RegEx"
-                              IsChecked="{Binding UseRegex}"
-                              Style="{StaticResource TopLogMenuToggleButton}"
-                              FontSize="10" FontStyle="Italic" Margin="3,3,15,3" Padding="10,0"/>
-                <TextBlock Foreground="Gray"
-                           FontSize="10" FontStyle="Italic" VerticalAlignment="Center">
-                  <Run Text="Found:"/>
-                  <Run Text="{Binding SearchEntries.Count, Mode=OneWay}"/>
-                  <Run Text="lines."/>
-                  <Run Text="{Binding LastSearchDateTime, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss', TargetNullValue=''}"/>
-                </TextBlock>
-              </StackPanel>
-            </Grid>
-
-          </Grid>
-        
+        <Grid Grid.Row="1">
+          <StackPanel Orientation="Horizontal">
+            <ToggleButton HorizontalAlignment="Right"
+                          Content="RegEx"
+                          IsChecked="{Binding UseRegex}"
+                          Style="{StaticResource OptionToggleButton}"
+                          FontSize="10" FontStyle="Italic" Margin="3,3,15,3" Padding="10,0"/>
+            <TextBlock Foreground="Gray"
+                       FontSize="10" FontStyle="Italic" VerticalAlignment="Center">
+              <Run Text="Found:"/>
+              <Run Text="{Binding SearchEntries.Count, Mode=OneWay}"/>
+              <Run Text="lines."/>
+              <Run Text="{Binding LastSearchDateTime, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss', TargetNullValue=''}"/>   
+            </TextBlock>
+          </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1" Visibility="{Binding SearchEntries.Count, Converter={StaticResource VisibilityCountConverter}, Mode=OneWay}">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" SharedSizeGroup="Buttons"/>
-            <ColumnDefinition Width="15"/>
-            <ColumnDefinition Width="*"/>
-          </Grid.ColumnDefinitions>
-
-          <Grid Grid.Column="0">
-
-            <StackPanel Orientation="Vertical">
-              <Button Content="View All" Command="{Binding ViewAllCommand}"/>
-              <Button Content="View Selected" Command="{Binding ViewSelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
-              <Button Content="Copy All" Command="{Binding CopyAllCommand}"/>
-              <Button Content="Copy Selected" Command="{Binding CopySelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
-              <Button Content="Clear" Command="{Binding ClearCommand}"/>
-            </StackPanel>
-
-          </Grid>
-
-          <Grid Grid.Column="2">
-            <ListView x:Name="SearchEntriesList"
-                      ItemsSource="{Binding SearchEntries}"
-                      SelectionMode="Extended"
-                      MinHeight="100">
-              <ListView.Resources>
-                <Style TargetType="{x:Type ListViewItem}">
-                  <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
-                </Style>
-              </ListView.Resources>
-            </ListView>
-          </Grid>
-
+        <Grid Grid.Row="2" Visibility="{Binding SearchEntries.Count, Converter={StaticResource VisibilityCountConverter}, Mode=OneWay}">
+          <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Style="{StaticResource ActionButton}" Content="View All" Command="{Binding ViewAllCommand}"/>
+            <Button Style="{StaticResource ActionButton}" Content="View Selected" Command="{Binding ViewSelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
+            <Button Style="{StaticResource ActionButton}" Content="Copy All" Command="{Binding CopyAllCommand}"/>
+            <Button Style="{StaticResource ActionButton}" Content="Copy Selected" Command="{Binding CopySelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
+            <Button Style="{StaticResource ActionButton}" Content="Clear" Command="{Binding ClearCommand}"/>
+          </StackPanel>
+        </Grid>
+        
+        <Grid Grid.Row="3" Visibility="{Binding SearchEntries.Count, Converter={StaticResource VisibilityCountConverter}, Mode=OneWay}">
+          <ListView x:Name="SearchEntriesList"
+          ItemsSource="{Binding SearchEntries}"
+          SelectionMode="Extended"
+          MinHeight="100">
+            <ListView.Resources>
+              <Style TargetType="{x:Type ListViewItem}">
+                <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+              </Style>
+            </ListView.Resources>
+          </ListView>
         </Grid>
 
       </Grid>
