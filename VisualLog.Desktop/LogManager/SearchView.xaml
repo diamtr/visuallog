@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop"
              xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
   <UserControl.Resources>
@@ -47,7 +48,11 @@
 
         <Grid Grid.Row="1">
           <StackPanel Orientation="Horizontal">
-            <ToggleButton HorizontalAlignment="Right"
+            <Button Style="{StaticResource ActionButton}" Padding="2" Margin="0,0,15,0" VerticalAlignment="Center"
+                    Command="{Binding SearchCommand}" CommandParameter="{Binding Text, ElementName=StringToSearch}" Height="18">
+              <svgc:SvgViewbox Source="pack://application:,,,/img/SearchView/refresh.svg"/>
+            </Button>
+            <ToggleButton VerticalAlignment="Center"
                           Content="RegEx"
                           IsChecked="{Binding UseRegex}"
                           Style="{StaticResource OptionToggleButton}"

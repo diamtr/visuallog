@@ -150,7 +150,7 @@
         <Setter Property="Foreground" Value="{StaticResource YellowBrush}"/>
       </Trigger>
       <Trigger Property="IsMouseOver" Value="True">
-        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="{StaticResource ActiveButtonBackgroundBrush}"/>
       </Trigger>
     </Style.Triggers>
   </Style>
