@@ -39,6 +39,9 @@ namespace VisualLog.Desktop.LogManager
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
+      if (!this.IsVisible)
+        return;
+
       this.ScrollToBottom();
       this.actualViewModel = this.DataContext as LogViewModel;
       if (this.actualViewModel != null)
@@ -51,18 +54,29 @@ namespace VisualLog.Desktop.LogManager
 
     private void LogView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (e.NewValue == null)
+      if (e.OldValue is LogViewModel oldVm)
+      {
+        oldVm.ShowLineRequested -= this.ShowLine;
+        if (oldVm.LogMessages != null)
+          oldVm.LogMessages.CollectionChanged -= this.LogMessages_CollectionChanged;
+        this.RememberSelectedMessagesPanelState();
+      }
+
+      if (e.NewValue is not LogViewModel vm)
         return;
 
-      this.RememberSelectedMessagesPanelState();
-      this.actualViewModel = e.NewValue as LogViewModel;
-      this.ShowSelectedMessagesPanel();
+      this.actualViewModel = vm;
+      this.actualViewModel.ShowLineRequested += this.ShowLine;
+      this.actualViewModel.LogMessages.CollectionChanged += this.LogMessages_CollectionChanged;
 
+      this.ShowSelectedMessagesPanel();
       this.ScrollToBottom();
     }
 
     private void LogMessages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
+      if (!this.IsVisible)
+        return;
       this.ScrollToBottom();
     }
 
@@ -76,12 +90,23 @@ namespace VisualLog.Desktop.LogManager
       if (!this.IsLoaded)
         return;
 
-      var scrollViewer = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(this.MessagesListView, 0), 0) as ScrollViewer;
-      if (scrollViewer == null)
+      if (!(this.FollowTailCheckBox.IsChecked.GetValueOrDefault()))
         return;
 
-      if (this.FollowTailCheckBox.IsChecked.GetValueOrDefault())
-        scrollViewer.ScrollToBottom();
+      // Defer until after layout to ensure correct extent
+      this.MessagesListView.Dispatcher.BeginInvoke(new Action(() =>
+      {
+        var count = this.MessagesListView.Items.Count;
+        if (count == 0)
+          return;
+
+        var lastItem = this.MessagesListView.Items[count - 1];
+        this.MessagesListView.ScrollIntoView(lastItem);
+
+        // As a fallback, also nudge the ScrollViewer if available
+        var scrollViewer = FindDescendant<ScrollViewer>(this.MessagesListView);
+        scrollViewer?.ScrollToBottom();
+      }), System.Windows.Threading.DispatcherPriority.Background);
     }
 
     private void ShowLine(double position)
@@ -183,6 +208,19 @@ namespace VisualLog.Desktop.LogManager
     private void SelectedMessagesGridSplitter_DragCompleted(object sender, DragCompletedEventArgs e)
     {
       this.RememberSelectedMessagesPanelState();
+    }
+
+    private static T FindDescendant<T>(DependencyObject root) where T : DependencyObject
+    {
+      if (root == null) return null;
+      for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+      {
+        var child = VisualTreeHelper.GetChild(root, i);
+        if (child is T match) return match;
+        var nested = FindDescendant<T>(child);
+        if (nested != null) return nested;
+      }
+      return null;
     }
   }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
+using System.Windows;
 
 namespace VisualLog.Desktop.LogManager
 {
@@ -9,6 +11,8 @@ namespace VisualLog.Desktop.LogManager
   {
     public Command ShowPreviousMessageCommand { get; private set; }
     public Command ShowNextMessageCommand { get; private set; }
+
+    public Command CopyMessagesCommand { get; private set; }
 
     public ObservableCollection<MessagePanelViewModel> Messages { get; set; }
     public int Index
@@ -46,6 +50,10 @@ namespace VisualLog.Desktop.LogManager
         );
       this.ShowNextMessageCommand = new Command(
         x => { this.ShowNextMessage(); },
+        x => true
+        );
+      this.CopyMessagesCommand = new Command(
+        x => { this.CopyMessagesToClipboard(); },
         x => true
         );
     }
@@ -120,6 +128,14 @@ namespace VisualLog.Desktop.LogManager
       if (this.Index >= Messages.Count - 1)
         return;
       this.Index++;
+    }
+
+    private void CopyMessagesToClipboard()
+    {
+      var messages = new StringBuilder();
+      foreach (var message in this.Messages.Select(x => x.Message.RawValue))
+        messages.AppendLine(message);
+      Clipboard.SetText(messages.ToString());
     }
   }
 }

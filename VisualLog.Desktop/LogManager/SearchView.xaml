@@ -63,13 +63,19 @@
         </Grid>
 
         <Grid Grid.Row="2" Visibility="{Binding SearchEntries.Count, Converter={StaticResource VisibilityCountConverter}, Mode=OneWay}">
-          <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button Style="{StaticResource ActionButton}" Content="View All" Command="{Binding ViewAllCommand}"/>
-            <Button Style="{StaticResource ActionButton}" Content="View Selected" Command="{Binding ViewSelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
-            <Button Style="{StaticResource ActionButton}" Content="Copy All" Command="{Binding CopyAllCommand}"/>
-            <Button Style="{StaticResource ActionButton}" Content="Copy Selected" Command="{Binding CopySelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
-            <Button Style="{StaticResource ActionButton}" Content="Clear" Command="{Binding ClearCommand}"/>
-          </StackPanel>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <Border Grid.Column="1" Margin="0,0,0,5" Style="{StaticResource ActionButtonBorder}">
+            <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+              <Button Style="{StaticResource ActionButton}" Content="View All" Command="{Binding ViewAllCommand}"/>
+              <Button Style="{StaticResource ActionButton}" Content="View Selected" Command="{Binding ViewSelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
+              <Button Style="{StaticResource ActionButton}" Content="Copy All" Command="{Binding CopyAllCommand}"/>
+              <Button Style="{StaticResource ActionButton}" Content="Copy Selected" Command="{Binding CopySelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=SearchEntriesList}"/>
+              <Button Style="{StaticResource ActionButton}" Content="Clear" Command="{Binding ClearCommand}"/>
+            </StackPanel>
+          </Border>
         </Grid>
         
         <Grid Grid.Row="3" Visibility="{Binding SearchEntries.Count, Converter={StaticResource VisibilityCountConverter}, Mode=OneWay}">
