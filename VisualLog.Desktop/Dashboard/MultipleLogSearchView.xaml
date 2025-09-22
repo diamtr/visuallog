@@ -15,40 +15,34 @@
       <search:SearchRequestView/>
     </DataTemplate>
   </UserControl.Resources>
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="*"/>
-    </Grid.RowDefinitions>
-    
-    <!-- HEADER -->
-    <Border Grid.Row="0"
-              BorderThickness="0,0,0,2"
-              BorderBrush="Black">
-      <Grid>
-        <TextBlock Text="Search" FontSize="32" TextWrapping="WrapWithOverflow" />
-      </Grid>
-    </Border>
 
-    <!-- SEARCH REQUEST -->
-    <Grid Grid.Row="1">
-      <ContentControl Content="{Binding SearchRequestViewModel}" />
+  <Border Background="White"
+          CornerRadius="5">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+
+      <!-- SEARCH REQUEST -->
+      <Grid Grid.Row="0">
+        <ContentControl Content="{Binding SearchRequestViewModel}" />
+      </Grid>
+
+      <!-- RESULTS -->
+      <ListView Grid.Row="1"
+            ItemsSource="{Binding SearchResults}"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            BorderThickness="0"
+            Background="Transparent"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListView.ItemContainerStyle>
+          <Style TargetType="ListViewItem">
+            <Setter Property="Focusable" Value="false"/>
+          </Style>
+        </ListView.ItemContainerStyle>
+      </ListView>
     </Grid>
-    
-    <!-- RESULTS -->
-    <ListView Grid.Row="2"
-              ItemsSource="{Binding SearchResults}"
-              HorizontalAlignment="Stretch"
-              HorizontalContentAlignment="Stretch"
-              BorderThickness="0"
-              Background="Transparent"
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-      <ListView.ItemContainerStyle>
-        <Style TargetType="ListViewItem">
-          <Setter Property="Focusable" Value="false"/>
-        </Style>
-      </ListView.ItemContainerStyle>
-    </ListView>
-  </Grid>
+  </Border>
 </UserControl>

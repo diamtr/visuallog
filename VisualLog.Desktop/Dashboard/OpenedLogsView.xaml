@@ -6,31 +6,69 @@
              xmlns:local="clr-namespace:VisualLog.Desktop.Dashboard"
              xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="200" d:DesignWidth="400">
   <UserControl.Resources>
     <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
       <local:OpenedLogView/>
     </DataTemplate>
   </UserControl.Resources>
 
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="*"/>
-    </Grid.RowDefinitions>
+  <Border Background="White"
+          CornerRadius="5"
+          Padding="10">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
 
-    <!-- HEADER -->
-    <Border Grid.Row="0"
-              BorderThickness="0,0,0,2"
-              BorderBrush="Black">
-      <Grid>
-        <TextBlock Text="Opened logs" FontSize="32" TextWrapping="WrapWithOverflow" />
-      </Grid>
-    </Border>
-    
-    <!-- LOGS -->
-    <ListView Grid.Row="1"
-              ItemsSource="{Binding DashboardViewModel.MainViewModel.LogManagerViewModel.Logs}"
-              BorderThickness="0"/>
-  </Grid>
+      <!-- HEADER -->
+      <Border Grid.Row="0" Margin="0,0,0,15">
+        <Grid>
+          <TextBlock Text="Logs" FontWeight="Bold" TextWrapping="WrapWithOverflow" />
+        </Grid>
+      </Border>
+
+      <!-- LOGS -->
+      <ListView Grid.Row="1"
+                ItemsSource="{Binding DashboardViewModel.MainViewModel.LogManagerViewModel.Logs}"
+                BorderThickness="0">
+        <ListView.ItemContainerStyle>
+          <Style TargetType="ListViewItem">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+              <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                  <Border Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}">
+                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                  </Border>
+                </ControlTemplate>
+              </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+              </Trigger>
+              <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+              </Trigger>
+              <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+              </Trigger>
+            </Style.Triggers>
+          </Style>
+        </ListView.ItemContainerStyle>
+      </ListView>
+    </Grid>
+  </Border>
+  
 </UserControl>

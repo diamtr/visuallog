@@ -5,39 +5,60 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop.Dashboard"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" d:Background="LightGray">
+             d:DesignHeight="450" d:DesignWidth="1080" d:Background="LightGray">
 
   <UserControl.Resources>
-    <DataTemplate DataType="{x:Type local:MultipleLogSearchViewModel}">
-      <local:MultipleLogSearchView/>
-    </DataTemplate>
-    <DataTemplate DataType="{x:Type local:OpenedLogsViewModel}">
-      <local:OpenedLogsView/>
-    </DataTemplate>
-    <DataTemplate DataType="{x:Type local:RecentLogsViewModel}">
-      <local:RecentLogsView/>
-    </DataTemplate>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Styles.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
+      <DataTemplate DataType="{x:Type local:MultipleLogSearchViewModel}">
+        <local:MultipleLogSearchView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type local:OpenedLogsViewModel}">
+        <local:OpenedLogsView/>
+      </DataTemplate>
+      <DataTemplate DataType="{x:Type local:RecentLogsViewModel}">
+        <local:RecentLogsView/>
+      </DataTemplate>
+    </ResourceDictionary>
   </UserControl.Resources>
 
-  <Grid Margin="15,10,0,0">
+  <Grid>
+
+    <Grid.RowDefinitions>
+      <RowDefinition Height="25"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="60*"/>
-      <ColumnDefinition Width="40*"/>
+      <ColumnDefinition Width="8*"/>
+      <ColumnDefinition Width="55*"/>
+      <ColumnDefinition Width="4*"/>
+      <ColumnDefinition Width="25*"/>
+      <ColumnDefinition Width="8*"/>
     </Grid.ColumnDefinitions>
-    <Grid Grid.Column="0" Margin="10, 0, 10, 0">
-      <ContentControl Content="{Binding MultipleLogSearchViewModel}" />
+    
+    <Grid Grid.Column="1" Grid.Row="1">
+
+      <ItemsControl Style="{StaticResource SpacedVerticalItemsControl}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <ItemsControl.Items>
+          <ContentControl Content="{Binding MultipleLogSearchViewModel}" />
+        </ItemsControl.Items>
+      </ItemsControl>
+      
     </Grid>
-    <Grid Grid.Column="1" Margin="10, 0, 10, 0">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="40*" />
-        <RowDefinition Height="60*" />
-      </Grid.RowDefinitions>
-      <Grid Grid.Row="0">
-        <ContentControl Content="{Binding OpenedLogsViewModel}" />
-      </Grid>
-      <Grid Grid.Row="1">
-        <ContentControl Content="{Binding RecentLogsViewModel}" />
-      </Grid>
+
+    <Grid Grid.Column="3" Grid.Row="1">
+      <ItemsControl Style="{StaticResource SpacedVerticalItemsControl}">
+        <ItemsControl.Items>
+          <ContentControl Content="{Binding OpenedLogsViewModel}"/>
+          <ContentControl Content="{Binding RecentLogsViewModel}"/>
+        </ItemsControl.Items>
+      </ItemsControl>
     </Grid>
+    
   </Grid>
 </UserControl>

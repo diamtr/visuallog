@@ -9,13 +9,21 @@ namespace VisualLog.Desktop
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      if (targetType != typeof(Visibility))
-        throw new InvalidOperationException("Converter can only convert to value of type Visibility.");
+      //if (targetType != typeof(Visibility))
+      //  throw new InvalidOperationException("Converter can only convert to value of type Visibility.");
 
-      if (value == null)
+      if (value == null || value == DependencyProperty.UnsetValue)
         return Visibility.Collapsed;
 
-      var isRunning = System.Convert.ToBoolean(value, culture);
+      var isRunning = false;
+      try
+      {
+        isRunning = System.Convert.ToBoolean(value, culture);
+      }
+      catch
+      {
+        return Visibility.Collapsed;
+      }
       if (Reverse)
         isRunning = !isRunning;
 
