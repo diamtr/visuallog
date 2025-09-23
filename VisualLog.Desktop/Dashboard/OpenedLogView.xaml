@@ -20,6 +20,7 @@
 
     <Button DockPanel.Dock="Right"
             Content="go to"
+            Command="{Binding ShowCommand}"
             Visibility="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DockPanel}, Converter={StaticResource VisibilityBoolConverter}, Mode=OneWay, FallbackValue=Collapsed}"
             Style="{StaticResource LinkButton}"/>
 

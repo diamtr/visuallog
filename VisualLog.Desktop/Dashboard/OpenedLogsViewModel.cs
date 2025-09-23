@@ -2,6 +2,7 @@
 {
   public class OpenedLogsViewModel : ViewModelBase
   {
+    private DashboardViewModel dashboardViewModel;
     public DashboardViewModel DashboardViewModel
     {
       get { return this.dashboardViewModel; }
@@ -11,7 +12,6 @@
         this.OnPropertyChanged();
       }
     }
-    private DashboardViewModel dashboardViewModel;
 
     public OpenedLogsViewModel(DashboardViewModel dashboardViewModel) : this()
     {

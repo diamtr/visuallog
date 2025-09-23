@@ -14,8 +14,10 @@ namespace VisualLog.Desktop.LogManager
   {
     public Command ShowSearchPanelCommand { get; private set; }
     public Command CloseCommand { get; private set; }
+    public Command ShowCommand { get; private set; }
 
     public event Action<LogViewModel> CloseRequested;
+    public event Action<LogViewModel> ShowRequested;
     public event Action<double> ShowLineRequested;
 
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
@@ -123,6 +125,10 @@ namespace VisualLog.Desktop.LogManager
       );
       this.CloseCommand = new Command(
         x => { if (this.CloseRequested != null) this.CloseRequested.Invoke(this); },
+        x => true
+      );
+      this.ShowCommand = new Command(
+        x => { this.ShowRequested?.Invoke(this); },
         x => true
       );
     }

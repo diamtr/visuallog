@@ -55,6 +55,7 @@ namespace VisualLog.Desktop.LogManager
           {
             logViewModel = new LogViewModel(path);
             logViewModel.CloseRequested += this.OnLogCloseRequested;
+            logViewModel.ShowRequested += this.OnLogShowRequested;
             logViewModel.ReadLog();
             logViewModel.FollowTail();
             this.Logs.Add(logViewModel);
@@ -85,6 +86,12 @@ namespace VisualLog.Desktop.LogManager
       closedViewModel.Dispose();
       if (nearestViewModelIndex >= 0 && this.Logs.Any())
         this.ActiveLog = this.Logs[nearestViewModelIndex];
+    }
+
+    private void OnLogShowRequested(LogViewModel logToShow)
+    {
+      this.ActiveLog = logToShow;
+      this.MainViewModel.SetAsActive(this);
     }
   }
 }
