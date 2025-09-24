@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop.LogManager"
              mc:Ignorable="d" 
-             d:DesignHeight="30" d:DesignWidth="105">
+             d:DesignHeight="30" d:DesignWidth="150">
   <UserControl.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
@@ -15,29 +15,28 @@
   </UserControl.Resources>
   
   <Border Background="{StaticResource PanelBackgroundBrush}"
-          CornerRadius="2"
           TextBlock.Foreground="{StaticResource ForegroundBrush}">
-    <Grid Margin="5,3,5,2">
+    <Grid Margin="20,3,5,2">
 
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="20" />
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
 
       <TextBlock Grid.Column="0"
                  MinWidth="50"
                  Text="{Binding DisplayName}"/>
-      <Button Grid.Column="1"
-            Margin="15,0,0,0"
-            Width="16"
-            Height="16"
-            Command="{Binding CloseCommand}" >
-        <Path Data="M 1 1 L 9 9 M 1 9 L 9 1"
-              Stroke="Black"
-              StrokeThickness="2"
-              HorizontalAlignment="Center"/>
-      </Button>
 
+      <Border Grid.Column="2" Style="{StaticResource ActionButtonBorder}">
+        <Button Command="{Binding CloseCommand}"
+                Style="{StaticResource ActionButton}" Padding="5,2">
+          <Path Data="M 1 1 L 9 9 M 1 9 L 9 1"
+                Stroke="{StaticResource ForegroundBrush}"
+                StrokeThickness="2"
+                HorizontalAlignment="Center"/>
+        </Button>
+      </Border>
     </Grid>
   </Border>
 </UserControl>

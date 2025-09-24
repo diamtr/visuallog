@@ -28,24 +28,60 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="*"/>
       </Grid.RowDefinitions>
-      <Border Grid.Row="0">
+      <Border Grid.Row="0"
+              Background="{StaticResource PanelBackgroundBrush}">
         <ListView FlowDirection="LeftToRight"
-             MinHeight="20"
-             ItemsSource="{Binding Logs}"
-             SelectedItem="{Binding ActiveLog}"
-             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-             BorderThickness="0, 0, 0, 0"
-             Background="{Binding Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Border}}}">
-          <ListBox.Resources>
+                   MinHeight="20"
+                   ItemsSource="{Binding Logs}"
+                   SelectedItem="{Binding ActiveLog}"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                   BorderThickness="0"
+                   Background="{Binding Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Border}}}">
+          <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem">
+              <Setter Property="Background" Value="Transparent"/>
+              <Setter Property="BorderBrush" Value="Transparent"/>
+              <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="ListViewItem">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                      <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+              <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                  <Setter Property="Background" Value="Transparent"/>
+                  <Setter Property="BorderBrush" Value="Transparent"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                  <Setter Property="Background" Value="Transparent"/>
+                  <Setter Property="BorderBrush" Value="{StaticResource YellowBrush}"/>
+                  <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                  <Setter Property="Background" Value="Transparent"/>
+                  <Setter Property="BorderBrush" Value="{StaticResource YellowBrush}"/>
+                  <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                </Trigger>
+              </Style.Triggers>
+            </Style>
+          </ListView.ItemContainerStyle>
+          <ListView.Resources>
             <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
               <logmgr:LogWrapPanelView/>
             </DataTemplate>
-          </ListBox.Resources>
-          <ItemsControl.ItemsPanel>
+          </ListView.Resources>
+          <ListView.ItemsPanel>
             <ItemsPanelTemplate>
-              <WrapPanel Orientation="Horizontal" />
+              <WrapPanel Orientation="Horizontal"/>
             </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
+          </ListView.ItemsPanel>
         </ListView>
       </Border>
       <ContentControl Grid.Row="1"
