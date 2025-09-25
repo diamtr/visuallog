@@ -56,10 +56,6 @@
                 Command="{Binding OpenLogsCommand}">
           <svgc:SvgViewbox Source="pack://application:,,,/img/LeftMenu/fileOpen.svg"/>
         </Button>
-        <Button Style="{StaticResource LeftMenuButton}"
-                Command="{Binding ShowLogManagerCommand}">
-          <svgc:SvgViewbox Source="pack://application:,,,/img/LeftMenu/logs.svg"/>
-        </Button>
       </StackPanel>
     </Border>
     

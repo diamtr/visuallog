@@ -10,7 +10,6 @@
   <ItemGroup>
     <None Remove="img\LeftMenu\Dashboard.svg" />
     <None Remove="img\LeftMenu\FileOpen.svg" />
-    <None Remove="img\LeftMenu\Logs.svg" />
     <None Remove="img\SelectedLines\down.svg" />
     <None Remove="img\SelectedLines\up.svg" />
     <None Remove="img\SearchView\refresh.svg" />
@@ -42,7 +41,6 @@
     <Resource Include="img\LeftMenu\fileOpen.svg">
       <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
-    <Resource Include="img\LeftMenu\logs.svg" />
     <Resource Include="img\SelectedLines\down.svg" />
     <Resource Include="img\SelectedLines\up.svg" />
     <Resource Include="img\SearchView\refresh.svg" />

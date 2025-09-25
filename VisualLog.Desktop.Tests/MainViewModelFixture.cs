@@ -31,14 +31,6 @@ namespace VisualLog.Desktop.Tests
     }
 
     [Test]
-    public void ShowLogManagerCommand()
-    {
-      var mvm = new MainViewModel();
-      mvm.ShowLogManagerCommand.Execute(null);
-      Assert.That(mvm.ActiveViewModel, Is.EqualTo(mvm.LogManagerViewModel));
-    }
-
-    [Test]
     public void ShowFormatManagerCommand()
     {
       var mvm = new MainViewModel();

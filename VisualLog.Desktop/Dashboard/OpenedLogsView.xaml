@@ -8,9 +8,15 @@
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="400">
   <UserControl.Resources>
-    <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
-      <local:OpenedLogView/>
-    </DataTemplate>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Styles.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
+
+      <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
+        <local:OpenedLogView/>
+      </DataTemplate>
+    </ResourceDictionary>
   </UserControl.Resources>
 
   <Border Background="White"
@@ -25,7 +31,12 @@
       <!-- HEADER -->
       <Border Grid.Row="0" Margin="0,0,0,15">
         <Grid>
-          <TextBlock Text="Logs" FontWeight="Bold" TextWrapping="WrapWithOverflow" />
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="0" Text="Logs" FontWeight="Bold" TextWrapping="WrapWithOverflow" />
+          <Button Grid.Column="1" Content="Open" Command="{Binding DashboardViewModel.MainViewModel.OpenLogsCommand}" Style="{StaticResource LinkButton}"/>
         </Grid>
       </Border>
 

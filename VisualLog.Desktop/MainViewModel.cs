@@ -20,7 +20,6 @@ namespace VisualLog.Desktop
     public LogManagerViewModel LogManagerViewModel { get; private set; }
     public FormatManagerViewModel FormatManagerViewModel { get; private set; }
     public Command OpenLogsCommand { get; private set; }
-    public Command ShowLogManagerCommand { get; private set; }
     public Command ShowDashboardCommand { get; private set; }
     public Command ShowFormatManagerCommand { get; private set; }
 
@@ -67,10 +66,6 @@ namespace VisualLog.Desktop
           }
           this.LogManagerViewModel.OpenLogs(paths.ToArray());
         },
-        x => true
-        );
-      this.ShowLogManagerCommand = new Command(
-        x => { this.SetAsActive(this.LogManagerViewModel); },
         x => true
         );
       this.ShowDashboardCommand = new Command(
