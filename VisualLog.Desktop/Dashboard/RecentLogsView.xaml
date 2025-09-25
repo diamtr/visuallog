@@ -8,9 +8,14 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="UserControl_Loaded">
   <UserControl.Resources>
-    <DataTemplate DataType="{x:Type local:RecentLogInfo}">
-      <local:AvailableRecentLogView/>
-    </DataTemplate>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Styles.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
+      <DataTemplate DataType="{x:Type local:RecentLogViewModel}">
+        <local:RecentLogView/>
+      </DataTemplate>
+    </ResourceDictionary>
   </UserControl.Resources>
 
   <Border Background="White"
@@ -23,27 +28,17 @@
       </Grid.RowDefinitions>
 
       <!-- HEADER -->
-      <Border Grid.Row="0">
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-          </Grid.ColumnDefinitions>
-          <TextBlock Grid.Column="0" Text="Available Recent" FontWeight="Bold" TextWrapping="WrapWithOverflow" />
-          <StackPanel Grid.Column="1" Orientation="Horizontal">
-            <Button Content="Open"
-                Command="{Binding OpenSelectedAvailableRecentLogCommand}"
-                CommandParameter="{Binding SelectedItems, ElementName=RecentLogsList}"/>
-          </StackPanel>
-        </Grid>
+      <Border Grid.Row="0" Margin="0,0,0,15">
+        <TextBlock Text="Available Recent" FontWeight="Bold" TextWrapping="WrapWithOverflow" />
       </Border>
 
       <!-- LOGS -->
       <ListView Grid.Row="1"
                 x:Name="RecentLogsList"
                 ItemsSource="{Binding AvailableRecentLogs}"
-                SelectionMode="Extended"
-                BorderThickness="0"/>
+                BorderThickness="0"
+                ItemContainerStyle="{StaticResource AvoidSelectionListViewItem}">
+      </ListView>
     </Grid>
   </Border>
 </UserControl>

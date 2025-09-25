@@ -18,9 +18,9 @@ namespace VisualLog.Desktop.Dashboard
     /// <summary>
     /// Interaction logic for AvailableRecentLogView.xaml
     /// </summary>
-    public partial class AvailableRecentLogView : UserControl
+    public partial class RecentLogView : UserControl
     {
-        public AvailableRecentLogView()
+        public RecentLogView()
         {
             InitializeComponent();
         }

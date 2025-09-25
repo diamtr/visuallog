@@ -10,7 +10,6 @@ namespace VisualLog.Desktop.Dashboard
   {
     public const string RecentFileName = @"recent.json";
 
-    public Command OpenSelectedAvailableRecentLogCommand { get; private set; }
     public DashboardViewModel DashboardViewModel
     {
       get { return this.dashboardViewModel; }
@@ -21,7 +20,7 @@ namespace VisualLog.Desktop.Dashboard
       }
     }
     private DashboardViewModel dashboardViewModel;
-    public ObservableCollection<RecentLogInfo> AvailableRecentLogs { get; set; }
+    public ObservableCollection<RecentLogViewModel> AvailableRecentLogs { get; set; }
 
     public RecentLogsViewModel(DashboardViewModel dashboardViewModel) : this()
     {
@@ -30,25 +29,12 @@ namespace VisualLog.Desktop.Dashboard
 
     public RecentLogsViewModel()
     {
-      this.AvailableRecentLogs = new ObservableCollection<RecentLogInfo>();
-      this.InitCommands();
+      this.AvailableRecentLogs = new ObservableCollection<RecentLogViewModel>();
     }
 
-    public void InitCommands()
+    public void Open(string path)
     {
-      this.OpenSelectedAvailableRecentLogCommand = new Command(
-        x => {
-          var collectionParameter = x as IEnumerable<object>;
-          if (collectionParameter == null)
-            return;
-          var selectedLogs = collectionParameter.Cast<RecentLogInfo>();
-          if (this.DashboardViewModel == null ||
-              this.DashboardViewModel.MainViewModel == null)
-            return;
-          this.DashboardViewModel.MainViewModel.LogManagerViewModel.OpenLogs(selectedLogs.Select(x => x.Path).ToArray());
-        },
-        x => true
-        );
+      this.DashboardViewModel.MainViewModel.LogManagerViewModel.OpenLogs(path);
     }
 
     public void RememberOpenedLogs()
@@ -61,7 +47,7 @@ namespace VisualLog.Desktop.Dashboard
       try
       {
         var logInfos = this.DashboardViewModel.MainViewModel.LogManagerViewModel.Logs
-          .Select(x => new RecentLogInfo()
+          .Select(x => new RecentLogViewModel()
           {
             DisplayName = x.DisplayName,
             Path = x.LogPath,
@@ -81,12 +67,13 @@ namespace VisualLog.Desktop.Dashboard
       {
         if (!File.Exists(RecentFileName))
           return;
-        var recentLogInfos = JsonConvert.DeserializeObject<List<RecentLogInfo>>(File.ReadAllText(RecentFileName));
+        var recentLogInfos = JsonConvert.DeserializeObject<List<RecentLogViewModel>>(File.ReadAllText(RecentFileName));
         foreach (var logInfo in recentLogInfos)
         {
           if (!File.Exists(logInfo.Path) ||
               this.AvailableRecentLogs.Any(x => x.Path == logInfo.Path))
             continue;
+          logInfo.Parent = this;
           this.AvailableRecentLogs.Add(logInfo);
         }
       }
