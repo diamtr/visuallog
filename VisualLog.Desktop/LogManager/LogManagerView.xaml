@@ -32,7 +32,7 @@
               Background="{StaticResource PanelBackgroundBrush}">
         <ListView FlowDirection="LeftToRight"
                    MinHeight="20"
-                   ItemsSource="{Binding Logs}"
+                   ItemsSource="{Binding MainViewModel.Logs}"
                    SelectedItem="{Binding ActiveLog}"
                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                    BorderThickness="0"

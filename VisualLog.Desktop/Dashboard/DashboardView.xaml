@@ -48,7 +48,7 @@
       <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Auto"
                     CanContentScroll="True">
-        <ItemsControl Style="{StaticResource SpacedVerticalItemsControl}">
+        <ItemsControl Style="{StaticResource SpacedVerticalItemsContentControl}">
           <ItemsControl.Items>
             <ContentControl Content="{Binding MultipleLogSearchViewModel}" />
             <ContentControl Content="{Binding SearchViewModel}" />
@@ -59,7 +59,7 @@
     </Grid>
 
     <Grid Grid.Column="3" Grid.Row="1">
-      <ItemsControl Style="{StaticResource SpacedVerticalItemsControl}">
+      <ItemsControl Style="{StaticResource SpacedVerticalItemsContentControl}">
         <ItemsControl.Items>
           <ContentControl Content="{Binding OpenedLogsViewModel}"/>
           <ContentControl Content="{Binding RecentLogsViewModel}"/>

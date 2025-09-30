@@ -20,6 +20,6 @@
   
   <Grid>
     <ItemsControl ItemsSource="{Binding LogSearchResults}"
-                  Style="{StaticResource SpacedVerticalItemsControl}"/>
+                  Style="{StaticResource SpacedVerticalItemsContentPresenter}"/>
   </Grid>
 </UserControl>

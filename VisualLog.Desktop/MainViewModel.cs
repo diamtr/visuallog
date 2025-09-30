@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using VisualLog.Desktop.Dashboard;
 using VisualLog.Desktop.FormatManager;
@@ -9,6 +11,8 @@ namespace VisualLog.Desktop
 {
   public class MainViewModel : ViewModelBase
   {
+    public ObservableCollection<LogViewModel> Logs { get; set; }
+
     public ViewModelBase ActiveViewModel
     {
       get { return this.activeViewModel; }
@@ -25,9 +29,9 @@ namespace VisualLog.Desktop
 
     public MainViewModel()
     {
+      this.Logs = new ObservableCollection<LogViewModel>();
       this.DashboardViewModel = new DashboardViewModel(this);
       this.LogManagerViewModel = new LogManagerViewModel(this);
-      this.LogManagerViewModel.Logs.CollectionChanged += LogManagerViewModelLogsCollectionChanged;
       this.FormatManagerViewModel = new FormatManagerViewModel();
       this.InitCommands();
     }
@@ -48,6 +52,30 @@ namespace VisualLog.Desktop
       this.ActiveViewModel = viewModel;
     }
 
+    public void Open(params string[] paths)
+    {
+      if (paths == null)
+        return;
+
+      LogViewModel logViewModel = null;
+      foreach (var path in paths)
+        if (File.Exists(path))
+        {
+          logViewModel = this.Logs.FirstOrDefault(x => x.LogPath == path);
+          if (logViewModel == null)
+          {
+            logViewModel = new LogViewModel(path);
+            logViewModel.CloseRequested += this.OnLogCloseRequested;
+            logViewModel.ShowRequested += this.OnLogShowRequested;
+            logViewModel.ReadLog();
+            logViewModel.FollowTail();
+            this.Logs.Add(logViewModel);
+          }
+        }
+      if (logViewModel != null)
+        this.LogManagerViewModel.ActiveLog = logViewModel;
+    }
+
     private void InitCommands()
     {
       this.OpenLogsCommand = new Command(
@@ -64,7 +92,8 @@ namespace VisualLog.Desktop
             if (dialog.ShowDialog() == true)
               paths = dialog.FileNames.ToList();
           }
-          this.LogManagerViewModel.OpenLogs(paths.ToArray());
+          this.Open(paths.ToArray());
+          this.SetAsActive(this.LogManagerViewModel);
         },
         x => true
         );
@@ -78,8 +107,35 @@ namespace VisualLog.Desktop
         );
     }
 
-    private void LogManagerViewModelLogsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void OnLogCloseRequested(LogViewModel closedViewModel)
     {
+      if (!Equals(this.LogManagerViewModel.ActiveLog, closedViewModel))
+      {
+        this.Logs.Remove(closedViewModel);
+        closedViewModel.Dispose();
+        return;
+      }
+
+      var closedViewModelIndex = this.Logs.IndexOf(closedViewModel);
+      var nearestViewModelIndex = -1;
+      if (this.Logs.Count > 1)
+      {
+        if (closedViewModelIndex < this.Logs.Count - 1)
+          nearestViewModelIndex = closedViewModelIndex;
+        else
+          nearestViewModelIndex = closedViewModelIndex - 1;
+      }
+      this.Logs.Remove(closedViewModel);
+      closedViewModel.Dispose();
+      if (nearestViewModelIndex >= 0 && this.Logs.Any())
+        this.LogManagerViewModel.ActiveLog = this.Logs[nearestViewModelIndex];
+      if (!this.Logs.Any())
+        this.SetAsActive(this.DashboardViewModel);
+    }
+
+    private void OnLogShowRequested(LogViewModel logToShow)
+    {
+      this.LogManagerViewModel.ActiveLog = logToShow;
       this.SetAsActive(this.LogManagerViewModel);
     }
   }

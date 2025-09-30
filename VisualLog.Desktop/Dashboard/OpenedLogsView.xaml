@@ -36,13 +36,13 @@
             <ColumnDefinition Width="Auto"/>
           </Grid.ColumnDefinitions>
           <TextBlock Grid.Column="0" Text="Logs" FontWeight="Bold" TextWrapping="WrapWithOverflow" />
-          <Button Grid.Column="1" Content="Open" Command="{Binding DashboardViewModel.MainViewModel.OpenLogsCommand}" Style="{StaticResource LinkButton}"/>
+          <Button Grid.Column="1" Content="Open" Command="{Binding MainViewModel.OpenLogsCommand}" Style="{StaticResource LinkButton}"/>
         </Grid>
       </Border>
 
       <!-- LOGS -->
       <ListView Grid.Row="1"
-                ItemsSource="{Binding DashboardViewModel.MainViewModel.LogManagerViewModel.Logs}"
+                ItemsSource="{Binding MainViewModel.Logs}"
                 BorderThickness="0"
                 ItemContainerStyle="{StaticResource AvoidSelectionListViewItem}">
       </ListView>

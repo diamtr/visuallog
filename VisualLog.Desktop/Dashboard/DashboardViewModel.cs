@@ -62,12 +62,12 @@ namespace VisualLog.Desktop.Dashboard
     public DashboardViewModel(MainViewModel mainViewModel) : this()
     {
       this.MainViewModel = mainViewModel;
+      this.OpenedLogsViewModel = new OpenedLogsViewModel(this.MainViewModel);
+      this.SearchViewModel = new SearchViewModel(this.MainViewModel);
     }
     public DashboardViewModel()
     {
       this.MultipleLogSearchViewModel = new MultipleLogSearchViewModel(this);
-      this.SearchViewModel = new SearchViewModel();
-      this.OpenedLogsViewModel = new OpenedLogsViewModel(this);
       this.RecentLogsViewModel = new RecentLogsViewModel(this);
     }
 

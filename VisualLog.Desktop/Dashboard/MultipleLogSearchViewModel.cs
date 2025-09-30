@@ -47,12 +47,11 @@ namespace VisualLog.Desktop.Dashboard
     {
       if (this.DashboardViewModel == null ||
           this.DashboardViewModel.MainViewModel == null ||
-          this.DashboardViewModel.MainViewModel.LogManagerViewModel == null ||
-          !this.DashboardViewModel.MainViewModel.LogManagerViewModel.Logs.Any())
+          !this.DashboardViewModel.MainViewModel.Logs.Any())
         return;
 
       this.SearchResults.Clear();
-      var logViewModels = this.DashboardViewModel.MainViewModel.LogManagerViewModel.Logs;
+      var logViewModels = this.DashboardViewModel.MainViewModel.Logs;
       foreach (var logViewModel in logViewModels)
       {
         var searchResults = SearchEngine.Search(logViewModel.Log, searchRequest);

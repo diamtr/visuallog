@@ -2,23 +2,22 @@
 {
   public class OpenedLogsViewModel : ViewModelBase
   {
-    private DashboardViewModel dashboardViewModel;
-    public DashboardViewModel DashboardViewModel
+    private MainViewModel mainViewModel;
+    public MainViewModel MainViewModel
     {
-      get { return this.dashboardViewModel; }
-      protected set
+      get { return this.mainViewModel; }
+      set
       {
-        this.dashboardViewModel = value;
+        this.mainViewModel = value;
         this.OnPropertyChanged();
       }
     }
+    
+    public OpenedLogsViewModel(MainViewModel mainViewModel) : this()
+    {
+      this.mainViewModel = mainViewModel;
+    }
 
-    public OpenedLogsViewModel(DashboardViewModel dashboardViewModel) : this()
-    {
-      this.DashboardViewModel = dashboardViewModel;
-    }
-    public OpenedLogsViewModel()
-    {
-    }
+    public OpenedLogsViewModel() { }
   }
 }

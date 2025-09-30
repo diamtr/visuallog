@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace VisualLog.Desktop.Dashboard
 {
@@ -8,8 +9,10 @@ namespace VisualLog.Desktop.Dashboard
     public string Path { get; set; }
     public DateTime LastOpened { get; set; }
 
+    [JsonIgnore]
     public Command OpenCommand { get; private set; }
 
+    [JsonIgnore]
     public RecentLogsViewModel Parent { get; set; }
 
     public RecentLogViewModel()

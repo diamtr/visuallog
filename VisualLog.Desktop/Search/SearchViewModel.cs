@@ -1,12 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using VisualLog.Core.Search;
-using VisualLog.Desktop.LogManager;
 
 namespace VisualLog.Desktop.Search
 {
   public class SearchViewModel : ViewModelBase
   {
+    private MainViewModel mainViewModel;
+    public MainViewModel MainViewModel
+    {
+      get { return this.mainViewModel; }
+      set
+      {
+        this.mainViewModel = value;
+        this.OnPropertyChanged();
+      }
+    }
+
     private SearchRequestViewModel searchRequestViewModel;
     public SearchRequestViewModel SearchRequestViewModel
     {
@@ -29,11 +38,13 @@ namespace VisualLog.Desktop.Search
       }
     }
 
-    public List<LogViewModel> Logs { get; set; }
+    public SearchViewModel(MainViewModel mainViewModel) : this()
+    {
+      this.MainViewModel = mainViewModel;
+    }
 
     public SearchViewModel()
     {
-      this.Logs = new List<LogViewModel>();
       this.SearchRequestViewModel = new SearchRequestViewModel();
       this.SearchRequestViewModel.SearchRequested += this.OnSearchRequested;
       this.SearchResponseViewModel = new SearchResponseViewModel();
@@ -42,11 +53,15 @@ namespace VisualLog.Desktop.Search
     private void OnSearchRequested(SearchRequest searchRequest)
     {
       this.SearchResponseViewModel = new SearchResponseViewModel();
-      foreach (var logViewModel in this.Logs)
+      foreach (var logViewModel in this.MainViewModel.Logs)
       {
         var searchResponse = SearchEngine.Search(logViewModel.Log, searchRequest);
         if (searchResponse.Entries.Any())
-          this.SearchResponseViewModel.LogSearchResults.Add(new LogSearchResultsViewModel(logViewModel, searchResponse));
+        {
+          var searchResultsViewModel = new LogSearchResultsViewModel(logViewModel, searchResponse);
+          searchResultsViewModel.UpdateSearchEntries();
+          this.SearchResponseViewModel.LogSearchResults.Add(searchResultsViewModel);
+        }
       }
     }
   }

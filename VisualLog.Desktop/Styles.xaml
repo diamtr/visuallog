@@ -186,7 +186,7 @@
     <Setter Property="Margin" Value="10, 0, 0, 0" />
   </Style>
 
-  <Style x:Key="SpacedVerticalItemsControl" TargetType="ItemsControl">
+  <Style x:Key="SpacedVerticalItemsContentControl" TargetType="ItemsControl">
     <Setter Property="ItemsPanel">
       <Setter.Value>
         <ItemsPanelTemplate>
@@ -196,7 +196,24 @@
     </Setter>
     <Setter Property="ItemContainerStyle">
       <Setter.Value>
-        <Style TargetType="Control">
+        <Style TargetType="ContentControl">
+          <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="SpacedVerticalItemsContentPresenter" TargetType="ItemsControl">
+    <Setter Property="ItemsPanel">
+      <Setter.Value>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Vertical"/>
+        </ItemsPanelTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="ItemContainerStyle">
+      <Setter.Value>
+        <Style TargetType="ContentPresenter">
           <Setter Property="Margin" Value="0,0,0,10"/>
         </Style>
       </Setter.Value>

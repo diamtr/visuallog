@@ -34,7 +34,7 @@ namespace VisualLog.Desktop.Dashboard
 
     public void Open(string path)
     {
-      this.DashboardViewModel.MainViewModel.LogManagerViewModel.OpenLogs(path);
+      this.DashboardViewModel.MainViewModel.Open(path);
     }
 
     public void RememberOpenedLogs()
@@ -46,7 +46,7 @@ namespace VisualLog.Desktop.Dashboard
 
       try
       {
-        var logInfos = this.DashboardViewModel.MainViewModel.LogManagerViewModel.Logs
+        var logInfos = this.DashboardViewModel.MainViewModel.Logs
           .Select(x => new RecentLogViewModel()
           {
             DisplayName = x.DisplayName,
