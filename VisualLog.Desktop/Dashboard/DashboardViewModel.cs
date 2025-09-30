@@ -1,7 +1,10 @@
-﻿namespace VisualLog.Desktop.Dashboard
+﻿using VisualLog.Desktop.Search;
+
+namespace VisualLog.Desktop.Dashboard
 {
   public class DashboardViewModel : ViewModelBase
   {
+    private MainViewModel mainViewModel;
     public MainViewModel MainViewModel
     {
       get { return this.mainViewModel; }
@@ -11,7 +14,8 @@
         this.OnPropertyChanged();
       }
     }
-    private MainViewModel mainViewModel;
+
+    private MultipleLogSearchViewModel multipleLogSearchViewModel;
     public MultipleLogSearchViewModel MultipleLogSearchViewModel
     {
       get { return this.multipleLogSearchViewModel; }
@@ -21,7 +25,8 @@
         this.OnPropertyChanged();
       }
     }
-    private MultipleLogSearchViewModel multipleLogSearchViewModel;
+
+    private OpenedLogsViewModel openedLogsViewModel;
     public OpenedLogsViewModel OpenedLogsViewModel
     {
       get { return this.openedLogsViewModel; }
@@ -31,7 +36,8 @@
         this.OnPropertyChanged();
       }
     }
-    private OpenedLogsViewModel openedLogsViewModel;
+
+    private RecentLogsViewModel recentLogsViewModel;
     public RecentLogsViewModel RecentLogsViewModel
     {
       get { return this.recentLogsViewModel; }
@@ -41,7 +47,17 @@
         this.OnPropertyChanged();
       }
     }
-    private RecentLogsViewModel recentLogsViewModel;
+
+    private SearchViewModel searchViewModel;
+    public SearchViewModel SearchViewModel
+    {
+      get { return this.searchViewModel; }
+      protected set
+      {
+        this.searchViewModel = value;
+        this.OnPropertyChanged();
+      }
+    }
 
     public DashboardViewModel(MainViewModel mainViewModel) : this()
     {
@@ -50,6 +66,7 @@
     public DashboardViewModel()
     {
       this.MultipleLogSearchViewModel = new MultipleLogSearchViewModel(this);
+      this.SearchViewModel = new SearchViewModel();
       this.OpenedLogsViewModel = new OpenedLogsViewModel(this);
       this.RecentLogsViewModel = new RecentLogsViewModel(this);
     }
