@@ -89,14 +89,9 @@
                 Margin="20,0,0,0"
                 VerticalAlignment="Center"/>
 
-      <TextBox Grid.Column="2"
-               Text="{Binding LogPath}"
-               IsReadOnly="True"
-               Background="Transparent"
-               BorderBrush="Transparent"
-               BorderThickness="0"
-               Margin="20,0,0,0"
-               VerticalAlignment="Center"/>
+      <Button Grid.Column="2" Content="{Binding LogPath}"
+              Command="{Binding OpenInExplorerCommand}"
+              Style="{StaticResource LinkButton}" Margin="20,0,0,0" VerticalAlignment="Center"/>
 
       <ComboBox Grid.Column="4"
                 ItemsSource="{Binding Encodings}"

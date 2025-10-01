@@ -15,6 +15,7 @@ namespace VisualLog.Desktop.LogManager
     public Command ShowSearchPanelCommand { get; private set; }
     public Command CloseCommand { get; private set; }
     public Command ShowCommand { get; private set; }
+    public Command OpenInExplorerCommand { get; private set; }
 
     public event Action<LogViewModel> CloseRequested;
     public event Action<LogViewModel> ShowRequested;
@@ -120,15 +121,29 @@ namespace VisualLog.Desktop.LogManager
     private void InitCommands()
     {
       this.ShowSearchPanelCommand = new Command(
-        x => this.State.ShowSearchPanel = true,
+        x => {
+          this.State.ShowSearchPanel = true;
+        },
         x => true
       );
       this.CloseCommand = new Command(
-        x => { if (this.CloseRequested != null) this.CloseRequested.Invoke(this); },
+        x => {
+          this.CloseRequested?.Invoke(this);
+        },
         x => true
       );
       this.ShowCommand = new Command(
-        x => { this.ShowRequested?.Invoke(this); },
+        x => { 
+          this.ShowRequested?.Invoke(this);
+        },
+        x => true
+      );
+      this.OpenInExplorerCommand = new Command(
+        x => {
+          var fileInfo = new FileInfo(this.LogPath);
+          if (fileInfo.Exists)
+            System.Diagnostics.Process.Start("explorer.exe", fileInfo.Directory.FullName);
+        },
         x => true
       );
     }
