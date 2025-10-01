@@ -11,12 +11,15 @@ namespace VisualLog.Core.Search
         return response;
 
       response.LogPath = log.SourceFilePath;
-      foreach (var message in log.Messages)
+
+      var messagesCount = log.Messages.Count;
+      for (var index = 0; index < messagesCount; index++)
       {
+        var message = log.Messages[index];
         var entry = Search(message, request);
         if (entry == null)
           continue;
-        entry.LineNumber = log.Messages.IndexOf(message) + 1; // Lines numbering is 1-based.
+        entry.LineNumber = index + 1;
         response.Entries.Add(entry);
       }
 

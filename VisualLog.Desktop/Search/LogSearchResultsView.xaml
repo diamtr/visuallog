@@ -5,15 +5,23 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VisualLog.Desktop.Search"
              xmlns:conv="clr-namespace:VisualLog.Desktop.Converters"
+             xmlns:logmngr="clr-namespace:VisualLog.Desktop.LogManager"
              mc:Ignorable="d" 
              d:DesignHeight="250" d:DesignWidth="450" d:Background="White">
 
   <UserControl.Resources>
     <ResourceDictionary>
+      
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="../Styles.xaml"/>
       </ResourceDictionary.MergedDictionaries>
+      
       <conv:VisibilityBoolConverter x:Key="VisibilityBoolConverter" />
+
+      <DataTemplate DataType="{x:Type logmngr:SearchEntryViewModel}">
+        <logmngr:SearchEntryView/>
+      </DataTemplate>
+      
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -31,13 +39,17 @@
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
 
-      <ToggleButton Grid.Column="0" Content="show" IsChecked="{Binding ShowEntries}"/>
+      <ToggleButton x:Name="ShowEntriesToggleButton" Grid.Column="0"
+                    Content="show"
+                    IsChecked="{Binding ShowEntries}"
+                    Style="{StaticResource OptionToggleButton}"/>
       <TextBlock Grid.Column="1" Text="{Binding LogViewModel.LogPath}"/>
       
     </Grid>
 
-    <Grid Grid.Row="1" Visibility="{Binding ShowEntries, Converter={StaticResource VisibilityBoolConverter}}">
-      <TextBlock Text="SearchEntries"/>
+    <Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=ShowEntriesToggleButton, Converter={StaticResource VisibilityBoolConverter}}">
+      <ListView ItemsSource="{Binding SearchEntries}"
+                MaxHeight="400"/>
     </Grid>
     
   </Grid>
