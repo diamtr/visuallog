@@ -109,6 +109,7 @@
     <Style.Triggers>
       <Trigger Property="IsMouseOver" Value="True">
         <Setter Property="Background" Value="{StaticResource ActiveButtonBackgroundBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
       </Trigger>
     </Style.Triggers>
   </Style>
@@ -252,5 +253,5 @@
       </Trigger>
     </Style.Triggers>
   </Style>
-  
+
 </ResourceDictionary>

@@ -24,15 +24,11 @@ namespace VisualLog.Desktop.LogManager
   /// </summary>
   public partial class LogView : UserControl
   {
-    private Dictionary<Guid, GridLength> lastSelectedMessagesPanelWidth;
-    private Dictionary<Guid, GridLength> lastLogWidth;
     private Dictionary<Guid, double> lastSearchPanelHeight;
     private LogViewModel actualViewModel;
 
     public LogView()
     {
-      this.lastSelectedMessagesPanelWidth = new Dictionary<Guid, GridLength>();
-      this.lastLogWidth = new Dictionary<Guid, GridLength>();
       this.lastSearchPanelHeight = new Dictionary<Guid, double>();
       InitializeComponent();
     }
@@ -48,7 +44,6 @@ namespace VisualLog.Desktop.LogManager
       {
         this.actualViewModel.ShowLineRequested += this.ShowLine;
         this.actualViewModel.LogMessages.CollectionChanged += this.LogMessages_CollectionChanged;
-        this.HideSelectedMessagesPanel();
       }
     }
 
@@ -59,7 +54,6 @@ namespace VisualLog.Desktop.LogManager
         oldVm.ShowLineRequested -= this.ShowLine;
         if (oldVm.LogMessages != null)
           oldVm.LogMessages.CollectionChanged -= this.LogMessages_CollectionChanged;
-        this.RememberSelectedMessagesPanelState();
       }
 
       if (e.NewValue is not LogViewModel vm)
@@ -69,7 +63,6 @@ namespace VisualLog.Desktop.LogManager
       this.actualViewModel.ShowLineRequested += this.ShowLine;
       this.actualViewModel.LogMessages.CollectionChanged += this.LogMessages_CollectionChanged;
 
-      this.ShowSelectedMessagesPanel();
       this.ScrollToBottom();
     }
 
@@ -144,57 +137,6 @@ namespace VisualLog.Desktop.LogManager
       }
     }
 
-    private void SelectedLogMessages_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-      var border = sender as Border;
-      if (border == null)
-        return;
-
-      if (this.actualViewModel != null)
-      {
-        if (border.Visibility == Visibility.Collapsed)
-          this.HideSelectedMessagesPanel();
-        else
-          this.ShowSelectedMessagesPanel();
-      }
-    }
-
-    private void ShowSelectedMessagesPanel()
-    {
-      if (!this.actualViewModel?.State?.ShowSelectedMessagesPanel ?? true)
-        return;
-
-      var selectedMessagesWidth = this.lastSelectedMessagesPanelWidth.ContainsKey(this.actualViewModel.Guid) ?
-          this.lastSelectedMessagesPanelWidth[this.actualViewModel.Guid] :
-          new GridLength(1, GridUnitType.Star);
-      this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width = selectedMessagesWidth;
-      this.LogAndSelectedMessagesGrid.ColumnDefinitions[1].Width = new GridLength(3);
-      var logWidth = this.lastLogWidth.ContainsKey(this.actualViewModel.Guid) ?
-        this.lastLogWidth[this.actualViewModel.Guid] :
-        new GridLength(4, GridUnitType.Star);
-      this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = logWidth;
-    }
-
-    private void HideSelectedMessagesPanel()
-    {
-      this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width = new GridLength(0);
-      this.LogAndSelectedMessagesGrid.ColumnDefinitions[1].Width = new GridLength(0);
-      this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
-    }
-
-    private void RememberSelectedMessagesPanelState()
-    {
-      if (!this.actualViewModel?.State?.ShowSelectedMessagesPanel ?? true)
-        return;
-
-      var panelWidth = this.LogAndSelectedMessagesGrid.ColumnDefinitions[0].Width;
-      if (panelWidth.Value > 0)
-        this.lastSelectedMessagesPanelWidth[this.actualViewModel.Guid] = panelWidth;
-      var logWidth = this.LogAndSelectedMessagesGrid.ColumnDefinitions[2].Width;
-      if (logWidth.Value > 0)
-        this.lastLogWidth[this.actualViewModel.Guid] = logWidth;
-    }
-
     private void RememberSearchPanelState()
     {
       if (!this.actualViewModel?.State?.ShowSearchPanel ?? true)
@@ -203,11 +145,6 @@ namespace VisualLog.Desktop.LogManager
       var panelHeight = this.SearchPaneContentControl.Height;
       if (panelHeight > 0)
         this.lastSearchPanelHeight[this.actualViewModel.Guid] = panelHeight;
-    }
-
-    private void SelectedMessagesGridSplitter_DragCompleted(object sender, DragCompletedEventArgs e)
-    {
-      this.RememberSelectedMessagesPanelState();
     }
 
     private static T FindDescendant<T>(DependencyObject root) where T : DependencyObject

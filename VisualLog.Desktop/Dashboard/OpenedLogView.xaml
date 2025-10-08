@@ -24,7 +24,7 @@
             Visibility="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DockPanel}, Converter={StaticResource VisibilityBoolConverter}, Mode=OneWay, FallbackValue=Collapsed}"
             Style="{StaticResource LinkButton}"/>
 
-    <Grid>
+    <Grid Margin="30,0,0,0">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />

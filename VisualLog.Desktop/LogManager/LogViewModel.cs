@@ -31,7 +31,10 @@ namespace VisualLog.Desktop.LogManager
     {
       get { return this.selectedLogMessages; }
       set {
+        if (this.selectedLogMessages != null)
+          this.selectedLogMessages.CloseRequested -= this.OnSelectedLinesCloseRequested;
         this.selectedLogMessages = value;
+        this.selectedLogMessages.CloseRequested += this.OnSelectedLinesCloseRequested;
         this.OnPropertyChanged();
       }
     }
@@ -271,6 +274,11 @@ namespace VisualLog.Desktop.LogManager
     public string GetEncodingDisplayName(Encoding encoding)
     {
       return $"{encoding.CodePage} {encoding.WebName} {encoding.EncodingName}";
+    }
+
+    private void OnSelectedLinesCloseRequested()
+    {
+      this.State.ShowSelectedMessagesPanel = false;
     }
 
     private void SelectedEncoding_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

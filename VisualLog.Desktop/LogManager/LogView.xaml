@@ -101,35 +101,9 @@
 
     </Grid>
     
-    <!-- Log & Selected Log Messages -->
     <Grid Grid.Row="2" x:Name="LogAndSelectedMessagesGrid">
 
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource BoolToGridLengthConverter}}"
-                          MinWidth="0"/>
-        <ColumnDefinition Width="3" />
-        <ColumnDefinition Width="4*" />
-      </Grid.ColumnDefinitions>
-
-      <Border x:Name="SelectedLogMessages"
-              Grid.Column="0"
-              Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
-              IsVisibleChanged="SelectedLogMessages_IsVisibleChanged">
-        <ContentControl Content="{Binding SelectedLogMessages}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"/>
-      </Border>
-
-      <GridSplitter Grid.Column="1"
-                    Width="3"
-                    ResizeBehavior="PreviousAndNext"
-                    ResizeDirection="Columns"
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch"
-                    Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
-                    DragCompleted="SelectedMessagesGridSplitter_DragCompleted"/>
-
-      <DockPanel Grid.Column="2" >
+      <DockPanel>
 
         <Border DockPanel.Dock="Top"
                 MaxHeight="500"
@@ -150,7 +124,19 @@
                   SelectionChanged="MessagesListView_SelectionChanged" />
         
       </DockPanel>
-      
+
+      <Border Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
+              Background="{StaticResource PanelBackgroundBrush}"
+              Opacity="0.5"/>
+
+      <Border Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
+              Background="Transparent"
+              Padding="50,20,50,10">
+        <ContentControl Content="{Binding SelectedLogMessages}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"/>
+      </Border>
+
     </Grid>
 
   </Grid>

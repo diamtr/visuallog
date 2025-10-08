@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,6 +14,9 @@ namespace VisualLog.Desktop.LogManager
     public Command ShowNextMessageCommand { get; private set; }
 
     public Command CopyMessagesCommand { get; private set; }
+    public Command CloseSelectedMessagesCommand { get; private set; }
+
+    public event Action CloseRequested;
 
     public ObservableCollection<MessagePanelViewModel> Messages { get; set; }
     public int Index
@@ -44,6 +48,10 @@ namespace VisualLog.Desktop.LogManager
       this.Messages = new ObservableCollection<MessagePanelViewModel>();
       this.Messages.CollectionChanged += Messages_CollectionChanged;
       this.Index = 0;
+      this.CloseSelectedMessagesCommand = new Command(
+        x => { this.CloseRequested?.Invoke(); },
+        x => true
+        );
       this.ShowPreviousMessageCommand = new Command(
         x => { this.ShowPreviousMessage(); },
         x => true

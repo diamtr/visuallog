@@ -16,15 +16,9 @@
     </ResourceDictionary>
   </UserControl.Resources>
 
-  <DockPanel>
+  <Grid>
 
-    <Button DockPanel.Dock="Right"
-            Content="open"
-            Command="{Binding OpenCommand}"
-            Visibility="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DockPanel}, Converter={StaticResource VisibilityBoolConverter}, Mode=OneWay, FallbackValue=Collapsed}"
-            Style="{StaticResource LinkButton}"/>
-
-    <Grid>
+    <Grid Margin="35,0,0,0">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
@@ -35,5 +29,23 @@
       <TextBlock Grid.Row="2" Text="{Binding LastOpened, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm', TargetNullValue=''}" Foreground="Gray" FontSize="10" />
     </Grid>
 
-  </DockPanel>
+    <DockPanel>
+
+      <Button DockPanel.Dock="Right"
+              Content="open"
+              Command="{Binding OpenCommand}"
+              Visibility="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DockPanel}, Converter={StaticResource VisibilityBoolConverter}, Mode=OneWay, FallbackValue=Collapsed}"
+              Style="{StaticResource LinkButton}"/>
+
+      <CheckBox DockPanel.Dock="Left"
+                Visibility="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DockPanel}, Converter={StaticResource VisibilityBoolConverter}, Mode=OneWay, FallbackValue=Collapsed}"
+                Margin="10,0,0,0"
+                VerticalAlignment="Center"/>
+
+      <Border BorderThickness="0" BorderBrush="Transparent" Background="Transparent" />
+
+    </DockPanel>
+  </Grid>
+  
+  
 </UserControl>
