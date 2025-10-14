@@ -6,6 +6,17 @@ namespace VisualLog.Desktop.Dashboard
   public class RecentLogViewModel : ViewModelBase
   {
     public string DisplayName { get; set; }
+    public string PathDirectory
+    {
+      get
+      {
+        var pos = this.Path?.LastIndexOfAny(new char[] { '/', '\\' }) ?? -1;
+        if (pos == -1)
+          return this.Path;
+        return this.Path.Substring(0, pos);
+      }
+    }
+
     public string Path { get; set; }
     public DateTime LastOpened { get; set; }
 

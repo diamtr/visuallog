@@ -15,17 +15,6 @@ namespace VisualLog.Desktop.Dashboard
       }
     }
 
-    private MultipleLogSearchViewModel multipleLogSearchViewModel;
-    public MultipleLogSearchViewModel MultipleLogSearchViewModel
-    {
-      get { return this.multipleLogSearchViewModel; }
-      protected set
-      {
-        this.multipleLogSearchViewModel = value;
-        this.OnPropertyChanged();
-      }
-    }
-
     private OpenedLogsViewModel openedLogsViewModel;
     public OpenedLogsViewModel OpenedLogsViewModel
     {
@@ -67,7 +56,6 @@ namespace VisualLog.Desktop.Dashboard
     }
     public DashboardViewModel()
     {
-      this.MultipleLogSearchViewModel = new MultipleLogSearchViewModel(this);
       this.RecentLogsViewModel = new RecentLogsViewModel(this);
     }
 

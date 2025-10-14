@@ -24,9 +24,9 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
-      <TextBlock Grid.Row="0" Text="{Binding DisplayName, Mode=OneWay}" />
-      <TextBlock Grid.Row="1" Text="{Binding Path, Mode=OneWay}" Foreground="Gray" FontSize="10" />
-      <TextBlock Grid.Row="2" Text="{Binding LastOpened, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm', TargetNullValue=''}" Foreground="Gray" FontSize="10" />
+      <TextBlock Grid.Row="0" TextWrapping="WrapWithOverflow" Text="{Binding DisplayName, Mode=OneWay}" />
+      <TextBlock Grid.Row="1" TextWrapping="WrapWithOverflow" Text="{Binding PathDirectory, Mode=OneWay}" Foreground="Gray" FontSize="10" />
+      <TextBlock Grid.Row="2" TextWrapping="WrapWithOverflow" Text="{Binding LastOpened, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm', TargetNullValue=''}" Foreground="Gray" FontSize="10" />
     </Grid>
 
     <DockPanel>

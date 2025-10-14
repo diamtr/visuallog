@@ -16,9 +16,6 @@
       <DataTemplate DataType="{x:Type search:SearchViewModel}">
         <search:SearchVew/>
       </DataTemplate>
-      <DataTemplate DataType="{x:Type local:MultipleLogSearchViewModel}">
-        <local:MultipleLogSearchView/>
-      </DataTemplate>
       <DataTemplate DataType="{x:Type local:OpenedLogsViewModel}">
         <local:OpenedLogsView/>
       </DataTemplate>
@@ -50,7 +47,6 @@
                     CanContentScroll="True">
         <ItemsControl Style="{StaticResource SpacedVerticalItemsContentControl}">
           <ItemsControl.Items>
-            <ContentControl Content="{Binding MultipleLogSearchViewModel}" />
             <ContentControl Content="{Binding SearchViewModel}" />
           </ItemsControl.Items>
         </ItemsControl>

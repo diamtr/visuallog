@@ -37,7 +37,9 @@
                 x:Name="RecentLogsList"
                 ItemsSource="{Binding AvailableRecentLogs}"
                 BorderThickness="0"
-                ItemContainerStyle="{StaticResource AvoidSelectionListViewItem}">
+                ItemContainerStyle="{StaticResource AvoidSelectionListViewItem}"
+                HorizontalContentAlignment="Stretch"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
       </ListView>
     </Grid>
   </Border>
