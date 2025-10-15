@@ -121,7 +121,11 @@
                   SelectedItem="{Binding SelectedLogMessage}"
                   SelectionMode="Extended"
                   BorderThickness="0,0,0,0"
-                  SelectionChanged="MessagesListView_SelectionChanged" />
+                  SelectionChanged="MessagesListView_SelectionChanged"
+                  VirtualizingPanel.IsVirtualizing="True"
+                  VirtualizingPanel.VirtualizationMode="Recycling"
+                  VirtualizingPanel.CacheLength="2"
+                  VirtualizingPanel.CacheLengthUnit="Page"/>
         
       </DockPanel>
 
