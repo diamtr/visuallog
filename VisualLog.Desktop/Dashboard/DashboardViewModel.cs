@@ -63,5 +63,10 @@ namespace VisualLog.Desktop.Dashboard
     {
       this.RecentLogsViewModel.RememberOpenedLogs();
     }
+
+    public void RememberLog(LogManager.LogViewModel logViewModel)
+    {
+      this.RecentLogsViewModel.RememberLog(logViewModel);
+    }
   }
 }

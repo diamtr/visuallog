@@ -92,8 +92,11 @@ namespace VisualLog.Desktop
             if (dialog.ShowDialog() == true)
               paths = dialog.FileNames.ToList();
           }
-          this.Open(paths.ToArray());
-          this.SetAsActive(this.LogManagerViewModel);
+          if (paths.Any())
+          {
+            this.Open(paths.ToArray());
+            this.SetAsActive(this.LogManagerViewModel);
+          }
         },
         x => true
         );
@@ -109,6 +112,8 @@ namespace VisualLog.Desktop
 
     private void OnLogCloseRequested(LogViewModel closedViewModel)
     {
+      this.DashboardViewModel.RememberLog(closedViewModel);
+
       if (!Equals(this.LogManagerViewModel.ActiveLog, closedViewModel))
       {
         this.Logs.Remove(closedViewModel);

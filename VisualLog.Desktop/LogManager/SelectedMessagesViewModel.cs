@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using VisualLog.Core;
 
 namespace VisualLog.Desktop.LogManager
 {
@@ -13,12 +14,13 @@ namespace VisualLog.Desktop.LogManager
     public Command ShowPreviousMessageCommand { get; private set; }
     public Command ShowNextMessageCommand { get; private set; }
 
-    public Command CopyMessagesCommand { get; private set; }
+    public Command CopyAllMessagesCommand { get; private set; }
     public Command CloseSelectedMessagesCommand { get; private set; }
 
     public event Action CloseRequested;
 
-    public ObservableCollection<MessagePanelViewModel> Messages { get; set; }
+    public ObservableCollection<IMessage> Messages { get; set; }
+
     public int Index
     {
       get { return this.index; }
@@ -33,7 +35,7 @@ namespace VisualLog.Desktop.LogManager
     public int Position {
       get { return this.MessageToShow == null ? 0 : this.Index + 1; }
     }
-    public MessagePanelViewModel MessageToShow {
+    public IMessage MessageToShow {
       get { return this.messageToShow; }
       set {
         this.messageToShow = value;
@@ -41,11 +43,11 @@ namespace VisualLog.Desktop.LogManager
         this.OnPropertyChanged(nameof(this.Position));
       }
     }
-    private MessagePanelViewModel messageToShow;
+    private IMessage messageToShow;
 
     public SelectedMessagesViewModel()
     {
-      this.Messages = new ObservableCollection<MessagePanelViewModel>();
+      this.Messages = new ObservableCollection<IMessage>();
       this.Messages.CollectionChanged += Messages_CollectionChanged;
       this.Index = 0;
       this.CloseSelectedMessagesCommand = new Command(
@@ -60,8 +62,8 @@ namespace VisualLog.Desktop.LogManager
         x => { this.ShowNextMessage(); },
         x => true
         );
-      this.CopyMessagesCommand = new Command(
-        x => { this.CopyMessagesToClipboard(); },
+      this.CopyAllMessagesCommand = new Command(
+        x => { this.CopyAllMessagesToClipboard(); },
         x => true
         );
     }
@@ -70,7 +72,7 @@ namespace VisualLog.Desktop.LogManager
     {
       this.Messages.Clear();
       foreach (var entry in searchEntries)
-        this.Messages.Add(new MessagePanelViewModel(entry.SearchEntry.Message));
+        this.Messages.Add(entry.SearchEntry.Message);
     }
 
     private void Messages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -138,10 +140,10 @@ namespace VisualLog.Desktop.LogManager
       this.Index++;
     }
 
-    private void CopyMessagesToClipboard()
+    private void CopyAllMessagesToClipboard()
     {
       var messages = new StringBuilder();
-      foreach (var message in this.Messages.Select(x => x.Message.RawValue))
+      foreach (var message in this.Messages.Select(x => x.RawValue))
         messages.AppendLine(message);
       Clipboard.SetText(messages.ToString());
     }

@@ -44,14 +44,23 @@
           <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBox Grid.Row="0" x:Name="StringToSearch" Text="{Binding StringToSearch}" Height="20"/>
+        <Grid Grid.Row="0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <Button Grid.Column="0" Style="{StaticResource ActionButton}" Padding="2" Margin="0,0,15,0" VerticalAlignment="Center"
+                  Command="{Binding SearchCommand}" CommandParameter="{Binding Text, ElementName=StringToSearch}" Height="18">
+            <svgc:SvgViewbox Source="pack://application:,,,/img/SearchView/refresh.svg"/>
+          </Button>
+          <TextBox Grid.Column="1" x:Name="StringToSearch" Text="{Binding StringToSearch}" Height="20"/>
+          
+        </Grid>
+        
 
         <Grid Grid.Row="1">
           <StackPanel Orientation="Horizontal">
-            <Button Style="{StaticResource ActionButton}" Padding="2" Margin="0,0,15,0" VerticalAlignment="Center"
-                    Command="{Binding SearchCommand}" CommandParameter="{Binding Text, ElementName=StringToSearch}" Height="18">
-              <svgc:SvgViewbox Source="pack://application:,,,/img/SearchView/refresh.svg"/>
-            </Button>
             <ToggleButton VerticalAlignment="Center"
                           Content="RegEx"
                           IsChecked="{Binding UseRegex}"

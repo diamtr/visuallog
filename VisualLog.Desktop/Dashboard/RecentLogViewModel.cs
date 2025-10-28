@@ -38,16 +38,14 @@ namespace VisualLog.Desktop.Dashboard
         return false;
       return
         this.DisplayName == recentLog.DisplayName &&
-        this.Path == recentLog.Path &&
-        this.LastOpened == recentLog.LastOpened;
+        this.Path == recentLog.Path;
     }
 
     public override int GetHashCode()
     {
       return
         this.DisplayName.GetHashCode() ^
-        this.Path.GetHashCode() ^
-        this.LastOpened.GetHashCode();
+        this.Path.GetHashCode();
     }
 
     private void InitCommands()

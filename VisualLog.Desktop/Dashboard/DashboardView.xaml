@@ -33,11 +33,11 @@
     </Grid.RowDefinitions>
     
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="8*"/>
+      <ColumnDefinition Width="5*"/>
       <ColumnDefinition Width="55*"/>
-      <ColumnDefinition Width="4*"/>
+      <ColumnDefinition Width="5*"/>
       <ColumnDefinition Width="25*"/>
-      <ColumnDefinition Width="8*"/>
+      <ColumnDefinition Width="10*"/>
     </Grid.ColumnDefinitions>
     
     <Grid Grid.Column="1" Grid.Row="1">

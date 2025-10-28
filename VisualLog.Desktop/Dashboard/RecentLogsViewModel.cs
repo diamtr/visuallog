@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using VisualLog.Desktop.LogManager;
 
 namespace VisualLog.Desktop.Dashboard
 {
@@ -51,7 +53,7 @@ namespace VisualLog.Desktop.Dashboard
           {
             DisplayName = x.DisplayName,
             Path = x.LogPath,
-            LastOpened = System.DateTime.Now
+            LastOpened = DateTime.Now
           });
 
         logInfos = logInfos.Where(x => !this.AvailableRecentLogs.Any(y => y.Path == x.Path));
@@ -59,6 +61,23 @@ namespace VisualLog.Desktop.Dashboard
         File.WriteAllText(RecentFileName, JsonConvert.SerializeObject(logInfos, Formatting.Indented));
       }
       catch { }
+    }
+
+    public void RememberLog(LogViewModel logViewModel)
+    {
+      var recentLogViewModel = new RecentLogViewModel()
+      {
+        DisplayName = logViewModel.DisplayName,
+        Path = logViewModel.LogPath,
+        LastOpened = DateTime.Now
+      };
+
+      var original = this.AvailableRecentLogs.FirstOrDefault(x => Equals(x, recentLogViewModel));
+
+      if (original == null)
+        this.AvailableRecentLogs.Add(recentLogViewModel);
+      else
+        original.LastOpened = DateTime.Now;
     }
 
     public void FillAvailableRecentLogs()
