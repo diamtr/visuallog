@@ -24,8 +24,8 @@ namespace VisualLog.Desktop.LogManager
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
     private readonly List<MessageInlineViewModel> pendingMessages = new List<MessageInlineViewModel>();
     private readonly DispatcherTimer batchTimer;
-    private const int BatchSize = 50;
-    private const int BatchTimeoutMs = 100;
+    private const int BatchSize = 1000;
+    private const int BatchTimeoutMs = 500;
 
     public SelectedMessagesViewModel SelectedLogMessages
     {

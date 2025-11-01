@@ -137,16 +137,6 @@ namespace VisualLog.Desktop.LogManager
       }
     }
 
-    private void RememberSearchPanelState()
-    {
-      if (!this.actualViewModel?.State?.ShowSearchPanel ?? true)
-        return;
-
-      var panelHeight = this.SearchPaneContentControl.Height;
-      if (panelHeight > 0)
-        this.lastSearchPanelHeight[this.actualViewModel.Guid] = panelHeight;
-    }
-
     private static T FindDescendant<T>(DependencyObject root) where T : DependencyObject
     {
       if (root == null) return null;
