@@ -31,7 +31,7 @@
       <RowDefinition Height="25"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-    
+
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="5*"/>
       <ColumnDefinition Width="55*"/>
@@ -39,7 +39,7 @@
       <ColumnDefinition Width="25*"/>
       <ColumnDefinition Width="10*"/>
     </Grid.ColumnDefinitions>
-    
+
     <Grid Grid.Column="1" Grid.Row="1">
 
       <ScrollViewer HorizontalScrollBarVisibility="Disabled"
@@ -51,7 +51,7 @@
           </ItemsControl.Items>
         </ItemsControl>
       </ScrollViewer>
-      
+
     </Grid>
 
     <Grid Grid.Column="3" Grid.Row="1">
@@ -62,6 +62,6 @@
         </ItemsControl.Items>
       </ItemsControl>
     </Grid>
-    
+
   </Grid>
 </UserControl>

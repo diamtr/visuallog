@@ -12,6 +12,7 @@ namespace VisualLog.Desktop.Dashboard
   {
     public const string RecentFileName = @"recent.json";
 
+    private DashboardViewModel dashboardViewModel;
     public DashboardViewModel DashboardViewModel
     {
       get { return this.dashboardViewModel; }
@@ -21,8 +22,11 @@ namespace VisualLog.Desktop.Dashboard
         this.OnPropertyChanged();
       }
     }
-    private DashboardViewModel dashboardViewModel;
-    public ObservableCollection<RecentLogViewModel> AvailableRecentLogs { get; set; }
+
+    public ObservableCollection<RecentLogViewModel> RecentLogs { get; set; }
+
+    protected List<RecentLogInfo> recentLogInfos;
+    
 
     public RecentLogsViewModel(DashboardViewModel dashboardViewModel) : this()
     {
@@ -31,7 +35,8 @@ namespace VisualLog.Desktop.Dashboard
 
     public RecentLogsViewModel()
     {
-      this.AvailableRecentLogs = new ObservableCollection<RecentLogViewModel>();
+      this.recentLogInfos = new List<RecentLogInfo>();
+      this.RecentLogs = new ObservableCollection<RecentLogViewModel>();
     }
 
     public void Open(string path)
@@ -49,15 +54,16 @@ namespace VisualLog.Desktop.Dashboard
       try
       {
         var logInfos = this.DashboardViewModel.MainViewModel.Logs
-          .Select(x => new RecentLogViewModel()
+          .Select(x => new RecentLogInfo()
           {
             DisplayName = x.DisplayName,
             Path = x.LogPath,
             LastOpened = DateTime.Now
           });
 
-        logInfos = logInfos.Where(x => !this.AvailableRecentLogs.Any(y => y.Path == x.Path));
-        logInfos = logInfos.Union(this.AvailableRecentLogs);
+        logInfos = logInfos.Where(x => !this.recentLogInfos.Any(y => y.Path == x.Path));
+        logInfos = logInfos.Union(this.recentLogInfos);
+        logInfos = logInfos.OrderByDescending(x => x.LastOpened);
         File.WriteAllText(RecentFileName, JsonConvert.SerializeObject(logInfos, Formatting.Indented));
       }
       catch { }
@@ -65,19 +71,20 @@ namespace VisualLog.Desktop.Dashboard
 
     public void RememberLog(LogViewModel logViewModel)
     {
-      var recentLogViewModel = new RecentLogViewModel()
+      var recentLogInfo = new RecentLogInfo()
       {
         DisplayName = logViewModel.DisplayName,
         Path = logViewModel.LogPath,
         LastOpened = DateTime.Now
       };
 
-      var original = this.AvailableRecentLogs.FirstOrDefault(x => Equals(x, recentLogViewModel));
-
+      var original = this.recentLogInfos.FirstOrDefault(x => Equals(x, recentLogInfo));
       if (original == null)
-        this.AvailableRecentLogs.Add(recentLogViewModel);
+        this.recentLogInfos.Add(recentLogInfo);
       else
         original.LastOpened = DateTime.Now;
+
+      this.RefreshRecentLogs();
     }
 
     public void FillAvailableRecentLogs()
@@ -86,17 +93,26 @@ namespace VisualLog.Desktop.Dashboard
       {
         if (!File.Exists(RecentFileName))
           return;
-        var recentLogInfos = JsonConvert.DeserializeObject<List<RecentLogViewModel>>(File.ReadAllText(RecentFileName));
+        var recentLogInfos = JsonConvert.DeserializeObject<List<RecentLogInfo>>(File.ReadAllText(RecentFileName));
         foreach (var logInfo in recentLogInfos)
         {
           if (!File.Exists(logInfo.Path) ||
-              this.AvailableRecentLogs.Any(x => x.Path == logInfo.Path))
+              this.recentLogInfos.Any(x => x.Path == logInfo.Path))
             continue;
-          logInfo.Parent = this;
-          this.AvailableRecentLogs.Add(logInfo);
+          this.recentLogInfos.Add(logInfo);
         }
+
+        this.RefreshRecentLogs();
       }
       catch { }
+    }
+
+    protected void RefreshRecentLogs()
+    {
+      var logInfos = this.recentLogInfos.OrderByDescending(x => x.LastOpened);
+      this.RecentLogs.Clear();
+      foreach (var info in logInfos)
+        this.RecentLogs.Add(new RecentLogViewModel(info));
     }
   }
 }
