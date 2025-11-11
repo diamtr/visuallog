@@ -13,6 +13,7 @@ namespace VisualLog.Desktop.LogManager
   public class LogViewModel : ViewModelBase, IDisposable
   {
     public Command ShowSearchPanelCommand { get; private set; }
+    public Command ShowSelectedLinesCommand { get; private set; }
     public Command CloseCommand { get; private set; }
     public Command ShowCommand { get; private set; }
     public Command OpenInExplorerCommand { get; private set; }
@@ -22,23 +23,23 @@ namespace VisualLog.Desktop.LogManager
     public event Action<double> ShowLineRequested;
 
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
+    
     private readonly List<MessageInlineViewModel> pendingMessages = new List<MessageInlineViewModel>();
     private readonly DispatcherTimer batchTimer;
     private const int BatchSize = 1000;
     private const int BatchTimeoutMs = 500;
 
-    public SelectedMessagesViewModel SelectedLogMessages
+    public SelectedMessagesViewModel SelectedMessagesViewModel
     {
-      get { return this.selectedLogMessages; }
+      get { return this.selectedMessagesViewModel; }
       set {
-        if (this.selectedLogMessages != null)
-          this.selectedLogMessages.CloseRequested -= this.OnSelectedLinesCloseRequested;
-        this.selectedLogMessages = value;
-        this.selectedLogMessages.CloseRequested += this.OnSelectedLinesCloseRequested;
+        this.selectedMessagesViewModel = value;
         this.OnPropertyChanged();
       }
     }
-    private SelectedMessagesViewModel selectedLogMessages;
+    private SelectedMessagesViewModel selectedMessagesViewModel;
+    protected List<IMessage> selectedMessages;
+
     public MessageInlineViewModel SelectedLogMessage
     { 
       get
@@ -109,7 +110,8 @@ namespace VisualLog.Desktop.LogManager
     {
       this.Guid = Guid.NewGuid();
       this.LogMessages = new ObservableCollection<MessageInlineViewModel>();
-      this.SelectedLogMessages = new SelectedMessagesViewModel();
+      this.selectedMessages = new List<IMessage>();
+      this.SelectedMessagesViewModel = new SelectedMessagesViewModel();
       this.Encodings = new List<string>();
       this.LogFormats = new List<Format>();
       this.State = new LogViewStateViewModel();
@@ -126,6 +128,12 @@ namespace VisualLog.Desktop.LogManager
       this.ShowSearchPanelCommand = new Command(
         x => {
           this.State.ShowSearchPanel = true;
+        },
+        x => true
+      );
+      this.ShowSelectedLinesCommand = new Command(
+        x => {
+          this.ShowSelectedLines();
         },
         x => true
       );
@@ -209,6 +217,37 @@ namespace VisualLog.Desktop.LogManager
       }
     }
 
+    #region Selected messages
+
+    public void AddToSelection(IMessage message)
+    {
+      this.selectedMessages.Add(message);
+    }
+
+    public void RemoveFromSelection(IMessage message)
+    {
+      this.selectedMessages.Remove(message);
+    }
+
+    private void ShowSelectedLines()
+    {
+      this.SelectedMessagesViewModel = new SelectedMessagesViewModel(this.selectedMessages);
+      this.SelectedMessagesViewModel.CloseRequested += this.OnSelectedLinesCloseRequested;
+    }
+
+    private void OnSelectedLinesCloseRequested()
+    {
+      this.State.ShowSelectedMessagesPanel = false;
+      if (this.SelectedMessagesViewModel != null)
+      {
+        this.SelectedMessagesViewModel.CloseRequested -= this.OnSelectedLinesCloseRequested;
+        this.SelectedMessagesViewModel = null;
+      }
+    }
+
+
+    #endregion
+
     private void AddToBatch(MessageInlineViewModel messageViewModel)
     {
       this.pendingMessages.Add(messageViewModel);
@@ -260,7 +299,7 @@ namespace VisualLog.Desktop.LogManager
       this.SelectedLogMessage = null;
       var firstEntry = searchEntries.FirstOrDefault();
       this.SelectedLogMessage = firstEntry != null ? this.LogMessages[firstEntry.SearchEntry.LineNumber] : null;
-      this.SelectedLogMessages.SetMessages(searchEntries);
+      this.SelectedMessagesViewModel = new SelectedMessagesViewModel(searchEntries.Select(x => x.SearchEntry.Message));
     }
 
     public void InitEncodings()
@@ -275,12 +314,7 @@ namespace VisualLog.Desktop.LogManager
     {
       return $"{encoding.CodePage} {encoding.WebName} {encoding.EncodingName}";
     }
-
-    private void OnSelectedLinesCloseRequested()
-    {
-      this.State.ShowSelectedMessagesPanel = false;
-    }
-
+    
     private void SelectedEncoding_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
       if (sender == null || e.PropertyName != nameof(SelectedEncoding))

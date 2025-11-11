@@ -121,7 +121,7 @@
   </Style>
 
   <Style x:Key="TopLogMenuToggleButton" TargetType="{x:Type ToggleButton}">
-    <Setter Property="Margin" Value="10,10,10,5"/>
+    <Setter Property="Margin" Value="10,10,10,10"/>
     <Setter Property="Padding" Value="15,3,15,3"/>
     <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}"/>
     <Setter Property="BorderBrush" Value="{StaticResource DefaultBackgroundBrush}"/>
@@ -134,7 +134,7 @@
                   Background="{TemplateBinding Background}"
                   BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}"
-                  CornerRadius="1">
+                  CornerRadius="3">
             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
           </Border>
         </ControlTemplate>

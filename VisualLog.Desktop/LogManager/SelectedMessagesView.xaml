@@ -87,12 +87,16 @@
 
       <Grid Grid.Row="1"
             Margin="10">
-        <ListView ItemsSource="{Binding Messages}" Focusable="False" />
+        <ListView ItemsSource="{Binding MessagesViewModels}"
+                  SelectedIndex="{Binding Index}"
+                  SelectionMode="Single"
+                  Focusable="False"
+                  MaxHeight="200"/>
       </Grid>
       
       <Border Grid.Row="2"
               Margin="10">
-        <ContentControl Content="{Binding MessageToShow}"/>
+        <ContentControl Content="{Binding MessagePanelViewModel}"/>
       </Border>
       
     </Grid>

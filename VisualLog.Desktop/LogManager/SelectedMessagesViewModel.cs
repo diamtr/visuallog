@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -19,7 +18,8 @@ namespace VisualLog.Desktop.LogManager
 
     public event Action CloseRequested;
 
-    public ObservableCollection<IMessage> Messages { get; set; }
+    public List<IMessage> Messages { get; protected set; }
+    public ObservableCollection<MessageInlineViewModel> MessagesViewModels { get; protected set; }
 
     public int Index
     {
@@ -28,28 +28,43 @@ namespace VisualLog.Desktop.LogManager
       {
         this.index = value;
         this.OnPropertyChanged();
-        this.SetMessageToShow();
+        this.OnPropertyChanged(nameof(this.Position));
+        this.SetMessagePanelViewModel();
       }
     }
     private int index;
     public int Position {
-      get { return this.MessageToShow == null ? 0 : this.Index + 1; }
+      get { return this.Index + 1; }
     }
-    public IMessage MessageToShow {
-      get { return this.messageToShow; }
+
+    public MessagePanelViewModel MessagePanelViewModel
+    {
+      get { return this.messagePanelViewModel; }
       set {
-        this.messageToShow = value;
+        this.messagePanelViewModel = value;
         this.OnPropertyChanged();
-        this.OnPropertyChanged(nameof(this.Position));
       }
     }
-    private IMessage messageToShow;
+    private MessagePanelViewModel messagePanelViewModel;
+
+    public SelectedMessagesViewModel(IEnumerable<IMessage> messages) : this()
+    {
+      this.Messages.AddRange(messages);
+      foreach (var message in this.Messages)
+        this.MessagesViewModels.Add(new MessageInlineViewModel(message));
+      this.MessagePanelViewModel = new MessagePanelViewModel(this.Messages[this.Index]);
+    }
 
     public SelectedMessagesViewModel()
     {
-      this.Messages = new ObservableCollection<IMessage>();
-      this.Messages.CollectionChanged += Messages_CollectionChanged;
+      this.Messages = new List<IMessage>();
+      this.MessagesViewModels = new ObservableCollection<MessageInlineViewModel>();
       this.Index = 0;
+      this.InitCommands();
+    }
+
+    private void InitCommands()
+    {
       this.CloseSelectedMessagesCommand = new Command(
         x => { this.CloseRequested?.Invoke(); },
         x => true
@@ -68,62 +83,17 @@ namespace VisualLog.Desktop.LogManager
         );
     }
 
-    public void SetMessages(IEnumerable<SearchEntryViewModel> searchEntries)
-    {
-      this.Messages.Clear();
-      foreach (var entry in searchEntries)
-        this.Messages.Add(entry.SearchEntry.Message);
-    }
-
-    private void Messages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-      if (this.Messages == null)
-        return;
-
-      if (!this.Messages.Any())
-      {
-        this.MessageToShow = null;
-        return;
-      }
-
-      if (this.MessageToShow != null &&
-          this.Messages.Contains(this.MessageToShow))
-      {
-        this.Index = this.Messages.IndexOf(this.MessageToShow);
-        return;
-      }
-
-      if (!this.IndexInRange() && this.Index != 0)
-      {
-        this.Index = 0;
-        return;
-      }
-
-      if (e.OldItems != null &&
-          this.MessageToShow != null &&
-          e.OldItems.Contains(this.MessageToShow) &&
-          this.IndexInRange())
-      {
-        this.MessageToShow = this.Messages[this.Index];
-        return;
-      }
-
-      if (this.MessageToShow == null &&
-          this.IndexInRange())
-        this.MessageToShow = this.Messages[this.Index];
-    }
-
-    private void SetMessageToShow()
+    private void SetMessagePanelViewModel()
     {
       if (!this.IndexInRange())
         return;
 
-      this.MessageToShow = Messages[this.Index];
+      this.MessagePanelViewModel = new MessagePanelViewModel(this.Messages[this.Index]);
     }
 
     private bool IndexInRange()
     {
-      return this.Index >= 0 && this.Index <= Messages.Count - 1;
+      return this.Index >= 0 && this.Index <= this.Messages.Count - 1;
     }
 
     private void ShowPreviousMessage()
@@ -135,7 +105,7 @@ namespace VisualLog.Desktop.LogManager
 
     private void ShowNextMessage()
     {
-      if (this.Index >= Messages.Count - 1)
+      if (this.Index >= this.Messages.Count - 1)
         return;
       this.Index++;
     }

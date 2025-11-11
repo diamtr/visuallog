@@ -7,9 +7,10 @@
 
     public RecentLogsViewModel Parent { get; set; }
 
-    public RecentLogViewModel(RecentLogInfo logInfo) : this()
+    public RecentLogViewModel(RecentLogInfo logInfo, RecentLogsViewModel parent) : this()
     {
       this.LogInfo = logInfo;
+      this.Parent = parent;
     }
 
     public RecentLogViewModel()
@@ -20,7 +21,9 @@
     private void InitCommands()
     {
       this.OpenCommand = new Command(
-        x => { this.Parent?.Open(this.LogInfo.Path); },
+        x => {
+          this.Parent?.Open(this.LogInfo.Path); 
+        },
         x => true
         );
     }

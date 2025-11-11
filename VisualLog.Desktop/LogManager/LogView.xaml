@@ -74,6 +74,7 @@
 
           <ToggleButton x:Name="ShowSelectedMessagesPanelButton"
                         IsChecked="{Binding State.ShowSelectedMessagesPanel}"
+                        Command="{Binding ShowSelectedLinesCommand}"
                         Style="{StaticResource TopLogMenuToggleButton}">
             <TextBlock Text="Selected Lines"/>
           </ToggleButton>
@@ -136,7 +137,7 @@
       <Border Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
               Background="Transparent"
               Padding="50,20,50,10">
-        <ContentControl Content="{Binding SelectedLogMessages}"
+        <ContentControl Content="{Binding SelectedMessagesViewModel}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"/>
       </Border>

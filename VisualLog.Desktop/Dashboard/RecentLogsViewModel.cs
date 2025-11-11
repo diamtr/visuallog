@@ -112,7 +112,7 @@ namespace VisualLog.Desktop.Dashboard
       var logInfos = this.recentLogInfos.OrderByDescending(x => x.LastOpened);
       this.RecentLogs.Clear();
       foreach (var info in logInfos)
-        this.RecentLogs.Add(new RecentLogViewModel(info));
+        this.RecentLogs.Add(new RecentLogViewModel(info, this));
     }
   }
 }

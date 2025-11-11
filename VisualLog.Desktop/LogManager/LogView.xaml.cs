@@ -122,18 +122,12 @@ namespace VisualLog.Desktop.LogManager
 
       foreach (var selectedItem in e.AddedItems.Cast<MessageInlineViewModel>())
       {
-        var message = selectedItem.Message;
-        var messagePanelViewModel = this.actualViewModel.SelectedLogMessages.Messages.FirstOrDefault(x => Equals(x, message));
-        if (messagePanelViewModel == null)
-          this.actualViewModel.SelectedLogMessages.Messages.Add(message);
+        this.actualViewModel.AddToSelection(selectedItem.Message);
       }
 
       foreach (var unselectedItem in e.RemovedItems.Cast<MessageInlineViewModel>())
       {
-        var message = unselectedItem.Message;
-        var messagePanelViewModel = this.actualViewModel.SelectedLogMessages.Messages.FirstOrDefault(x => Equals(x, message));
-        if (messagePanelViewModel != null)
-          this.actualViewModel.SelectedLogMessages.Messages.Remove(messagePanelViewModel);
+        this.actualViewModel.RemoveFromSelection(unselectedItem.Message);
       }
     }
 
