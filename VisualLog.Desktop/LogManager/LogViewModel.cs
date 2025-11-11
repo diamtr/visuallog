@@ -133,7 +133,7 @@ namespace VisualLog.Desktop.LogManager
       );
       this.ShowSelectedLinesCommand = new Command(
         x => {
-          this.ShowSelectedLines();
+          this.ShowSelectedMessages(this.selectedMessages);
         },
         x => true
       );
@@ -229,10 +229,11 @@ namespace VisualLog.Desktop.LogManager
       this.selectedMessages.Remove(message);
     }
 
-    private void ShowSelectedLines()
+    private void ShowSelectedMessages(IEnumerable<IMessage> messages)
     {
-      this.SelectedMessagesViewModel = new SelectedMessagesViewModel(this.selectedMessages);
+      this.SelectedMessagesViewModel = new SelectedMessagesViewModel(messages);
       this.SelectedMessagesViewModel.CloseRequested += this.OnSelectedLinesCloseRequested;
+      this.State.ShowSelectedMessagesPanel = true;
     }
 
     private void OnSelectedLinesCloseRequested()
@@ -299,7 +300,7 @@ namespace VisualLog.Desktop.LogManager
       this.SelectedLogMessage = null;
       var firstEntry = searchEntries.FirstOrDefault();
       this.SelectedLogMessage = firstEntry != null ? this.LogMessages[firstEntry.SearchEntry.LineNumber] : null;
-      this.SelectedMessagesViewModel = new SelectedMessagesViewModel(searchEntries.Select(x => x.SearchEntry.Message));
+      this.ShowSelectedMessages(searchEntries.Select(x => x.SearchEntry.Message));
     }
 
     public void InitEncodings()

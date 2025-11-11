@@ -7,14 +7,17 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="350"
              d:Background="White">
-  <Grid VerticalAlignment="Stretch">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-      <StackPanel Orientation="Vertical">
-        <TextBlock Text="Text" />
+  <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <TabControl>
+      <TabItem Header="Message">
         <TextBox Text="{Binding Message.RawValue}" TextWrapping="Wrap" IsReadOnly="True" FontFamily="Consolas" />
-        <TextBlock Text="StackTrace" />
-        <TextBox Text="{Binding StackTrace}" TextWrapping="NoWrap" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True" FontFamily="Consolas" />
-      </StackPanel>
-    </ScrollViewer>
+      </TabItem>
+      <TabItem Header="StackTrace">
+        <TextBox Text="{Binding StackTrace}"
+                 TextWrapping="NoWrap" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True"
+                 FontFamily="Consolas"
+                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+      </TabItem>
+    </TabControl>
   </Grid>
 </UserControl>
