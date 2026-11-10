@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using VisualLog.Core;
+using VisualLog.Core.Search;
 using VisualLog.Desktop.LogManager;
 
 namespace VisualLog.Desktop.Tests
@@ -195,11 +196,11 @@ namespace VisualLog.Desktop.Tests
       vm.GoToNext();
       Assert.That(vm.PositionText, Is.EqualTo("1 / 2"));
       Assert.That(vm.CurrentLineNumber, Is.EqualTo(2));
-      Assert.That(log.SelectedLogMessage.Message.RawValue, Is.EqualTo(Lines[1]));
+      Assert.That(log.ShownLine.Message.RawValue, Is.EqualTo(Lines[1]));
 
       vm.GoToNext();
       Assert.That(vm.PositionText, Is.EqualTo("2 / 2"));
-      Assert.That(log.SelectedLogMessage.Message.RawValue, Is.EqualTo(Lines[3]));
+      Assert.That(log.ShownLine.Message.RawValue, Is.EqualTo(Lines[3]));
 
       vm.GoToNext();
       Assert.That(vm.PositionText, Is.EqualTo("1 / 2"));
@@ -210,30 +211,68 @@ namespace VisualLog.Desktop.Tests
     }
 
     [Test]
-    public async Task OpenAsSelectionSelectsTheFoundLine()
+    public async Task ShowLineRequestCarriesTheFoundEntry()
     {
-      // Regression: the line after the found one was selected
+      // Regression (with the list): the line after the found one was shown; the last line threw
       var log = CreateLog(Lines);
       var vm = log.SearchViewModel;
-      vm.StringToSearch = "connect";
+      SearchEntry shown = null;
+      log.ShowLineRequested += entry => shown = entry;
+      vm.StringToSearch = "again";
       await vm.SearchAsync();
 
-      vm.OpenAllAsSelectionCommand.Execute(null);
-      Assert.That(log.SelectedLogMessage.Message.RawValue, Is.EqualTo(Lines[1]));
-      Assert.That(log.State.ShowSelectedMessagesPanel, Is.True);
-      Assert.That(log.SelectedMessagesViewModel.Messages.Select(x => x.RawValue), Is.EqualTo(new[] { Lines[1] }));
+      vm.GoToNext();
+      Assert.That(shown.LineNumber, Is.EqualTo(4));
+      Assert.That(shown.Matches, Is.Not.Empty);
+      Assert.That(log.ShownLine.Message.RawValue, Is.EqualTo(Lines[3]));
+      Assert.That(log.State.FollowTail, Is.False);
+    }
+
+    [TestCase("timeout", true)]
+    [TestCase("a b", true)]
+    [TestCase("", false)]
+    [TestCase(null, false)]
+    [TestCase("one\ntwo", false)]
+    [TestCase("one\r\n", false)]
+    public void SearchableText(string text, bool expected)
+    {
+      Assert.That(SearchViewModel.IsSearchableText(text), Is.EqualTo(expected));
     }
 
     [Test]
-    public async Task OpenAsSelectionOfTheLastLine()
+    public void EscapeRegexKeepsSpacesReadable()
     {
-      // Regression: the last line threw ArgumentOutOfRangeException
+      Assert.That(SearchViewModel.EscapeRegex("a.b (c) [d] # e"), Is.EqualTo(@"a\.b \(c\) \[d\] # e"));
+    }
+
+    [Test]
+    public async Task SearchForSelectedTextFindsItLiterally()
+    {
+      var log = CreateLog(new[] { "value (1) ok", "value 1 ok", "other" });
+      var vm = log.SearchViewModel;
+      Assert.That(vm.UseRegex, Is.True);
+
+      await vm.SearchForTextAsync("(1)");
+      Assert.That(vm.StringToSearch, Is.EqualTo(@"\(1\)"));
+      Assert.That(vm.SearchEntries.Select(x => x.SearchEntry.LineNumber), Is.EqualTo(new[] { 1 }));
+      Assert.That(log.State.ShowSearchPanel, Is.True);
+      Assert.That(SearchViewModel.SharedHistory.First(), Is.EqualTo(@"\(1\)"));
+
+      vm.UseRegex = false;
+      await vm.SearchForTextAsync("(1)");
+      Assert.That(vm.StringToSearch, Is.EqualTo("(1)"));
+      Assert.That(vm.SearchEntries.Select(x => x.SearchEntry.LineNumber), Is.EqualTo(new[] { 1 }));
+    }
+
+    [Test]
+    public async Task MultilineSelectionIsNotSearched()
+    {
       var log = CreateLog(Lines);
       var vm = log.SearchViewModel;
-      vm.StringToSearch = "again";
-      await vm.SearchAsync();
-      Assert.DoesNotThrow(() => vm.OpenAllAsSelectionCommand.Execute(null));
-      Assert.That(log.SelectedLogMessage.Message.RawValue, Is.EqualTo(Lines[3]));
+      await vm.SearchForTextAsync("timeout\nagain");
+      Assert.That(vm.HasQuery, Is.False);
+      Assert.That(log.SearchTextCommand.CanExecute("timeout\nagain"), Is.False);
+      Assert.That(log.SearchTextCommand.CanExecute("timeout"), Is.True);
     }
 
     [Test]

@@ -7,6 +7,7 @@
              xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
              xmlns:search="clr-namespace:VisualLog.Desktop.Search"
              xmlns:ctl="clr-namespace:VisualLog.Desktop.Controls"
+             xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="UserControl_Loaded"
@@ -22,14 +23,6 @@
       <root:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
       <root:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter"/>
 
-      <DataTemplate DataType="{x:Type logmgr:MessageInlineViewModel}">
-        <logmgr:MessageInlineView />
-      </DataTemplate>
-
-      <DataTemplate DataType="{x:Type logmgr:SelectedMessagesViewModel}">
-        <logmgr:SelectedMessagesView />
-      </DataTemplate>
-
       <DataTemplate DataType="{x:Type logmgr:SearchViewModel}">
         <logmgr:SearchView/>
       </DataTemplate>
@@ -41,6 +34,9 @@
     <KeyBinding Gesture="Ctrl+F" Command="{Binding ShowSearchPanelCommand}"/>
     <KeyBinding Gesture="F3" Command="{Binding SearchViewModel.NextCommand}"/>
     <KeyBinding Gesture="Shift+F3" Command="{Binding SearchViewModel.PreviousCommand}"/>
+    <!-- Line details: previous / next line, by the search results if there are any -->
+    <KeyBinding Gesture="Alt+Up" Command="{Binding Details.PreviousCommand}"/>
+    <KeyBinding Gesture="Alt+Down" Command="{Binding Details.NextCommand}"/>
   </UserControl.InputBindings>
 
   <Grid>
@@ -71,18 +67,6 @@
         <logmgr:SearchBoxView Grid.Column="0"
                               x:Name="SearchBox"
                               DataContext="{Binding SearchViewModel}"/>
-
-        <ToggleButton Grid.Column="1"
-                      x:Name="ShowSelectedMessagesPanelButton"
-                      IsChecked="{Binding State.ShowSelectedMessagesPanel}"
-                      Command="{Binding ShowSelectedLinesCommand}"
-                      ToolTip="Show selected lines"
-                      Style="{StaticResource ToolbarToggleButton}">
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="&#xE762;" Style="{StaticResource ToolbarGlyph}"/>
-            <TextBlock Text="Selected lines" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ToggleButton>
 
         <ToggleButton Grid.Column="2"
                       x:Name="FollowTailCheckBox"
@@ -125,79 +109,106 @@
                   VerticalAlignment="Center"/>
       </Grid>
     </Border>
-    
-    <Grid Grid.Row="2" x:Name="LogAndSelectedMessagesGrid">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*" MinHeight="80"/>
-        <RowDefinition x:Name="SearchSplitterRow" Height="0"/>
-        <RowDefinition x:Name="SearchPanelRow" Height="0"/>
-      </Grid.RowDefinitions>
 
-      <Grid Grid.Row="0">
-        <ListView x:Name="MessagesListView"
-                  ItemsSource="{Binding LogMessages}"
-                  SelectedItem="{Binding SelectedLogMessage}"
-                  SelectionMode="Extended"
-                  BorderThickness="0,0,0,0"
-                  SelectionChanged="MessagesListView_SelectionChanged"
-                  Loaded="MessagesListView_Loaded"
-                  VirtualizingPanel.IsVirtualizing="True"
-                  VirtualizingPanel.VirtualizationMode="Recycling"
-                  VirtualizingPanel.CacheLength="2"
-                  VirtualizingPanel.CacheLengthUnit="Page">
-          <ListView.ItemContainerStyle>
-            <!-- Highlight background goes on the row container: the theme's selection/hover
-                 look is drawn over it, so selected highlighted lines still look selected.
-                 No BasedOn: the theme style (template, selection) applies anyway, and a
-                 StaticResource to {x:Type ListViewItem} can't be resolved here (crash on open). -->
-            <Style TargetType="ListViewItem">
-              <Setter Property="Background" Value="{Binding Highlight.Background}"/>
-            </Style>
-          </ListView.ItemContainerStyle>
-        </ListView>
+    <!-- The log with the search results under it; details of a line beside them -->
+    <Grid Grid.Row="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" MinWidth="200"/>
+        <ColumnDefinition x:Name="DetailsSplitterColumn" Width="0"/>
+        <ColumnDefinition x:Name="DetailsPanelColumn" Width="0"/>
+      </Grid.ColumnDefinitions>
 
-        <!-- Search results marked along the vertical scrollbar of the log; placed by code-behind -->
-        <ctl:ScrollMarkersBar x:Name="SearchMarkers"
-                              HorizontalAlignment="Right"
-                              LineNumbers="{Binding SearchViewModel.MatchLineNumbers}"
-                              TotalLines="{Binding LogMessages.Count}"
-                              CurrentLineNumber="{Binding SearchViewModel.CurrentLineNumber}"
-                              MarkerBrush="{StaticResource SearchMarkerBrush}"
-                              CurrentMarkerBrush="{StaticResource AccentBrush}"/>
+      <Grid Grid.Column="0" x:Name="LogAndSearchGrid">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*" MinHeight="80"/>
+          <RowDefinition x:Name="SearchSplitterRow" Height="0"/>
+          <RowDefinition x:Name="SearchPanelRow" Height="0"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+          <!-- The log as plain read-only text: one document, so the selection may span lines and
+               the horizontal scroll moves all the lines together. Filled by code-behind. -->
+          <ae:TextEditor x:Name="LogEditor"
+                         IsReadOnly="True"
+                         WordWrap="False"
+                         FontFamily="{StaticResource LogFont}"
+                         FontSize="{StaticResource LogFontSize}"
+                         Background="{StaticResource CardBrush}"
+                         Foreground="{StaticResource LogTextBrush}"
+                         TextOptions.TextFormattingMode="Display"
+                         TextOptions.TextRenderingMode="ClearType"
+                         LineNumbersForeground="{StaticResource TextTertiaryBrush}"
+                         ShowLineNumbers="{Binding Display.ShowLineNumbers, FallbackValue=False}"
+                         HorizontalScrollBarVisibility="Auto"
+                         VerticalScrollBarVisibility="Auto"
+                         Padding="6,2,0,0"
+                         Loaded="LogEditor_Loaded"
+                         PreviewKeyDown="LogEditor_PreviewKeyDown"
+                         MouseDoubleClick="LogEditor_MouseDoubleClick"
+                         ContextMenuOpening="LogEditor_ContextMenuOpening">
+            <ae:TextEditor.ContextMenu>
+              <ContextMenu>
+                <MenuItem x:Name="ShowDetailsMenuItem" Header="Show details" InputGestureText="Double-click" Click="ShowDetailsMenuItem_Click"/>
+                <Separator/>
+                <MenuItem x:Name="CopyMenuItem" Header="Copy" InputGestureText="Ctrl+C" Click="CopyMenuItem_Click"/>
+                <MenuItem x:Name="SearchSelectionMenuItem" InputGestureText="Ctrl+F" Click="SearchSelectionMenuItem_Click">
+                  <MenuItem.Header>
+                    <!-- TextBlock: an underscore in the selected text is not an access key -->
+                    <TextBlock x:Name="SearchSelectionMenuHeader" Text="Search"/>
+                  </MenuItem.Header>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Select all" InputGestureText="Ctrl+A" Click="SelectAllMenuItem_Click"/>
+              </ContextMenu>
+            </ae:TextEditor.ContextMenu>
+          </ae:TextEditor>
+
+          <!-- Search results marked along the vertical scrollbar of the log; placed by code-behind -->
+          <ctl:ScrollMarkersBar x:Name="SearchMarkers"
+                                HorizontalAlignment="Right"
+                                LineNumbers="{Binding SearchViewModel.MatchLineNumbers}"
+                                TotalLines="{Binding LogMessages.Count}"
+                                CurrentLineNumber="{Binding SearchViewModel.CurrentLineNumber}"
+                                MarkerBrush="{StaticResource SearchMarkerBrush}"
+                                CurrentMarkerBrush="{StaticResource AccentBrush}"/>
+        </Grid>
+
+        <GridSplitter Grid.Row="1"
+                      x:Name="SearchSplitter"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      ResizeDirection="Rows"
+                      ResizeBehavior="PreviousAndNext"
+                      Background="{StaticResource DividerBrush}"
+                      Cursor="SizeNS"
+                      Focusable="False"
+                      DragCompleted="SearchSplitter_DragCompleted"/>
+
+        <ContentControl Grid.Row="2"
+                        x:Name="SearchPaneContentControl"
+                        Focusable="False"
+                        Content="{Binding SearchViewModel}"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"/>
+
       </Grid>
 
-      <GridSplitter Grid.Row="1"
-                    x:Name="SearchSplitter"
+      <GridSplitter Grid.Column="1"
+                    x:Name="DetailsSplitter"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    ResizeDirection="Rows"
+                    ResizeDirection="Columns"
                     ResizeBehavior="PreviousAndNext"
                     Background="{StaticResource DividerBrush}"
-                    Cursor="SizeNS"
+                    Cursor="SizeWE"
                     Focusable="False"
-                    DragCompleted="SearchSplitter_DragCompleted"/>
+                    Visibility="Collapsed"
+                    DragCompleted="DetailsSplitter_DragCompleted"/>
 
-      <ContentControl Grid.Row="2"
-                      x:Name="SearchPaneContentControl"
-                      Focusable="False"
-                      Content="{Binding SearchViewModel}"
-                      HorizontalContentAlignment="Stretch"
-                      VerticalContentAlignment="Stretch"/>
-
-      <Border Grid.RowSpan="3"
-              Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
-              Background="{StaticResource PanelBackgroundBrush}"
-              Opacity="0.5"/>
-
-      <Border Grid.RowSpan="3"
-              Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
-              Background="Transparent"
-              Padding="50,20,50,10">
-        <ContentControl Content="{Binding SelectedMessagesViewModel}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"/>
-      </Border>
-
+      <logmgr:MessageDetailsView Grid.Column="2"
+                                 x:Name="DetailsPane"
+                                 DataContext="{Binding Details}"
+                                 Visibility="Collapsed"/>
     </Grid>
 
   </Grid>

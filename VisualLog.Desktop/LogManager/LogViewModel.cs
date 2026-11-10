@@ -7,57 +7,87 @@ using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using VisualLog.Core;
+using VisualLog.Core.Search;
 using VisualLog.Desktop.Settings;
 
 namespace VisualLog.Desktop.LogManager
 {
-  public class LogViewModel : ViewModelBase, IDisposable
+  public class LogViewModel : ViewModelBase, IDisposable, ILineNavigator
   {
     private static readonly NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
+    /// <summary>Ctrl+F. Parameter: text selected in the log - searched for if it is a part of one line.</summary>
     public Command ShowSearchPanelCommand { get; private set; }
-    public Command ShowSelectedLinesCommand { get; private set; }
+    /// <summary>Searches for the text given as the parameter (a part of one line).</summary>
+    public Command SearchTextCommand { get; private set; }
     public Command CloseCommand { get; private set; }
     public Command ShowCommand { get; private set; }
     public Command OpenInExplorerCommand { get; private set; }
 
     public event Action<LogViewModel> CloseRequested;
     public event Action<LogViewModel> ShowRequested;
-    public event Action<double> ShowLineRequested;
+    /// <summary>The view scrolls to the line of the entry and selects its first match.</summary>
+    public event Action<SearchEntry> ShowLineRequested;
     public event Action SearchFocusRequested;
+    /// <summary>The look of the lines changed (highlighting rules): the view redraws them.</summary>
+    public event Action LinesRestyled;
 
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
-    
+
     private readonly List<MessageInlineViewModel> pendingMessages = new List<MessageInlineViewModel>();
     private readonly DispatcherTimer batchTimer;
     private const int BatchSize = 1000;
     private const int BatchTimeoutMs = 500;
 
-    public SelectedMessagesViewModel SelectedMessagesViewModel
+    /// <summary>The line the log was last moved to by the search.</summary>
+    public MessageInlineViewModel ShownLine
     {
-      get { return this.selectedMessagesViewModel; }
-      set {
-        this.selectedMessagesViewModel = value;
+      get { return this.shownLine; }
+      private set
+      {
+        this.shownLine = value;
         this.OnPropertyChanged();
       }
     }
-    private SelectedMessagesViewModel selectedMessagesViewModel;
-    protected List<IMessage> selectedMessages;
+    private MessageInlineViewModel shownLine;
 
-    public MessageInlineViewModel SelectedLogMessage
-    { 
-      get
+    /// <summary>Details of the line chosen in the log, shown in the panel beside it; null - the panel is closed.</summary>
+    public MessageDetailsViewModel Details
+    {
+      get { return this.details; }
+      private set
       {
-        return this.selectedLogMessage;
+        if (this.details is JsonMessageDetailsViewModel shownJson)
+          this.jsonDetailsAsTree = shownJson.IsTreeView;
+        if (this.details != null)
+          this.details.CloseRequested -= this.HideDetails;
+        this.details = value;
+        if (this.details != null)
+        {
+          this.details.CloseRequested += this.HideDetails;
+          this.details.Navigator = this;
+        }
+        // The chosen look of JSON lines (tree or text) is kept from line to line
+        if (this.details is JsonMessageDetailsViewModel json)
+          json.IsTreeView = this.jsonDetailsAsTree;
+        this.OnPropertyChanged();
       }
+    }
+    private MessageDetailsViewModel details;
+    private bool jsonDetailsAsTree = true;
+
+    /// <summary>Application-wide look of the logs (line numbers...).</summary>
+    public DisplaySettings Display
+    {
+      get { return this.display; }
       set
       {
-        this.selectedLogMessage = value;
+        this.display = value;
         this.OnPropertyChanged();
       }
     }
-    private MessageInlineViewModel selectedLogMessage;
-    
+    private DisplaySettings display = new DisplaySettings();
+
     public string DisplayName
     {
       get
@@ -153,8 +183,6 @@ namespace VisualLog.Desktop.LogManager
       this.Guid = Guid.NewGuid();
       this.highlighterSource = () => this.highlighting?.Current;
       this.LogMessages = new ObservableCollection<MessageInlineViewModel>();
-      this.selectedMessages = new List<IMessage>();
-      this.SelectedMessagesViewModel = new SelectedMessagesViewModel();
       this.Encodings = new List<string>();
       this.LogFormats = new List<Format>();
       this.State = new LogViewStateViewModel();
@@ -168,20 +196,21 @@ namespace VisualLog.Desktop.LogManager
 
     private void InitCommands()
     {
-      // Ctrl+F: the view moves the focus to the query box; the results panel opens if there are results
+      // Ctrl+F: the view moves the focus to the query box; the results panel opens if there are results.
+      // With a part of a line selected in the log, that text is searched for.
       this.ShowSearchPanelCommand = new Command(
         x => {
-          if (this.SearchViewModel.HasQuery)
+          if (SearchViewModel.IsSearchableText(x as string))
+            _ = this.SearchViewModel.SearchForTextAsync((string)x);
+          else if (this.SearchViewModel.HasQuery)
             this.State.ShowSearchPanel = true;
           this.SearchFocusRequested?.Invoke();
         },
         x => true
       );
-      this.ShowSelectedLinesCommand = new Command(
-        x => {
-          this.ShowSelectedMessages(this.selectedMessages);
-        },
-        x => true
+      this.SearchTextCommand = new Command(
+        x => _ = this.SearchViewModel.SearchForTextAsync(x as string),
+        x => SearchViewModel.IsSearchableText(x as string)
       );
       this.CloseCommand = new Command(
         x => {
@@ -277,38 +306,6 @@ namespace VisualLog.Desktop.LogManager
       }
     }
 
-    #region Selected messages
-
-    public void AddToSelection(IMessage message)
-    {
-      this.selectedMessages.Add(message);
-    }
-
-    public void RemoveFromSelection(IMessage message)
-    {
-      this.selectedMessages.Remove(message);
-    }
-
-    private void ShowSelectedMessages(IEnumerable<IMessage> messages)
-    {
-      this.SelectedMessagesViewModel = new SelectedMessagesViewModel(messages);
-      this.SelectedMessagesViewModel.CloseRequested += this.OnSelectedLinesCloseRequested;
-      this.State.ShowSelectedMessagesPanel = true;
-    }
-
-    private void OnSelectedLinesCloseRequested()
-    {
-      this.State.ShowSelectedMessagesPanel = false;
-      if (this.SelectedMessagesViewModel != null)
-      {
-        this.SelectedMessagesViewModel.CloseRequested -= this.OnSelectedLinesCloseRequested;
-        this.SelectedMessagesViewModel = null;
-      }
-    }
-
-
-    #endregion
-
     private void AddToBatch(MessageInlineViewModel messageViewModel)
     {
       this.pendingMessages.Add(messageViewModel);
@@ -346,6 +343,7 @@ namespace VisualLog.Desktop.LogManager
       // Only lines that were already shown hold a computed look; the rest are matched lazily
       foreach (var message in this.LogMessages)
         message.RefreshHighlight();
+      this.LinesRestyled?.Invoke();
     }
 
     public void Dispose()
@@ -357,30 +355,100 @@ namespace VisualLog.Desktop.LogManager
     }
 
     /// <summary>Line of the log by its 1-based number, null if there is no such line.</summary>
-    private MessageInlineViewModel GetLogLine(int lineNumber)
+    public MessageInlineViewModel GetLogLine(int lineNumber)
     {
       var index = lineNumber - 1;
       return index >= 0 && index < this.LogMessages.Count ? this.LogMessages[index] : null;
     }
 
-    public void ShowLogLine(SearchEntryViewModel searchEntryViewModel)
+    /// <summary>Opens the details panel for the line by its 1-based number; nothing if there is no such line.</summary>
+    public void ShowDetails(int lineNumber)
     {
-      var line = searchEntryViewModel?.SearchEntry == null ? null : this.GetLogLine(searchEntryViewModel.SearchEntry.LineNumber);
+      var line = this.GetLogLine(lineNumber);
       if (line == null)
         return;
-      // Scroll so that the line is not glued to the top edge
-      var index = searchEntryViewModel.SearchEntry.LineNumber - 1;
-      this.ShowLineRequested?.Invoke(index > 10 ? index - 10 : 0);
-      this.SelectedLogMessage = line;
+      this.Details = MessageDetailsViewModel.From(line.Message?.RawValue, lineNumber);
     }
 
-    public void SelectLogLines(IEnumerable<SearchEntryViewModel> searchEntries)
+    public void HideDetails()
     {
-      var entries = searchEntries?.Where(x => x?.SearchEntry != null).ToList() ?? new List<SearchEntryViewModel>();
-      this.SelectedLogMessage = null;
-      var firstEntry = entries.FirstOrDefault();
-      this.SelectedLogMessage = firstEntry != null ? this.GetLogLine(firstEntry.SearchEntry.LineNumber) : null;
-      this.ShowSelectedMessages(entries.Select(x => x.SearchEntry.Message));
+      this.Details = null;
+    }
+
+    /// <summary>
+    /// The line the details go to from a line: by the search results if there are any, otherwise by all the lines.
+    /// 0 - there is no line in that direction.
+    /// </summary>
+    public int FindLine(int fromLineNumber, int direction)
+    {
+      var entries = this.SearchViewModel.SearchEntries;
+      if (entries.Count == 0)
+      {
+        var lineNumber = fromLineNumber + Math.Sign(direction);
+        return this.GetLogLine(lineNumber) != null ? lineNumber : 0;
+      }
+      var index = NeighbourEntryIndex(entries, fromLineNumber, direction);
+      return index >= 0 ? LineNumberOf(entries[index]) : 0;
+    }
+
+    /// <summary>Shows the details of the line and moves the log (and the current search result, if it is one) to it.</summary>
+    public void GoToLine(int lineNumber)
+    {
+      var line = this.GetLogLine(lineNumber);
+      if (line == null)
+        return;
+      this.ShowDetails(lineNumber);
+      var entries = this.SearchViewModel.SearchEntries;
+      var index = entries.Count == 0 ? -1 : NeighbourEntryIndex(entries, lineNumber - 1, 1);
+      if (index >= 0 && LineNumberOf(entries[index]) == lineNumber)
+      {
+        // Moves the log to the line too
+        this.SearchViewModel.CurrentEntry = entries[index];
+        return;
+      }
+      this.State.FollowTail = false;
+      this.ShownLine = line;
+      this.ShowLineRequested?.Invoke(new SearchEntry { LineNumber = lineNumber });
+    }
+
+    /// <summary>
+    /// Index of the first result after the line (direction &gt; 0) or of the last one before it; -1 - none.
+    /// The results go by line number: the log is searched from the start, new lines are appended.
+    /// </summary>
+    private static int NeighbourEntryIndex(IList<SearchEntryViewModel> entries, int lineNumber, int direction)
+    {
+      // The first result after the line
+      int low = 0, high = entries.Count;
+      while (low < high)
+      {
+        var middle = low + (high - low) / 2;
+        if (LineNumberOf(entries[middle]) <= lineNumber)
+          low = middle + 1;
+        else
+          high = middle;
+      }
+      if (direction > 0)
+        return low < entries.Count ? low : -1;
+      var before = low - 1;
+      while (before >= 0 && LineNumberOf(entries[before]) >= lineNumber)
+        before--;
+      return before;
+    }
+
+    private static int LineNumberOf(SearchEntryViewModel entry)
+    {
+      return entry?.SearchEntry?.LineNumber ?? 0;
+    }
+
+    public void ShowLogLine(SearchEntryViewModel searchEntryViewModel)
+    {
+      var entry = searchEntryViewModel?.SearchEntry;
+      var line = entry == null ? null : this.GetLogLine(entry.LineNumber);
+      if (line == null)
+        return;
+      this.State.FollowTail = false;
+      this.ShownLine = line;
+      this.ShowLineRequested?.Invoke(entry);
     }
 
     public void InitEncodings()

@@ -43,12 +43,6 @@
               <TextBlock Text="Copy all"/>
             </StackPanel>
           </Button>
-          <Button Style="{StaticResource PanelActionButton}" Command="{Binding OpenAllAsSelectionCommand}" ToolTip="Open all found lines as selected lines">
-            <StackPanel Orientation="Horizontal">
-              <TextBlock Text="&#xE762;" Style="{StaticResource PanelActionGlyph}"/>
-              <TextBlock Text="Open as selection"/>
-            </StackPanel>
-          </Button>
           <Button Style="{StaticResource PanelActionButton}" Command="{Binding ExportCommand}" ToolTip="Save all found lines to a file">
             <StackPanel Orientation="Horizontal">
               <TextBlock Text="&#xE896;" Style="{StaticResource PanelActionGlyph}"/>
@@ -135,7 +129,6 @@
           <Separator/>
           <MenuItem Header="Copy selected" InputGestureText="Ctrl+C" Command="{Binding CopySelectedCommand}"/>
           <MenuItem Header="Copy selected with line numbers" InputGestureText="Ctrl+Shift+C" Command="{Binding CopySelectedWithLineNumbersCommand}"/>
-          <MenuItem Header="Open selected as selection" Command="{Binding OpenSelectedAsSelectionCommand}"/>
           <Separator/>
           <MenuItem Header="Copy all" Command="{Binding CopyAllCommand}"/>
           <MenuItem Header="Export all…" Command="{Binding ExportCommand}"/>
@@ -149,9 +142,10 @@
               <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0"
-                       Text="{Binding SearchEntry.LineNumber, StringFormat={}{0:N0}}"
-                       FontFamily="{StaticResource MonoFont}"
-                       FontSize="11.5"
+                       Text="{Binding SearchEntry.LineNumber}"
+                       FontFamily="{StaticResource LogFont}"
+                       FontSize="{StaticResource LogFontSize}"
+                       TextOptions.TextFormattingMode="Display"
                        Foreground="{StaticResource TextTertiaryBrush}"
                        TextAlignment="Right"
                        MinWidth="40"

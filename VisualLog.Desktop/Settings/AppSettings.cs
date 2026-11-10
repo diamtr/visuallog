@@ -12,7 +12,12 @@ namespace VisualLog.Desktop.Settings
 
     public const string FileName = @"settings.json";
 
+    public const bool DefaultShowLineNumbers = true;
+
     public List<HighlightRule> HighlightRules { get; set; } = new List<HighlightRule>();
+
+    /// <summary>Line numbers along the left edge of a log.</summary>
+    public bool ShowLineNumbers { get; set; } = DefaultShowLineNumbers;
 
     /// <summary>Default location, next to the application like recent.json.</summary>
     public static string DefaultPath => Path.Combine(AppContext.BaseDirectory, FileName);

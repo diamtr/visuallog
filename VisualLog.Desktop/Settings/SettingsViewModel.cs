@@ -7,7 +7,7 @@ using System.Windows.Threading;
 namespace VisualLog.Desktop.Settings
 {
   /// <summary>
-  /// Application settings page. For now only line highlighting rules.
+  /// Application settings page: line highlighting rules and the look of the logs.
   /// Every change is applied to <see cref="HighlightingService"/> and saved;
   /// rule edits (typing a pattern) are debounced, add/remove/move are applied at once.
   /// </summary>
@@ -29,6 +29,22 @@ namespace VisualLog.Desktop.Settings
 
     public bool HasRules => this.HighlightRules.Count > 0;
 
+    /// <summary>Look of the opened logs, shared with them.</summary>
+    public DisplaySettings Display { get; }
+
+    public bool ShowLineNumbers
+    {
+      get { return this.Display.ShowLineNumbers; }
+      set
+      {
+        if (this.Display.ShowLineNumbers == value)
+          return;
+        this.Display.ShowLineNumbers = value;
+        this.OnPropertyChanged();
+        this.ApplyNow();
+      }
+    }
+
     /// <summary>True while a debounced edit has not been applied yet.</summary>
     public bool HasPendingChanges { get; private set; }
 
@@ -37,9 +53,10 @@ namespace VisualLog.Desktop.Settings
     public Command MoveRuleUpCommand { get; }
     public Command MoveRuleDownCommand { get; }
 
-    public SettingsViewModel(HighlightingService highlighting, string storagePath = null)
+    public SettingsViewModel(HighlightingService highlighting, string storagePath = null, DisplaySettings display = null)
     {
       this.highlighting = highlighting ?? throw new ArgumentNullException(nameof(highlighting));
+      this.Display = display ?? new DisplaySettings();
       this.StoragePath = storagePath ?? AppSettings.DefaultPath;
       this.HighlightRules.CollectionChanged += (s, e) => this.OnPropertyChanged(nameof(this.HasRules));
 
@@ -67,6 +84,8 @@ namespace VisualLog.Desktop.Settings
       foreach (var rule in settings.HighlightRules)
         this.Attach(new HighlightRuleViewModel(rule), this.HighlightRules.Count);
       this.highlighting.Update(this.ToRules());
+      this.Display.ShowLineNumbers = settings.ShowLineNumbers;
+      this.OnPropertyChanged(nameof(this.ShowLineNumbers));
     }
 
     public HighlightRuleViewModel AddRule()
@@ -105,7 +124,7 @@ namespace VisualLog.Desktop.Settings
       this.StopTimer();
       var rules = this.ToRules();
       this.highlighting.Update(rules);
-      new AppSettings { HighlightRules = rules }.Save(this.StoragePath);
+      new AppSettings { HighlightRules = rules, ShowLineNumbers = this.Display.ShowLineNumbers }.Save(this.StoragePath);
     }
 
     /// <summary>Applies a debounced edit if there is one, e.g. when the window closes.</summary>

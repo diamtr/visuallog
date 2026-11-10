@@ -47,6 +47,27 @@ namespace VisualLog.Desktop.Tests
     }
 
     [Test]
+    public void ShowLineNumbersIsSavedAndShared()
+    {
+      var display = new DisplaySettings();
+      var svm = new SettingsViewModel(this.highlighting, this.storagePath, display);
+      svm.Load();
+      Assert.That(svm.ShowLineNumbers, Is.True);
+
+      svm.AddRule().Pattern = "ERROR";
+      svm.ShowLineNumbers = false;
+      Assert.That(display.ShowLineNumbers, Is.False);
+      var saved = AppSettings.Load(this.storagePath);
+      Assert.That(saved.ShowLineNumbers, Is.False);
+      Assert.That(saved.HighlightRules.Single().Pattern, Is.EqualTo("ERROR"));
+
+      var reloaded = new SettingsViewModel(new HighlightingService(), this.storagePath);
+      reloaded.Load();
+      Assert.That(reloaded.ShowLineNumbers, Is.False);
+      Assert.That(reloaded.Display.ShowLineNumbers, Is.False);
+    }
+
+    [Test]
     public void LoadMissingFile()
     {
       var svm = Create();

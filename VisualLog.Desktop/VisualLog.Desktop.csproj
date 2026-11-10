@@ -8,8 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="img\SelectedLines\down.svg" />
-    <None Remove="img\SelectedLines\up.svg" />
     <None Remove="img\SearchView\refresh.svg" />
   </ItemGroup>
 
@@ -18,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="5.1.1" />
@@ -38,8 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="img\SelectedLines\down.svg" />
-    <Resource Include="img\SelectedLines\up.svg" />
     <Resource Include="img\SearchView\refresh.svg" />
   </ItemGroup>
 

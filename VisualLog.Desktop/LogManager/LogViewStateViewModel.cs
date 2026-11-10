@@ -11,15 +11,6 @@
       }
     }
     private bool showSearchPanel;
-    public bool ShowSelectedMessagesPanel
-    {
-      get { return this.showSelectedMessagesVertical; }
-      set {
-        this.showSelectedMessagesVertical = value;
-        this.OnPropertyChanged();
-      }
-    }
-    private bool showSelectedMessagesVertical;
     public bool FollowTail
     {
       get { return this.followTail; }
@@ -39,12 +30,21 @@
       }
     }
     private double searchPanelHeight = 240;
+    /// <summary>Width of the line details panel; kept while the panel is closed.</summary>
+    public double DetailsPanelWidth
+    {
+      get { return this.detailsPanelWidth; }
+      set {
+        this.detailsPanelWidth = value;
+        this.OnPropertyChanged();
+      }
+    }
+    private double detailsPanelWidth = 420;
 
     public LogViewStateViewModel()
     {
       this.followTail = true;
       this.showSearchPanel = false;
-      this.showSelectedMessagesVertical = false;
     }
   }
 }

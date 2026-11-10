@@ -1,8 +1,10 @@
+using ICSharpCode.AvalonEdit;
 using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
 using VisualLog.Desktop.Settings;
 
@@ -45,29 +47,176 @@ namespace VisualLog.Desktop.Tests
     }
 
     [Test]
-    public void ShowSelectedLines()
+    public void LogAsTextSelectionSearch()
     {
       RunInWindow((mvm, view) =>
       {
         mvm.OpenAndShow(Path.GetFullPath("doc\\simpletest.log"));
         Pump(800);
         var logVm = mvm.LogManagerViewModel.ActiveLog;
-        // Regression: nothing selected threw ArgumentOutOfRangeException
-        log.Info("ShowSelectedLines step: show empty");
-        logVm.ShowSelectedLinesCommand.Execute(null);
-        Pump(300);
-        Assert.That(logVm.State.ShowSelectedMessagesPanel, Is.True);
-        logVm.SelectedMessagesViewModel.CloseSelectedMessagesCommand.Execute(null);
-        Pump(300);
+        var search = logVm.SearchViewModel;
+        var editor = FindDescendant<TextEditor>(view, x => x.IsVisible);
+        Assert.That(editor, Is.Not.Null);
 
-        log.Info("ShowSelectedLines step: show two lines");
-        logVm.AddToSelection(logVm.LogMessages[0].Message);
-        logVm.AddToSelection(logVm.LogMessages[2].Message);
-        logVm.ShowSelectedLinesCommand.Execute(null);
+        log.Info("LogAsText step: text matches the lines");
+        var document = editor.Document;
+        Assert.That(document.LineCount, Is.EqualTo(logVm.LogMessages.Count));
+        Assert.That(document.GetText(document.GetLineByNumber(2)), Is.EqualTo(logVm.LogMessages[1].Message.RawValue));
+        Assert.That(editor.IsReadOnly, Is.True);
+
+        log.Info("LogAsText step: line numbers setting");
+        Assert.That(editor.ShowLineNumbers, Is.True);
+        mvm.SettingsViewModel.ShowLineNumbers = false;
+        Pump(100);
+        Assert.That(editor.ShowLineNumbers, Is.False);
+
+        log.Info("LogAsText step: Ctrl+F with a selection");
+        var line = document.GetLineByNumber(1);
+        var start = document.GetText(line).IndexOf("logging");
+        editor.Select(line.Offset + start, "logging".Length);
+        logVm.ShowSearchPanelCommand.Execute(editor.SelectedText);
+        Pump(500);
+        Assert.That(search.StringToSearch, Is.EqualTo("logging"));
+        Assert.That(search.SearchEntries.Count, Is.EqualTo(2));
+        Assert.That(logVm.State.ShowSearchPanel, Is.True);
+
+        log.Info("LogAsText step: next result selects the match");
+        editor.Select(0, 0);
+        search.NextCommand.Execute(null);
+        search.NextCommand.Execute(null);
         Pump(300);
-        log.Info("ShowSelectedLines step: done");
-        Assert.That(logVm.SelectedMessagesViewModel.Messages.Count, Is.EqualTo(2));
+        Assert.That(editor.SelectedText, Is.EqualTo("logging"));
+        Assert.That(editor.TextArea.Caret.Line, Is.EqualTo(3));
+
+        log.Info("LogAsText step: new lines are appended");
+        var count = logVm.LogMessages.Count;
+        logVm.OnNewLogMessageCatched(new Core.Message("appended one"));
+        logVm.OnNewLogMessageCatched(new Core.Message("appended two"));
+        logVm.FlushPendingMessages();
+        Pump(300);
+        Assert.That(document.LineCount, Is.EqualTo(count + 2));
+        Assert.That(document.GetText(document.GetLineByNumber(count + 2)), Is.EqualTo("appended two"));
+
+        log.Info("LogAsText step: re-read rebuilds the text");
+        logVm.ReadLog();
+        Pump(300);
+        Assert.That(document.LineCount, Is.EqualTo(count));
+        log.Info("LogAsText step: done");
       });
+    }
+
+    [Test]
+    public void LineDetails()
+    {
+      RunInWindow((mvm, view) =>
+      {
+        mvm.OpenAndShow(Path.GetFullPath("doc\\simpletest.log"));
+        Pump(800);
+        var logVm = mvm.LogManagerViewModel.ActiveLog;
+        var longValue = string.Join(" ", System.Linq.Enumerable.Repeat("at Some.Namespace.Method()", 60));
+        logVm.OnNewLogMessageCatched(new Core.Message($"{{\"level\":\"Error\",\"stack\":\"{longValue}\",\"ex\":{{\"type\":\"IOException\"}}}}"));
+        logVm.FlushPendingMessages();
+        Pump(300);
+        var pane = FindDescendant<LogManager.MessageDetailsView>(view, x => true);
+        Assert.That(pane, Is.Not.Null);
+        Assert.That(pane.IsVisible, Is.False);
+
+        log.Info("LineDetails step: text line");
+        logVm.ShowDetails(1);
+        Pump(300);
+        Assert.That(pane.IsVisible, Is.True);
+        var text = FindDescendant<System.Windows.Controls.TextBox>(pane, x => x.IsVisible);
+        Assert.That(text.Text, Is.EqualTo(logVm.LogMessages[0].Message.RawValue));
+
+        log.Info("LineDetails step: next line");
+        logVm.Details.NextCommand.Execute(null);
+        Pump(300);
+        text = FindDescendant<System.Windows.Controls.TextBox>(pane, x => x.IsVisible);
+        Assert.That(text.Text, Is.EqualTo(logVm.LogMessages[1].Message.RawValue));
+        var editor = FindDescendant<TextEditor>(view, x => x.IsVisible);
+        Assert.That(editor.TextArea.Caret.Line, Is.EqualTo(2));
+
+        log.Info("LineDetails step: JSON line");
+        logVm.ShowDetails(logVm.LogMessages.Count);
+        Pump(300);
+        var json = (LogManager.JsonMessageDetailsViewModel)logVm.Details;
+        var tree = FindDescendant<System.Windows.Controls.TreeView>(pane, x => x.IsVisible);
+        Assert.That(tree, Is.Not.Null);
+        Assert.That(tree.Items.Count, Is.EqualTo(3));
+        // A long value wraps within the panel
+        var wrapped = FindDescendant<System.Windows.Controls.TextBox>(tree, x => x.Text == longValue);
+        Assert.That(wrapped, Is.Not.Null);
+        Assert.That(wrapped.ActualWidth, Is.LessThanOrEqualTo(pane.ActualWidth));
+        Assert.That(wrapped.ActualHeight, Is.GreaterThan(wrapped.FontSize * 2));
+
+        log.Info("LineDetails step: copy a value from the menu of the node");
+        string clipboard = null;
+        json.SetClipboardText = x => clipboard = x;
+        var menu = wrapped.ContextMenu;
+        menu.PlacementTarget = wrapped;
+        menu.IsOpen = true;
+        Pump(200);
+        Assert.That(menu.DataContext, Is.SameAs(json.Fields[1]));
+        var copyValue = FindMenuItem(menu, "Copy value");
+        Assert.That(copyValue.IsEnabled, Is.True);
+        copyValue.Command.Execute(copyValue.CommandParameter);
+        Assert.That(clipboard, Is.EqualTo(longValue));
+        menu.IsOpen = false;
+        // Every node has its own menu
+        var levelMenu = FindDescendant<System.Windows.Controls.TextBox>(tree, x => x.Text == "Error").ContextMenu;
+        Assert.That(levelMenu, Is.Not.SameAs(menu));
+
+        log.Info("LineDetails step: expand, text view");
+        json.Fields[2].IsExpanded = true;
+        Pump(200);
+        Assert.That(FindDescendant<System.Windows.Controls.TextBox>(tree, x => x.Text == "IOException" && x.IsVisible), Is.Not.Null);
+        json.IsTextView = true;
+        Pump(200);
+        Assert.That(tree.IsVisible, Is.False);
+        text = FindDescendant<System.Windows.Controls.TextBox>(pane, x => x.IsVisible);
+        Assert.That(text.Text, Is.EqualTo(json.IndentedText));
+
+        log.Info("LineDetails step: menu of the read-only text has no Cut and Paste");
+        text.Focus();
+        text.Select(0, 5);
+        menu = text.ContextMenu;
+        Assert.That(menu, Is.Not.Null);
+        menu.PlacementTarget = text;
+        menu.IsOpen = true;
+        Pump(200);
+        Assert.That(System.Linq.Enumerable.Select(System.Linq.Enumerable.OfType<System.Windows.Controls.MenuItem>(menu.Items), x => x.Header),
+                    Is.EqualTo(new[] { "Copy", "Select all" }));
+        Assert.That(FindMenuItem(menu, "Copy").IsEnabled, Is.True);
+        menu.IsOpen = false;
+
+        log.Info("LineDetails step: close");
+        json.CloseCommand.Execute(null);
+        Pump(200);
+        Assert.That(pane.IsVisible, Is.False);
+        log.Info("LineDetails step: done");
+      });
+    }
+
+    private static System.Windows.Controls.MenuItem FindMenuItem(System.Windows.Controls.ContextMenu menu, string header)
+    {
+      foreach (var item in menu.Items)
+        if (item is System.Windows.Controls.MenuItem menuItem && Equals(menuItem.Header, header))
+          return menuItem;
+      return null;
+    }
+
+    private static T FindDescendant<T>(DependencyObject root, Func<T, bool> condition) where T : DependencyObject
+    {
+      for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+      {
+        var child = VisualTreeHelper.GetChild(root, i);
+        if (child is T match && condition(match))
+          return match;
+        var nested = FindDescendant(child, condition);
+        if (nested != null)
+          return nested;
+      }
+      return null;
     }
 
     [Test]
@@ -105,15 +254,6 @@ namespace VisualLog.Desktop.Tests
         search.UseHistoryCommand.Execute("logging");
         Pump(500);
         Assert.That(search.SearchEntries.Count, Is.EqualTo(2));
-
-        log.Info("SearchInLog step: open as selection");
-        search.OpenAllAsSelectionCommand.Execute(null);
-        Pump(300);
-        Assert.That(logVm.State.ShowSelectedMessagesPanel, Is.True);
-
-        log.Info("SearchInLog step: close selection");
-        logVm.SelectedMessagesViewModel.CloseSelectedMessagesCommand.Execute(null);
-        Pump(300);
 
         log.Info("SearchInLog step: hide panel");
         search.HideSearchPanelCommand.Execute(null);

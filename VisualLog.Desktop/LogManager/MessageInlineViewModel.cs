@@ -4,18 +4,9 @@ using VisualLog.Desktop.Settings;
 
 namespace VisualLog.Desktop.LogManager
 {
+  /// <summary>A line of the log: the message and its look by the highlighting rules.</summary>
   public class MessageInlineViewModel : MessageViewModelBase
   {
-    public bool CopyEnabled
-    {
-      get { return this.copyEnabled; }
-      set {
-        this.copyEnabled = value;
-        this.OnPropertyChanged();
-      }
-    }
-    private bool copyEnabled;
-
     /// <summary>Gives the current highlighting rules; null - the line is never highlighted.</summary>
     public Func<LineHighlighter> HighlighterSource { get; set; }
 

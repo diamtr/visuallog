@@ -40,6 +40,8 @@ namespace VisualLog.Desktop
     public SettingsViewModel SettingsViewModel { get; private set; }
     /// <summary>Current line highlighting rules, shared by all opened logs.</summary>
     public HighlightingService Highlighting { get; private set; }
+    /// <summary>Look of the logs (line numbers...), shared by all opened logs.</summary>
+    public DisplaySettings Display { get; private set; }
     public Command OpenLogsCommand { get; private set; }
     public Command ShowDashboardCommand { get; private set; }
     public Command ShowLogsCommand { get; private set; }
@@ -52,6 +54,7 @@ namespace VisualLog.Desktop
       this.Highlighting = new HighlightingService();
       // Before any log is opened, so logs start with the saved highlighting
       this.SettingsViewModel = new SettingsViewModel(this.Highlighting);
+      this.Display = this.SettingsViewModel.Display;
       this.SettingsViewModel.Load();
       this.DashboardViewModel = new DashboardViewModel(this);
       this.LogManagerViewModel = new LogManagerViewModel(this);
@@ -104,6 +107,7 @@ namespace VisualLog.Desktop
           log.Info($"Open: '{path}', {new FileInfo(path).Length:N0} bytes");
           logViewModel = new LogViewModel(path);
           logViewModel.Highlighting = this.Highlighting;
+          logViewModel.Display = this.Display;
           logViewModel.CloseRequested += this.OnLogCloseRequested;
           logViewModel.ShowRequested += this.OnLogShowRequested;
           logViewModel.ReadLog();

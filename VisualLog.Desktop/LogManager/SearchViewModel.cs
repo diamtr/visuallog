@@ -78,8 +78,6 @@ namespace VisualLog.Desktop.LogManager
     public Command CopyAllCommand { get; private set; }
     public Command CopySelectedCommand { get; private set; }
     public Command CopySelectedWithLineNumbersCommand { get; private set; }
-    public Command OpenAllAsSelectionCommand { get; private set; }
-    public Command OpenSelectedAsSelectionCommand { get; private set; }
     public Command ExportCommand { get; private set; }
 
     /// <summary>Puts text to the clipboard; replaceable in tests.</summary>
@@ -598,6 +596,44 @@ namespace VisualLog.Desktop.LogManager
       this.Move(backwards ? -1 : +1);
     }
 
+    /// <summary>Text selected in the log can be searched for: not empty and within one line.</summary>
+    public static bool IsSearchableText(string text)
+    {
+      return !string.IsNullOrEmpty(text) && text.IndexOfAny(new[] { '\r', '\n' }) < 0;
+    }
+
+    /// <summary>
+    /// Searches for a piece of text taken from the log (selection, context menu) as it is:
+    /// in regex mode its special characters are escaped. Opens the results panel.
+    /// </summary>
+    public async Task SearchForTextAsync(string text)
+    {
+      if (!IsSearchableText(text))
+        return;
+      this.stringToSearch = this.UseRegex ? EscapeRegex(text) : text;
+      this.OnPropertyChanged(nameof(this.StringToSearch));
+      this.OnPropertyChanged(nameof(this.HasQuery));
+      log.Debug($"Search: for the selected text '{text}'");
+      await this.SearchAsync();
+      this.AddToHistory(this.activeQuery);
+      if (this.LogViewModel != null && this.activeQuery != null)
+        this.LogViewModel.State.ShowSearchPanel = true;
+    }
+
+    /// <summary>Escapes only what has a meaning in a regex; unlike Regex.Escape keeps spaces and '#' readable.</summary>
+    public static string EscapeRegex(string text)
+    {
+      const string special = "\\*+?|{}[]()^$.";
+      var sb = new StringBuilder(text.Length + 8);
+      foreach (var c in text)
+      {
+        if (special.IndexOf(c) >= 0)
+          sb.Append('\\');
+        sb.Append(c);
+      }
+      return sb.ToString();
+    }
+
     public void ShowSerchEntryLine(SearchEntryViewModel searchEntryViewModel)
     {
       this.LogViewModel?.ShowLogLine(searchEntryViewModel);
@@ -624,15 +660,6 @@ namespace VisualLog.Desktop.LogManager
     #endregion
 
     #region Operations
-
-    public void ViewSelected(IEnumerable<SearchEntryViewModel> searchEntries)
-    {
-      var entries = searchEntries?.ToList();
-      if (entries == null || entries.Count == 0)
-        return;
-      this.AddToHistory(this.activeQuery);
-      this.LogViewModel?.SelectLogLines(entries);
-    }
 
     public void CopySearchEntriesToClipboard()
     {
@@ -736,10 +763,6 @@ namespace VisualLog.Desktop.LogManager
         x => this.TargetSelection(x).Any());
       this.CopySelectedWithLineNumbersCommand = new Command(
         x => this.CopySearchEntriesToClipboard(this.TargetSelection(x).Select(e => e.SearchEntry), true),
-        x => this.TargetSelection(x).Any());
-      this.OpenAllAsSelectionCommand = new Command(x => this.ViewSelected(this.SearchEntries), x => this.SearchEntries.Count > 0);
-      this.OpenSelectedAsSelectionCommand = new Command(
-        x => this.ViewSelected(this.TargetSelection(x)),
         x => this.TargetSelection(x).Any());
       this.ExportCommand = new Command(x => this.Export(), x => this.SearchEntries.Count > 0);
     }

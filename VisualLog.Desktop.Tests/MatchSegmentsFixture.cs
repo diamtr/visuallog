@@ -15,6 +15,32 @@ namespace VisualLog.Desktop.Tests
       string.Concat(segments.Select(s => s.IsMatch ? $"[{s.Text}]" : s.Text));
 
     [Test]
+    public void SearchResultIsShownFromItsStartWhenTheMatchFits()
+    {
+      // Regression: a line was cut on the left even when it fit the row
+      var text = new string('a', 100) + "error" + new string('b', 20);
+      Assert.That(LogManager.SearchEntryView.LeadingContextFor(text, new[] { M(100, 5) }, 200), Is.EqualTo(-1));
+      Assert.That(LogManager.SearchEntryView.LeadingContextFor(text, new[] { M(100, 5) }, 105), Is.EqualTo(-1));
+      // Width not measured yet
+      Assert.That(LogManager.SearchEntryView.LeadingContextFor(text, new[] { M(100, 5) }, 0), Is.EqualTo(-1));
+    }
+
+    [Test]
+    public void SearchResultIsCutSoThatTheMatchIsVisible()
+    {
+      var text = new string('a', 100) + "error" + new string('b', 20);
+      var visible = 60;
+      var leading = LogManager.SearchEntryView.LeadingContextFor(text, new[] { M(100, 5) }, visible);
+      Assert.That(leading, Is.EqualTo(visible - 1 - 5 - LogManager.SearchEntryView.TrailingContext));
+      var shown = Describe(MatchSegments.Split(text, new[] { M(100, 5) }, leading));
+      Assert.That(shown.IndexOf("[error]"), Is.LessThan(visible));
+
+      // The first match counts, even if listed later; a match wider than the row keeps no context
+      Assert.That(LogManager.SearchEntryView.LeadingContextFor(text, new[] { M(110, 2), M(100, 5) }, visible), Is.EqualTo(leading));
+      Assert.That(LogManager.SearchEntryView.LeadingContextFor(text, new[] { M(10, 110) }, visible), Is.EqualTo(0));
+    }
+
+    [Test]
     public void EmptyAndNullInput()
     {
       Assert.That(MatchSegments.Split(null, new[] { M(0, 1) }), Is.Empty);

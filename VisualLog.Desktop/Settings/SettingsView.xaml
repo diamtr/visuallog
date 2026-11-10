@@ -176,6 +176,21 @@
                    Margin="0,4,0,0"/>
       </StackPanel>
 
+      <!-- LOG VIEW -->
+      <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+        <StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+            <TextBlock Text="&#xE8A5;" Style="{StaticResource ToolbarGlyph}" FontSize="15"/>
+            <TextBlock Text="Log view" Style="{StaticResource CardTitle}"/>
+          </StackPanel>
+          <CheckBox x:Name="ShowLineNumbersCheckBox"
+                    IsChecked="{Binding ShowLineNumbers}"
+                    VerticalContentAlignment="Center">
+            <TextBlock Text="Show line numbers" FontSize="13"/>
+          </CheckBox>
+        </StackPanel>
+      </Border>
+
       <!-- LINE HIGHLIGHTING -->
       <Border Style="{StaticResource Card}">
         <StackPanel>
