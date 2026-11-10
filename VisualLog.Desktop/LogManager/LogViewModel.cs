@@ -7,11 +7,14 @@ using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using VisualLog.Core;
+using VisualLog.Desktop.Settings;
 
 namespace VisualLog.Desktop.LogManager
 {
   public class LogViewModel : ViewModelBase, IDisposable
   {
+    private static readonly NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
+
     public Command ShowSearchPanelCommand { get; private set; }
     public Command ShowSelectedLinesCommand { get; private set; }
     public Command CloseCommand { get; private set; }
@@ -21,6 +24,7 @@ namespace VisualLog.Desktop.LogManager
     public event Action<LogViewModel> CloseRequested;
     public event Action<LogViewModel> ShowRequested;
     public event Action<double> ShowLineRequested;
+    public event Action SearchFocusRequested;
 
     public ObservableCollection<MessageInlineViewModel> LogMessages { get; set; }
     
@@ -67,6 +71,23 @@ namespace VisualLog.Desktop.LogManager
       }
     }
     private string displayName;
+    /// <summary>
+    /// True while this log is the one shown in the log manager.
+    /// Every opened log has its own view; inactive ones are kept alive but hidden.
+    /// </summary>
+    public bool IsActive
+    {
+      get { return this.isActive; }
+      set
+      {
+        if (this.isActive == value)
+          return;
+        this.isActive = value;
+        this.OnPropertyChanged();
+      }
+    }
+    private bool isActive;
+
     public List<string> Encodings { get; set; }
     public string LogPath
     {
@@ -101,6 +122,27 @@ namespace VisualLog.Desktop.LogManager
     public Log Log { get; private set; }
     public Guid Guid { get; private set; }
 
+    /// <summary>
+    /// Application-wide line highlighting. When the rules change, the lines of this log are re-styled.
+    /// </summary>
+    public HighlightingService Highlighting
+    {
+      get { return this.highlighting; }
+      set
+      {
+        if (ReferenceEquals(this.highlighting, value))
+          return;
+        if (this.highlighting != null)
+          this.highlighting.Changed -= this.OnHighlightingChanged;
+        this.highlighting = value;
+        if (this.highlighting != null)
+          this.highlighting.Changed += this.OnHighlightingChanged;
+        this.OnHighlightingChanged();
+      }
+    }
+    private HighlightingService highlighting;
+    private readonly Func<LineHighlighter> highlighterSource;
+
     public LogViewModel(string path) : this()
     {
       this.LogPath = path;
@@ -109,6 +151,7 @@ namespace VisualLog.Desktop.LogManager
     public LogViewModel()
     {
       this.Guid = Guid.NewGuid();
+      this.highlighterSource = () => this.highlighting?.Current;
       this.LogMessages = new ObservableCollection<MessageInlineViewModel>();
       this.selectedMessages = new List<IMessage>();
       this.SelectedMessagesViewModel = new SelectedMessagesViewModel();
@@ -125,9 +168,12 @@ namespace VisualLog.Desktop.LogManager
 
     private void InitCommands()
     {
+      // Ctrl+F: the view moves the focus to the query box; the results panel opens if there are results
       this.ShowSearchPanelCommand = new Command(
         x => {
-          this.State.ShowSearchPanel = true;
+          if (this.SearchViewModel.HasQuery)
+            this.State.ShowSearchPanel = true;
+          this.SearchFocusRequested?.Invoke();
         },
         x => true
       );
@@ -185,10 +231,21 @@ namespace VisualLog.Desktop.LogManager
       var encoding = Encoding.Default;
       if (!string.IsNullOrWhiteSpace(this.SelectedEncoding))
         encoding = Encoding.GetEncoding(int.Parse(this.SelectedEncoding.Split(' ')[0]));
-      this.Log = new Log(this.logPath, encoding);
-      this.Log.MessageCatched += this.OnNewLogMessageCatched;
-      this.Log.Read();
-      this.FlushPendingMessages();
+      log.Debug($"Read: '{path}', encoding {encoding.WebName}");
+      var watch = System.Diagnostics.Stopwatch.StartNew();
+      try
+      {
+        this.Log = new Log(this.logPath, encoding);
+        this.Log.MessageCatched += this.OnNewLogMessageCatched;
+        this.Log.Read();
+        this.FlushPendingMessages();
+      }
+      catch (Exception ex)
+      {
+        log.Error(ex, $"Read failed: '{path}'");
+        throw;
+      }
+      log.Info($"Read: '{path}', {this.LogMessages.Count:N0} lines in {watch.ElapsedMilliseconds} ms");
     }
 
     public void FollowTail()
@@ -205,15 +262,18 @@ namespace VisualLog.Desktop.LogManager
       try
       {
         var messageViewModel = new MessageInlineViewModel(message);
-        
+        messageViewModel.HighlighterSource = this.highlighterSource;
+
         // UI thread safety
         if (Application.Current != null)
           Application.Current.Dispatcher.Invoke(() => { this.AddToBatch(messageViewModel); });
         else
           this.AddToBatch(messageViewModel);
       }
-      catch
+      catch (Exception ex)
       {
+        // Called from the file watcher thread: an exception here would be lost silently
+        log.Error(ex, $"New line of '{this.logPath}' was not added");
       }
     }
 
@@ -281,26 +341,46 @@ namespace VisualLog.Desktop.LogManager
       this.ProcessBatchNow();
     }
 
+    private void OnHighlightingChanged()
+    {
+      // Only lines that were already shown hold a computed look; the rest are matched lazily
+      foreach (var message in this.LogMessages)
+        message.RefreshHighlight();
+    }
+
     public void Dispose()
     {
       this.FlushPendingMessages();
       this.batchTimer?.Stop();
+      // Don't let the application-wide service keep a closed log alive
+      this.Highlighting = null;
+    }
+
+    /// <summary>Line of the log by its 1-based number, null if there is no such line.</summary>
+    private MessageInlineViewModel GetLogLine(int lineNumber)
+    {
+      var index = lineNumber - 1;
+      return index >= 0 && index < this.LogMessages.Count ? this.LogMessages[index] : null;
     }
 
     public void ShowLogLine(SearchEntryViewModel searchEntryViewModel)
     {
-      var lineNumber = searchEntryViewModel.SearchEntry.LineNumber - 1;
-      if (this.ShowLineRequested != null)
-        this.ShowLineRequested.Invoke(lineNumber > 10 ? lineNumber - 10 : 0);
-      this.SelectedLogMessage = this.LogMessages[lineNumber];
+      var line = searchEntryViewModel?.SearchEntry == null ? null : this.GetLogLine(searchEntryViewModel.SearchEntry.LineNumber);
+      if (line == null)
+        return;
+      // Scroll so that the line is not glued to the top edge
+      var index = searchEntryViewModel.SearchEntry.LineNumber - 1;
+      this.ShowLineRequested?.Invoke(index > 10 ? index - 10 : 0);
+      this.SelectedLogMessage = line;
     }
 
     public void SelectLogLines(IEnumerable<SearchEntryViewModel> searchEntries)
     {
+      var entries = searchEntries?.Where(x => x?.SearchEntry != null).ToList() ?? new List<SearchEntryViewModel>();
       this.SelectedLogMessage = null;
-      var firstEntry = searchEntries.FirstOrDefault();
-      this.SelectedLogMessage = firstEntry != null ? this.LogMessages[firstEntry.SearchEntry.LineNumber] : null;
-      this.ShowSelectedMessages(searchEntries.Select(x => x.SearchEntry.Message));
+      var firstEntry = entries.FirstOrDefault();
+      this.SelectedLogMessage = firstEntry != null ? this.GetLogLine(firstEntry.SearchEntry.LineNumber) : null;
+      this.ShowSelectedMessages(entries.Select(x => x.SearchEntry.Message));
     }
 
     public void InitEncodings()

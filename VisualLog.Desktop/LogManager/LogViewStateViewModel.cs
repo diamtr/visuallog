@@ -29,6 +29,16 @@
       }
     }
     private bool followTail;
+    /// <summary>Height of the search results panel; kept while the panel is closed.</summary>
+    public double SearchPanelHeight
+    {
+      get { return this.searchPanelHeight; }
+      set {
+        this.searchPanelHeight = value;
+        this.OnPropertyChanged();
+      }
+    }
+    private double searchPanelHeight = 240;
 
     public LogViewStateViewModel()
     {

@@ -33,6 +33,24 @@ namespace VisualLog.Desktop
       mvm.OnWindowLoaded();
     }
 
+    private void Window_PreviewDragOver(object sender, DragEventArgs e)
+    {
+      // Only files are intercepted, so text drag & drop inside text boxes keeps working.
+      if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+        return;
+      e.Effects = DragDropEffects.Copy;
+      e.Handled = true;
+    }
+
+    private void Window_PreviewDrop(object sender, DragEventArgs e)
+    {
+      if (this.DataContext is not MainViewModel mvm ||
+          e.Data.GetData(DataFormats.FileDrop) is not string[] paths)
+        return;
+      e.Handled = true;
+      mvm.OpenAndShow(paths);
+    }
+
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
       var mvm = this.DataContext as MainViewModel;

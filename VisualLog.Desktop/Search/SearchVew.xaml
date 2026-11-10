@@ -21,9 +21,8 @@
     </ResourceDictionary>
   </UserControl.Resources>
   
-  <Grid Background="White">
+  <Grid Background="Transparent">
     <StackPanel Orientation="Vertical">
-      <TextBlock Text="SearchViewModel" HorizontalAlignment="Center"/>
       <ContentControl Content="{Binding SearchRequestViewModel}"/>
       <ContentControl Content="{Binding SearchResponseViewModel}"/>
     </StackPanel>

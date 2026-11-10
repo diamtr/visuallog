@@ -15,7 +15,12 @@
   </UserControl.Resources>
   <Grid>
     <ContentControl MouseDoubleClick="Message_MouseDoubleClick">
+      <!-- Highlight is null when no rule matches: the bindings then fall back to the defaults -->
       <TextBlock Text="{Binding Message.RawValue}"
+                 Foreground="{Binding Highlight.Foreground}"
+                 FontWeight="{Binding Highlight.FontWeight}"
+                 FontStyle="{Binding Highlight.FontStyle}"
+                 TextDecorations="{Binding Highlight.TextDecorations}"
                  Visibility="{Binding CopyEnabled, Converter={StaticResource VisibilityBoolConverterReverse}}"/>
     </ContentControl>
     <TextBox x:Name="MessageTextBox"

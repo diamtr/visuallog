@@ -1,0 +1,235 @@
+<UserControl x:Class="VisualLog.Desktop.Settings.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:VisualLog.Desktop.Settings"
+             xmlns:ctl="clr-namespace:VisualLog.Desktop.Controls"
+             xmlns:conv="clr-namespace:VisualLog.Desktop"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1200"
+             d:DataContext="{d:DesignInstance Type=local:SettingsViewModel}"
+             FontFamily="{DynamicResource UiFont}"
+             Foreground="{DynamicResource TextPrimaryBrush}">
+
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Styles.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
+      <conv:VisibilityBoolConverter x:Key="VisibleIfTrue"/>
+      <conv:VisibilityBoolConverter x:Key="VisibleIfFalse" Reverse="True"/>
+
+      <DataTemplate x:Key="HighlightRuleTemplate" DataType="{x:Type local:HighlightRuleViewModel}">
+        <Border x:Name="Row"
+                Background="Transparent"
+                CornerRadius="6"
+                Padding="8,6,4,6">
+          <DockPanel LastChildFill="True">
+            <!-- Order and delete, shown subtly until the row is hovered -->
+            <StackPanel x:Name="Actions"
+                        DockPanel.Dock="Right"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Top"
+                        Margin="8,2,0,0"
+                        Opacity="0.45">
+              <Button Style="{StaticResource IconButton}"
+                      Content="&#xE70E;"
+                      ToolTip="Move up (higher priority)"
+                      Command="{Binding DataContext.MoveRuleUpCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                      CommandParameter="{Binding}"/>
+              <Button Style="{StaticResource IconButton}"
+                      Content="&#xE70D;"
+                      ToolTip="Move down (lower priority)"
+                      Command="{Binding DataContext.MoveRuleDownCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                      CommandParameter="{Binding}"/>
+              <Button Style="{StaticResource IconButton}"
+                      Content="&#xE74D;"
+                      ToolTip="Delete rule"
+                      Command="{Binding DataContext.RemoveRuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                      CommandParameter="{Binding}"/>
+            </StackPanel>
+
+            <CheckBox DockPanel.Dock="Left"
+                      IsChecked="{Binding IsEnabled}"
+                      ToolTip="Rule is enabled"
+                      VerticalAlignment="Top"
+                      Margin="0,8,10,0"
+                      Focusable="True"/>
+
+            <WrapPanel x:Name="Fields" Orientation="Horizontal">
+              <!-- Pattern + regex error -->
+              <StackPanel Width="280" Margin="0,0,10,0">
+                <TextBox x:Name="PatternBox"
+                         Text="{Binding Pattern, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="Text to find, e.g. ERROR"
+                         FontFamily="Cascadia Mono, Consolas"
+                         Loaded="PatternBox_Loaded">
+                  <TextBox.Style>
+                    <Style TargetType="TextBox" BasedOn="{StaticResource FieldTextBox}">
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasError}" Value="True">
+                          <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}"/>
+                          <Setter Property="ToolTip" Value="{Binding Error}"/>
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </TextBox.Style>
+                </TextBox>
+                <TextBlock Text="{Binding Error}"
+                           Foreground="{StaticResource ErrorBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="2,3,0,0"
+                           Visibility="{Binding HasError, Converter={StaticResource VisibleIfTrue}}"/>
+              </StackPanel>
+
+              <!-- Matching options -->
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,1,10,0">
+                <ToggleButton Style="{StaticResource OptionToggle}"
+                              IsChecked="{Binding MatchCase}"
+                              ToolTip="Match case">
+                  <TextBlock Text="Aa" FontSize="12" HorizontalAlignment="Center"/>
+                </ToggleButton>
+                <ToggleButton Style="{StaticResource OptionToggle}"
+                              IsChecked="{Binding IsRegex}"
+                              ToolTip="Use regular expression">
+                  <TextBlock Text=".*" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                </ToggleButton>
+              </StackPanel>
+
+              <!-- Colors -->
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,1,10,0">
+                <ctl:ColorPicker SelectedColor="{Binding Foreground}"
+                                 Label="Text"
+                                 ToolTip="Text color"
+                                 Margin="0,0,4,0"/>
+                <ctl:ColorPicker SelectedColor="{Binding Background}"
+                                 Label="Fill"
+                                 ToolTip="Background color"/>
+              </StackPanel>
+
+              <!-- Font -->
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,1,10,0">
+                <ToggleButton Style="{StaticResource OptionToggle}"
+                              IsChecked="{Binding Bold}"
+                              ToolTip="Bold">
+                  <TextBlock Text="B" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </ToggleButton>
+                <ToggleButton Style="{StaticResource OptionToggle}"
+                              IsChecked="{Binding Italic}"
+                              ToolTip="Italic">
+                  <TextBlock Text="I" FontSize="13" FontStyle="Italic" FontFamily="Georgia" HorizontalAlignment="Center"/>
+                </ToggleButton>
+                <ToggleButton Style="{StaticResource OptionToggle}"
+                              IsChecked="{Binding Strikethrough}"
+                              ToolTip="Strikethrough">
+                  <TextBlock Text="S" FontSize="13" TextDecorations="Strikethrough" HorizontalAlignment="Center"/>
+                </ToggleButton>
+              </StackPanel>
+
+              <!-- Live preview -->
+              <Border Background="{Binding Preview.Background}"
+                      BorderBrush="{StaticResource CardBorderBrush}"
+                      BorderThickness="1"
+                      CornerRadius="4"
+                      Padding="8,5,8,5"
+                      MaxWidth="240"
+                      VerticalAlignment="Top"
+                      ToolTip="Preview">
+                <TextBlock Text="{Binding PreviewText}"
+                           FontFamily="Cascadia Mono, Consolas"
+                           FontSize="12.5"
+                           Foreground="{Binding Preview.Foreground}"
+                           FontWeight="{Binding Preview.FontWeight}"
+                           FontStyle="{Binding Preview.FontStyle}"
+                           TextDecorations="{Binding Preview.TextDecorations}"
+                           TextTrimming="CharacterEllipsis"/>
+              </Border>
+            </WrapPanel>
+          </DockPanel>
+        </Border>
+        <DataTemplate.Triggers>
+          <Trigger SourceName="Row" Property="IsMouseOver" Value="True">
+            <Setter TargetName="Row" Property="Background" Value="{StaticResource RowHoverBrush}"/>
+            <Setter TargetName="Actions" Property="Opacity" Value="1"/>
+          </Trigger>
+          <DataTrigger Binding="{Binding IsEnabled}" Value="False">
+            <Setter TargetName="Fields" Property="Opacity" Value="0.5"/>
+          </DataTrigger>
+        </DataTemplate.Triggers>
+      </DataTemplate>
+    </ResourceDictionary>
+  </UserControl.Resources>
+
+  <ScrollViewer Background="{StaticResource SurfaceBrush}"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
+    <StackPanel MaxWidth="1280" Margin="40,32,40,32">
+
+      <!-- PAGE HEADER -->
+      <StackPanel Margin="4,0,0,24">
+        <TextBlock Text="Settings" FontSize="28" FontWeight="SemiBold"/>
+        <TextBlock Text="Preferences for all logs. Changes are applied and saved automatically."
+                   FontSize="13"
+                   Foreground="{StaticResource TextSecondaryBrush}"
+                   Margin="0,4,0,0"/>
+      </StackPanel>
+
+      <!-- LINE HIGHLIGHTING -->
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <DockPanel Margin="0,0,0,12">
+            <Button DockPanel.Dock="Right"
+                    Style="{StaticResource AccentButton}"
+                    Padding="12,6,14,6"
+                    VerticalAlignment="Top"
+                    Command="{Binding AddRuleCommand}">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="12"
+                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBlock Text="Add rule" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+            <StackPanel Margin="0,0,16,0">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Text="&#xE7E6;" Style="{StaticResource ToolbarGlyph}" FontSize="15"/>
+                <TextBlock Text="Line highlighting" Style="{StaticResource CardTitle}"/>
+              </StackPanel>
+              <TextBlock Text="Lines containing the pattern get the style. Rules higher in the list win."
+                         Style="{StaticResource SecondaryText}"
+                         TextTrimming="None"
+                         TextWrapping="Wrap"
+                         Margin="0,4,0,0"/>
+            </StackPanel>
+          </DockPanel>
+
+          <!-- Empty state -->
+          <Grid Height="96"
+                Visibility="{Binding HasRules, Converter={StaticResource VisibleIfFalse}}">
+            <Rectangle RadiusX="6" RadiusY="6"
+                       Stroke="{StaticResource CardBorderBrush}"
+                       StrokeThickness="1.5"
+                       StrokeDashArray="4 3"
+                       Fill="#FAFAFA"/>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+              <TextBlock Text="&#xE7E6;" FontFamily="{StaticResource IconFont}" FontSize="20"
+                         Foreground="{StaticResource TextTertiaryBrush}"
+                         HorizontalAlignment="Center"/>
+              <TextBlock Text="No rules yet. Add one to color lines with errors, warnings or anything you look for."
+                         Style="{StaticResource SecondaryText}"
+                         Margin="0,8,0,0"
+                         HorizontalAlignment="Center"/>
+            </StackPanel>
+          </Grid>
+
+          <ItemsControl ItemsSource="{Binding HighlightRules}"
+                        ItemTemplate="{StaticResource HighlightRuleTemplate}"
+                        Focusable="False"
+                        Margin="-8,0,-4,0"
+                        Visibility="{Binding HasRules, Converter={StaticResource VisibleIfTrue}}"/>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -1,0 +1,9 @@
+<Project>
+
+  <!-- Applies to every project in the repository. -->
+  <PropertyGroup>
+    <!-- bin\Debug\ instead of bin\Debug\net8.0-windows\: the path doesn't change when .NET version changes -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+</Project>

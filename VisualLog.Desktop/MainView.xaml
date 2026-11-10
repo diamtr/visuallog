@@ -7,12 +7,21 @@
         xmlns:dshbrd="clr-namespace:VisualLog.Desktop.Dashboard"
         xmlns:fmtmgr="clr-namespace:VisualLog.Desktop.FormatManager"
         xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
-        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+        xmlns:ctl="clr-namespace:VisualLog.Desktop.Controls"
+        xmlns:settings="clr-namespace:VisualLog.Desktop.Settings"
         mc:Ignorable="d"
         Title="VisualLog" Height="450" Width="800"
+        MinWidth="720" MinHeight="400"
         WindowState="Maximized"
+        AllowDrop="True"
+        PreviewDragOver="Window_PreviewDragOver"
+        PreviewDrop="Window_PreviewDrop"
         Loaded="Window_Loaded"
         Closing="Window_Closing">
+
+  <Window.InputBindings>
+    <KeyBinding Modifiers="Ctrl" Key="O" Command="{Binding OpenLogsCommand}"/>
+  </Window.InputBindings>
   
   <Window.Resources>
     <ResourceDictionary>
@@ -25,12 +34,12 @@
         <dshbrd:DashboardView/>
       </DataTemplate>
       
-      <DataTemplate DataType="{x:Type logmgr:LogManagerViewModel}">
-        <logmgr:LogManagerView/>
-      </DataTemplate>
-      
       <DataTemplate DataType="{x:Type fmtmgr:FormatManagerViewModel}">
         <fmtmgr:FormatManagerView/>
+      </DataTemplate>
+
+      <DataTemplate DataType="{x:Type settings:SettingsViewModel}">
+        <settings:SettingsView/>
       </DataTemplate>
 
       <local:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
@@ -40,25 +49,71 @@
   
   <Grid Background="{StaticResource DefaultBackgroundBrush}">
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="65" />
+      <ColumnDefinition Width="68" />
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
+
+    <!-- NAVIGATION RAIL -->
     <Border Grid.Column="0"
-            Padding="0, 20, 0, 10"
+            Padding="0,10,0,10"
             Background="{StaticResource PanelBackgroundBrush}">
-      <StackPanel Orientation="Vertical"
-                  HorizontalAlignment="Center">
-        <Button Style="{StaticResource LeftMenuButton}"
-        Command="{Binding ShowDashboardCommand}">
-          <svgc:SvgViewbox Source="pack://application:,,,/img/LeftMenu/dashboard.svg"/>
-        </Button>
-        <Button Style="{StaticResource LeftMenuButton}"
-                Command="{Binding OpenLogsCommand}">
-          <svgc:SvgViewbox Source="pack://application:,,,/img/LeftMenu/fileOpen.svg"/>
-        </Button>
-      </StackPanel>
+      <DockPanel HorizontalAlignment="Center" LastChildFill="False">
+        <!-- Pinned to the bottom of the rail -->
+        <ctl:NavButton DockPanel.Dock="Bottom"
+                       Style="{StaticResource NavButton}"
+                       Margin="0"
+                       Glyph="&#xE713;"
+                       Label="Settings"
+                       ToolTip="Settings"
+                       IsSelected="{Binding IsSettingsActive}"
+                       Command="{Binding ShowSettingsCommand}"/>
+
+        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+          <ctl:NavButton Style="{StaticResource NavButton}"
+                         Glyph="&#xE80F;"
+                         Label="Home"
+                         ToolTip="Dashboard"
+                         IsSelected="{Binding IsDashboardActive}"
+                         Command="{Binding ShowDashboardCommand}"/>
+          <ctl:NavButton Style="{StaticResource NavButton}"
+                         Glyph="&#xE8FD;"
+                         Label="Logs"
+                         ToolTip="Opened logs"
+                         IsSelected="{Binding IsLogManagerActive}"
+                         BadgeCount="{Binding Logs.Count}"
+                         Command="{Binding ShowLogsCommand}"/>
+
+          <Border Height="1" Margin="12,6,12,10" Background="{StaticResource RailDividerBrush}"/>
+
+          <ctl:NavButton Style="{StaticResource NavButton}"
+                         Glyph="&#xE8E5;"
+                         Label="Open"
+                         ToolTip="Open log file (Ctrl+O)"
+                         Command="{Binding OpenLogsCommand}"/>
+        </StackPanel>
+      </DockPanel>
     </Border>
     
-    <ContentControl Grid.Column="1" Content="{Binding ActiveViewModel}"/>
+    <Grid Grid.Column="1">
+      <ContentControl>
+        <ContentControl.Style>
+          <Style TargetType="ContentControl">
+            <Setter Property="Content" Value="{Binding ActiveViewModel}"/>
+            <Style.Triggers>
+              <!-- The log manager is hosted below and kept alive, don't create a second view for it -->
+              <DataTrigger Binding="{Binding IsLogManagerActive}" Value="True">
+                <Setter Property="Content" Value="{x:Null}"/>
+                <Setter Property="Visibility" Value="Collapsed"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </ContentControl.Style>
+      </ContentControl>
+
+      <!-- Kept in the tree permanently so opened logs are not re-rendered on every navigation -->
+      <Border Visibility="{Binding IsLogManagerActive, Converter={StaticResource VisibilityBoolConverter}}">
+        <logmgr:LogManagerView DataContext="{Binding LogManagerViewModel}"/>
+      </Border>
+    </Grid>
   </Grid>
 </Window>

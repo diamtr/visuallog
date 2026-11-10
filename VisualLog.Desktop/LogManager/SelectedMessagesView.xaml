@@ -46,12 +46,12 @@
                     Margin="7,0,0,0">
           <Button Style="{StaticResource SelectedLinesMenuButton}"
                   Command="{Binding ShowPreviousMessageCommand}" >
-            <svgc:SvgViewbox Source="pack://application:,,,/img/SelectedLines/up.svg"/>
+            <svgc:SvgViewbox Source="pack://application:,,,/VisualLog.Desktop;component/img/SelectedLines/up.svg"/>
           </Button>
           <Button Style="{StaticResource SelectedLinesMenuButton}"
                   Command="{Binding ShowNextMessageCommand}"
                   Margin="15,0,0,0">
-            <svgc:SvgViewbox Source="pack://application:,,,/img/SelectedLines/down.svg"/>
+            <svgc:SvgViewbox Source="pack://application:,,,/VisualLog.Desktop;component/img/SelectedLines/down.svg"/>
           </Button>
         </StackPanel>
 

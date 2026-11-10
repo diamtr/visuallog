@@ -24,47 +24,153 @@ namespace VisualLog.Desktop.LogManager
   /// </summary>
   public partial class LogView : UserControl
   {
-    private Dictionary<Guid, double> lastSearchPanelHeight;
+    private static readonly NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
+
+    // Each opened log owns its own LogView (see LogManagerView), so the view is bound
+    // to a single LogViewModel for its whole life. Hidden views keep their state.
     private LogViewModel actualViewModel;
 
     public LogView()
     {
-      this.lastSearchPanelHeight = new Dictionary<Guid, double>();
       InitializeComponent();
+      this.Unloaded += this.UserControl_Unloaded;
+      this.IsVisibleChanged += this.LogView_IsVisibleChanged;
     }
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
-      if (!this.IsVisible)
-        return;
-
+      this.Attach(this.DataContext as LogViewModel);
       this.ScrollToBottom();
-      this.actualViewModel = this.DataContext as LogViewModel;
-      if (this.actualViewModel != null)
-      {
-        this.actualViewModel.ShowLineRequested += this.ShowLine;
-        this.actualViewModel.LogMessages.CollectionChanged += this.LogMessages_CollectionChanged;
-      }
+    }
+
+    private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+    {
+      this.Detach();
     }
 
     private void LogView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (e.OldValue is LogViewModel oldVm)
-      {
-        oldVm.ShowLineRequested -= this.ShowLine;
-        if (oldVm.LogMessages != null)
-          oldVm.LogMessages.CollectionChanged -= this.LogMessages_CollectionChanged;
-      }
-
-      if (e.NewValue is not LogViewModel vm)
+      if (!this.IsLoaded)
         return;
-
-      this.actualViewModel = vm;
-      this.actualViewModel.ShowLineRequested += this.ShowLine;
-      this.actualViewModel.LogMessages.CollectionChanged += this.LogMessages_CollectionChanged;
-
+      this.Attach(e.NewValue as LogViewModel);
       this.ScrollToBottom();
     }
+
+    private void LogView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      // New lines are not scrolled to while the view is hidden; catch up when it is shown.
+      if (this.IsVisible)
+        this.ScrollToBottom();
+    }
+
+    private void Attach(LogViewModel viewModel)
+    {
+      if (ReferenceEquals(this.actualViewModel, viewModel))
+        return;
+      this.Detach();
+      this.actualViewModel = viewModel;
+      if (this.actualViewModel == null)
+        return;
+      this.actualViewModel.ShowLineRequested += this.ShowLine;
+      this.actualViewModel.SearchFocusRequested += this.FocusSearch;
+      this.actualViewModel.LogMessages.CollectionChanged += this.LogMessages_CollectionChanged;
+      this.actualViewModel.State.PropertyChanged += this.State_PropertyChanged;
+      this.SearchBox.EscapeRequested += this.SearchBox_EscapeRequested;
+      this.ApplySearchPanelVisibility();
+    }
+
+    private void Detach()
+    {
+      if (this.actualViewModel == null)
+        return;
+      this.actualViewModel.ShowLineRequested -= this.ShowLine;
+      this.actualViewModel.SearchFocusRequested -= this.FocusSearch;
+      this.actualViewModel.LogMessages.CollectionChanged -= this.LogMessages_CollectionChanged;
+      this.actualViewModel.State.PropertyChanged -= this.State_PropertyChanged;
+      this.SearchBox.EscapeRequested -= this.SearchBox_EscapeRequested;
+      this.actualViewModel = null;
+    }
+
+    #region Search
+
+    private void FocusSearch()
+    {
+      log.Debug("Search: focus the query box");
+      this.SearchBox.FocusQuery();
+    }
+
+    private void SearchBox_EscapeRequested()
+    {
+      if (this.actualViewModel != null)
+        this.actualViewModel.State.ShowSearchPanel = false;
+      this.MessagesListView.Focus();
+    }
+
+    private void State_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(LogViewStateViewModel.ShowSearchPanel))
+        this.ApplySearchPanelVisibility();
+    }
+
+    /// <summary>The results panel takes its last height when shown and no room when hidden.</summary>
+    private void ApplySearchPanelVisibility()
+    {
+      var state = this.actualViewModel?.State;
+      var show = state != null && state.ShowSearchPanel;
+      log.Debug($"Search: results panel {(show ? "shown" : "hidden")}, height {state?.SearchPanelHeight}");
+      if (show)
+      {
+        this.SearchSplitterRow.Height = new GridLength(5);
+        this.SearchPanelRow.MinHeight = 90;
+        this.SearchPanelRow.Height = new GridLength(Math.Max(state.SearchPanelHeight, 90));
+      }
+      else
+      {
+        if (state != null && this.SearchPanelRow.ActualHeight > 0)
+          state.SearchPanelHeight = this.SearchPanelRow.ActualHeight;
+        this.SearchSplitterRow.Height = new GridLength(0);
+        this.SearchPanelRow.MinHeight = 0;
+        this.SearchPanelRow.Height = new GridLength(0);
+      }
+      this.SearchSplitter.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+      this.SearchPaneContentControl.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void SearchSplitter_DragCompleted(object sender, DragCompletedEventArgs e)
+    {
+      if (this.actualViewModel != null)
+        this.actualViewModel.State.SearchPanelHeight = this.SearchPanelRow.ActualHeight;
+    }
+
+    private ScrollViewer logScrollViewer;
+
+    private void MessagesListView_Loaded(object sender, RoutedEventArgs e)
+    {
+      if (this.logScrollViewer != null)
+        return;
+      this.logScrollViewer = FindDescendant<ScrollViewer>(this.MessagesListView);
+      if (this.logScrollViewer != null)
+        this.logScrollViewer.ScrollChanged += (s, args) => this.PlaceSearchMarkers();
+      this.PlaceSearchMarkers();
+    }
+
+    /// <summary>Puts the match marks over the track of the vertical scrollbar of the log.</summary>
+    private void PlaceSearchMarkers()
+    {
+      var scrollViewer = this.logScrollViewer;
+      if (scrollViewer == null || scrollViewer.ComputedVerticalScrollBarVisibility != Visibility.Visible)
+      {
+        this.SearchMarkers.Visibility = Visibility.Collapsed;
+        return;
+      }
+      var bottom = scrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible ? SystemParameters.HorizontalScrollBarHeight : 0;
+      this.SearchMarkers.Visibility = Visibility.Visible;
+      this.SearchMarkers.Width = SystemParameters.VerticalScrollBarWidth;
+      this.SearchMarkers.VerticalInset = SystemParameters.VerticalScrollBarButtonHeight;
+      this.SearchMarkers.Margin = new Thickness(0, 0, 0, bottom);
+    }
+
+    #endregion
 
     private void LogMessages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {

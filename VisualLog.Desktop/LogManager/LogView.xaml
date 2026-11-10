@@ -6,7 +6,8 @@
              xmlns:root="clr-namespace:VisualLog.Desktop"
              xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
              xmlns:search="clr-namespace:VisualLog.Desktop.Search"
-             mc:Ignorable="d" 
+             xmlns:ctl="clr-namespace:VisualLog.Desktop.Controls"
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="UserControl_Loaded"
              DataContextChanged="LogView_DataContextChanged">
@@ -38,6 +39,8 @@
 
   <UserControl.InputBindings>
     <KeyBinding Gesture="Ctrl+F" Command="{Binding ShowSearchPanelCommand}"/>
+    <KeyBinding Gesture="F3" Command="{Binding SearchViewModel.NextCommand}"/>
+    <KeyBinding Gesture="Shift+F3" Command="{Binding SearchViewModel.PreviousCommand}"/>
   </UserControl.InputBindings>
 
   <Grid>
@@ -48,93 +51,146 @@
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
 
-    <!-- Top panel -->
-    <Grid Grid.Row="0"
-          Margin="0, 0, 10, 0">
+    <!-- Toolbar -->
+    <Border Grid.Row="0"
+            Background="{StaticResource CardBrush}"
+            BorderBrush="{StaticResource DividerBrush}"
+            BorderThickness="0,0,0,1"
+            Padding="8,6,10,6"
+            TextBlock.FontFamily="{StaticResource UiFont}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
-      </Grid.ColumnDefinitions>
+        <logmgr:SearchBoxView Grid.Column="0"
+                              x:Name="SearchBox"
+                              DataContext="{Binding SearchViewModel}"/>
 
-      <Border Grid.Column="0"
-              Background="{StaticResource PanelBackgroundBrush}"
-              VerticalAlignment="Center">
-        <StackPanel Orientation="Horizontal"
-                    Margin="0,0,10,0">
-          
-          <ToggleButton x:Name="ShowSearchPanelButton"
-                        IsChecked="{Binding State.ShowSearchPanel}"
-                        Style="{StaticResource TopLogMenuToggleButton}">
-            <TextBlock Text="Search"/>
-          </ToggleButton>
+        <ToggleButton Grid.Column="1"
+                      x:Name="ShowSelectedMessagesPanelButton"
+                      IsChecked="{Binding State.ShowSelectedMessagesPanel}"
+                      Command="{Binding ShowSelectedLinesCommand}"
+                      ToolTip="Show selected lines"
+                      Style="{StaticResource ToolbarToggleButton}">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="&#xE762;" Style="{StaticResource ToolbarGlyph}"/>
+            <TextBlock Text="Selected lines" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ToggleButton>
 
-          <ToggleButton x:Name="ShowSelectedMessagesPanelButton"
-                        IsChecked="{Binding State.ShowSelectedMessagesPanel}"
-                        Command="{Binding ShowSelectedLinesCommand}"
-                        Style="{StaticResource TopLogMenuToggleButton}">
-            <TextBlock Text="Selected Lines"/>
-          </ToggleButton>
-          
-        </StackPanel>
-      </Border>
+        <ToggleButton Grid.Column="2"
+                      x:Name="FollowTailCheckBox"
+                      IsChecked="{Binding State.FollowTail}"
+                      Checked="FollowTailCheckBox_Checked"
+                      ToolTip="Keep scrolling to new lines"
+                      Style="{StaticResource ToolbarToggleButton}">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="&#xE74B;" Style="{StaticResource ToolbarGlyph}"/>
+            <TextBlock Text="Follow tail" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ToggleButton>
 
-      <CheckBox Grid.Column="1"
-                x:Name="FollowTailCheckBox"
-                Content="Follow tail"
-                IsChecked="{Binding State.FollowTail}"
-                Checked="FollowTailCheckBox_Checked"
-                Margin="20,0,0,0"
-                VerticalAlignment="Center"/>
+        <Border Grid.Column="3"
+                Width="1" Height="20"
+                Margin="8,0,8,0"
+                Background="{StaticResource CardBorderBrush}"/>
 
-      <Button Grid.Column="2" Content="{Binding LogPath}"
-              Command="{Binding OpenInExplorerCommand}"
-              Style="{StaticResource LinkButton}" Margin="20,0,0,0" VerticalAlignment="Center"/>
+        <!-- Full path; click opens the folder in Explorer -->
+        <Button Grid.Column="4"
+                HorizontalAlignment="Left"
+                Command="{Binding OpenInExplorerCommand}"
+                ToolTip="Open containing folder"
+                Style="{StaticResource SubtleButton}"
+                Foreground="{StaticResource TextSecondaryBrush}">
+          <DockPanel>
+            <TextBlock DockPanel.Dock="Left" Text="&#xE838;" Style="{StaticResource ToolbarGlyph}" FontSize="13"/>
+            <TextBlock Text="{Binding LogPath}"
+                       TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Center"/>
+          </DockPanel>
+        </Button>
 
-      <ComboBox Grid.Column="4"
-                ItemsSource="{Binding Encodings}"
-                SelectedItem="{Binding SelectedEncoding}"
-                BorderThickness="0"
-                VerticalAlignment="Center"/>
-
-    </Grid>
+        <ComboBox Grid.Column="5"
+                  ItemsSource="{Binding Encodings}"
+                  SelectedItem="{Binding SelectedEncoding}"
+                  ToolTip="Encoding"
+                  Style="{StaticResource ToolbarComboBox}"
+                  Margin="12,0,0,0"
+                  VerticalAlignment="Center"/>
+      </Grid>
+    </Border>
     
     <Grid Grid.Row="2" x:Name="LogAndSelectedMessagesGrid">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" MinHeight="80"/>
+        <RowDefinition x:Name="SearchSplitterRow" Height="0"/>
+        <RowDefinition x:Name="SearchPanelRow" Height="0"/>
+      </Grid.RowDefinitions>
 
-      <DockPanel>
-
-        <Border DockPanel.Dock="Top"
-                MaxHeight="500"
-                Background="{StaticResource PanelBackgroundBrush}">
-          <ContentControl x:Name="SearchPaneContentControl"
-                Visibility="{Binding ElementName=ShowSearchPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
-                Content="{Binding SearchViewModel}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"/>
-        </Border>
-
+      <Grid Grid.Row="0">
         <ListView x:Name="MessagesListView"
-                  DockPanel.Dock="Bottom"
                   ItemsSource="{Binding LogMessages}"
                   SelectedItem="{Binding SelectedLogMessage}"
                   SelectionMode="Extended"
                   BorderThickness="0,0,0,0"
                   SelectionChanged="MessagesListView_SelectionChanged"
+                  Loaded="MessagesListView_Loaded"
                   VirtualizingPanel.IsVirtualizing="True"
                   VirtualizingPanel.VirtualizationMode="Recycling"
                   VirtualizingPanel.CacheLength="2"
-                  VirtualizingPanel.CacheLengthUnit="Page"/>
-        
-      </DockPanel>
+                  VirtualizingPanel.CacheLengthUnit="Page">
+          <ListView.ItemContainerStyle>
+            <!-- Highlight background goes on the row container: the theme's selection/hover
+                 look is drawn over it, so selected highlighted lines still look selected.
+                 No BasedOn: the theme style (template, selection) applies anyway, and a
+                 StaticResource to {x:Type ListViewItem} can't be resolved here (crash on open). -->
+            <Style TargetType="ListViewItem">
+              <Setter Property="Background" Value="{Binding Highlight.Background}"/>
+            </Style>
+          </ListView.ItemContainerStyle>
+        </ListView>
 
-      <Border Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
+        <!-- Search results marked along the vertical scrollbar of the log; placed by code-behind -->
+        <ctl:ScrollMarkersBar x:Name="SearchMarkers"
+                              HorizontalAlignment="Right"
+                              LineNumbers="{Binding SearchViewModel.MatchLineNumbers}"
+                              TotalLines="{Binding LogMessages.Count}"
+                              CurrentLineNumber="{Binding SearchViewModel.CurrentLineNumber}"
+                              MarkerBrush="{StaticResource SearchMarkerBrush}"
+                              CurrentMarkerBrush="{StaticResource AccentBrush}"/>
+      </Grid>
+
+      <GridSplitter Grid.Row="1"
+                    x:Name="SearchSplitter"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    ResizeDirection="Rows"
+                    ResizeBehavior="PreviousAndNext"
+                    Background="{StaticResource DividerBrush}"
+                    Cursor="SizeNS"
+                    Focusable="False"
+                    DragCompleted="SearchSplitter_DragCompleted"/>
+
+      <ContentControl Grid.Row="2"
+                      x:Name="SearchPaneContentControl"
+                      Focusable="False"
+                      Content="{Binding SearchViewModel}"
+                      HorizontalContentAlignment="Stretch"
+                      VerticalContentAlignment="Stretch"/>
+
+      <Border Grid.RowSpan="3"
+              Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
               Background="{StaticResource PanelBackgroundBrush}"
               Opacity="0.5"/>
 
-      <Border Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
+      <Border Grid.RowSpan="3"
+              Visibility="{Binding ElementName=ShowSelectedMessagesPanelButton, Path=IsChecked, Converter={StaticResource VisibilityBoolConverter}}"
               Background="Transparent"
               Padding="50,20,50,10">
         <ContentControl Content="{Binding SelectedMessagesViewModel}"

@@ -1,22 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace VisualLog.Desktop.LogManager
 {
   /// <summary>
-  /// Interaction logic for SearchView.xaml
+  /// Search results panel under the log.
   /// </summary>
   public partial class SearchView : UserControl
   {
@@ -25,18 +15,18 @@ namespace VisualLog.Desktop.LogManager
       InitializeComponent();
     }
 
-    private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void SearchEntriesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      var listViewItem = sender as ListViewItem;
-      if (listViewItem == null)
-        return;
-      var searchEntryViewModel = listViewItem.DataContext as SearchEntryViewModel;
-      if (searchEntryViewModel == null)
-        return;
-      var searchViewModel = this.DataContext as SearchViewModel;
-      if (searchViewModel == null)
-        return;
-      searchViewModel.ShowSerchEntryLine(searchEntryViewModel);
+      if (this.DataContext is SearchViewModel vm)
+        vm.SelectedEntries = this.SearchEntriesList.SelectedItems.OfType<SearchEntryViewModel>().ToList();
+    }
+
+    private void SearchEntriesList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+      // Double click on a row: show its line again, even if it is the current result already
+      var item = ItemsControl.ContainerFromElement(this.SearchEntriesList, e.OriginalSource as DependencyObject) as ListViewItem;
+      if (item?.DataContext is SearchEntryViewModel entry && this.DataContext is SearchViewModel vm)
+        vm.ShowSerchEntryLine(entry);
     }
   }
 }

@@ -1,90 +1,80 @@
 ﻿<UserControl x:Class="VisualLog.Desktop.LogManager.LogManagerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:root="clr-namespace:VisualLog.Desktop"
              xmlns:logmgr="clr-namespace:VisualLog.Desktop.LogManager"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" d:Background="Gray">
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
 
   <UserControl.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="../Styles.xaml"/>
       </ResourceDictionary.MergedDictionaries>
+      <root:VisibilityBoolConverter x:Key="VisibilityBoolConverter"/>
     </ResourceDictionary>
   </UserControl.Resources>
 
-  <Border BorderThickness="5,0,0,0"
-          BorderBrush="{StaticResource PanelBackgroundBrush}"
-          Margin="3,0,0,0">
-    <Grid Background="Transparent">
-      <Grid.Resources>
+  <UserControl.InputBindings>
+    <KeyBinding Gesture="Ctrl+Tab" Command="{Binding NextLogCommand}"/>
+    <KeyBinding Gesture="Ctrl+PageDown" Command="{Binding NextLogCommand}"/>
+    <KeyBinding Gesture="Ctrl+Shift+Tab" Command="{Binding PreviousLogCommand}"/>
+    <KeyBinding Gesture="Ctrl+PageUp" Command="{Binding PreviousLogCommand}"/>
+    <KeyBinding Gesture="Ctrl+W" Command="{Binding CloseActiveLogCommand}"/>
+    <KeyBinding Gesture="Ctrl+F4" Command="{Binding CloseActiveLogCommand}"/>
+  </UserControl.InputBindings>
+
+  <Grid Background="{StaticResource SurfaceBrush}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- TAB STRIP: the active tab is a white "card" that merges into the content below -->
+    <ListBox x:Name="TabsList"
+             Grid.Row="0"
+             Panel.ZIndex="1"
+             Padding="8,6,8,0"
+             ItemsSource="{Binding MainViewModel.Logs}"
+             SelectedItem="{Binding ActiveLog}"
+             Style="{StaticResource LogTabStrip}"
+             ItemContainerStyle="{StaticResource LogTab}"
+             SelectionChanged="TabsList_SelectionChanged"
+             PreviewMouseWheel="TabsList_PreviewMouseWheel">
+      <ListBox.ItemTemplate>
         <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
-          <logmgr:LogView/>
+          <logmgr:LogWrapPanelView/>
         </DataTemplate>
-      </Grid.Resources>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="*"/>
-      </Grid.RowDefinitions>
-      <Border Grid.Row="0"
-              Background="{StaticResource PanelBackgroundBrush}">
-        <ListView FlowDirection="LeftToRight"
-                   MinHeight="20"
-                   ItemsSource="{Binding MainViewModel.Logs}"
-                   SelectedItem="{Binding ActiveLog}"
-                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                   BorderThickness="0"
-                   Background="{Binding Background, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Border}}}">
-          <ListView.ItemContainerStyle>
-            <Style TargetType="ListViewItem">
-              <Setter Property="Background" Value="Transparent"/>
-              <Setter Property="BorderBrush" Value="Transparent"/>
-              <Setter Property="BorderThickness" Value="0,0,0,2"/>
-              <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-              <Setter Property="Template">
-                <Setter.Value>
-                  <ControlTemplate TargetType="ListViewItem">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                      <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                    </Border>
-                  </ControlTemplate>
-                </Setter.Value>
-              </Setter>
-              <Style.Triggers>
-                <Trigger Property="IsFocused" Value="True">
-                  <Setter Property="Background" Value="Transparent"/>
-                  <Setter Property="BorderBrush" Value="Transparent"/>
-                </Trigger>
-                <Trigger Property="IsMouseOver" Value="True">
-                  <Setter Property="Background" Value="Transparent"/>
-                  <Setter Property="BorderBrush" Value="{StaticResource YellowBrush}"/>
-                </Trigger>
-                <Trigger Property="IsSelected" Value="True">
-                  <Setter Property="Background" Value="Transparent"/>
-                  <Setter Property="BorderBrush" Value="{StaticResource YellowBrush}"/>
-                </Trigger>
-              </Style.Triggers>
-            </Style>
-          </ListView.ItemContainerStyle>
-          <ListView.Resources>
-            <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
-              <logmgr:LogWrapPanelView/>
-            </DataTemplate>
-          </ListView.Resources>
-          <ListView.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel Orientation="Horizontal"/>
-            </ItemsPanelTemplate>
-          </ListView.ItemsPanel>
-        </ListView>
-      </Border>
-      <ContentControl Grid.Row="1"
-                      Content="{Binding ActiveLog}"/>
-    </Grid>
-  </Border>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <!-- Every opened log owns its LogView. Views are stacked in one cell and only
+         the active one is visible, so switching logs never re-binds a shared view. -->
+    <Border Grid.Row="1"
+            Background="{StaticResource CardBrush}"
+            BorderBrush="{StaticResource CardBorderBrush}"
+            BorderThickness="0,1,0,0"
+            Margin="0,-1,0,0">
+      <ItemsControl ItemsSource="{Binding MainViewModel.Logs}"
+                    Focusable="False">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <Grid/>
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemContainerStyle>
+          <Style TargetType="ContentPresenter">
+            <Setter Property="Visibility" Value="{Binding IsActive, Converter={StaticResource VisibilityBoolConverter}}"/>
+          </Style>
+        </ItemsControl.ItemContainerStyle>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="{x:Type logmgr:LogViewModel}">
+            <logmgr:LogView/>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </Border>
+  </Grid>
 </UserControl>

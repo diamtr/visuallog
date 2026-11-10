@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using VisualLog.Core.Search;
+using VisualLog.Desktop.Controls;
 
 namespace VisualLog.Desktop.LogManager
 {
   /// <summary>
-  /// Interaction logic for SearchEntryView.xaml
+  /// A found line with its matches highlighted. Long lines start shortly before the first match.
   /// </summary>
   public partial class SearchEntryView : UserControl
   {
+    /// <summary>Characters kept before the first match of a long line.</summary>
+    public const int LeadingContext = 60;
+
+    private static readonly Brush FallbackMatchBrush = CreateFallbackBrush();
+
     public SearchEntryView()
     {
       InitializeComponent();
@@ -28,31 +22,19 @@ namespace VisualLog.Desktop.LogManager
 
     private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
+      // Rows are recycled by the virtualizing list: always rebuild from scratch
       var vm = e.NewValue as SearchEntryViewModel;
-      if (vm == null || vm.SearchEntry == null || vm.SearchEntry.Matches == null)
-        return;
+      var entry = vm?.SearchEntry;
+      var segments = MatchSegments.Split(entry?.Message?.RawValue, entry?.Matches, LeadingContext);
+      var brush = this.TryFindResource("SearchMatchBrush") as Brush ?? FallbackMatchBrush;
+      MatchSegments.Fill(this.SearchEntryTextBlock.Inlines, segments, brush);
+    }
 
-      var rawString = vm.SearchEntry.Message?.RawValue;
-      var stringParts = new List<Tuple<bool, string>>();
-      var matches = new Queue<MatchEntry>(vm.SearchEntry.Matches.OrderBy(x => x.Index));
-      var index = 0;
-      while (matches.Any())
-      {
-        var match = matches.Dequeue();
-        var offset = match.Index - index;
-        if (offset > 0)
-          stringParts.Add(new Tuple<bool, string>(false, rawString.Substring(index, offset)));
-        stringParts.Add(new Tuple<bool, string>(true, rawString.Substring(match.Index, match.Length)));
-        index = match.Index + match.Length;
-      }
-      if (index < rawString.Length - 1)
-        stringParts.Add(new Tuple<bool, string>(false, rawString.Substring(index)));
-
-      foreach (var part in stringParts)
-        if (part.Item1)
-          this.SearchEntryTextBlock.Inlines.Add(new Run(part.Item2) { Background = Brushes.Yellow });
-        else
-          this.SearchEntryTextBlock.Inlines.Add(part.Item2);
+    private static Brush CreateFallbackBrush()
+    {
+      var brush = new SolidColorBrush(Color.FromRgb(0xFF, 0xE7, 0xA3));
+      brush.Freeze();
+      return brush;
     }
   }
 }

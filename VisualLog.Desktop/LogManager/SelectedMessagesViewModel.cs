@@ -52,7 +52,8 @@ namespace VisualLog.Desktop.LogManager
       this.Messages.AddRange(messages);
       foreach (var message in this.Messages)
         this.MessagesViewModels.Add(new MessageInlineViewModel(message));
-      this.MessagePanelViewModel = new MessagePanelViewModel(this.Messages[this.Index]);
+      // Nothing selected: the panel shows an empty list, not a crash
+      this.SetMessagePanelViewModel();
     }
 
     public SelectedMessagesViewModel()
